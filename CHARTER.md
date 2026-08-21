@@ -76,7 +76,7 @@ Reglas:
 
 Canal de comunicación:
 
-El equipo utilizará como canal principal WhatsApp donde se comunicarán problemas generales, sobre el desarollo,
+El equipo utilizará como canal principal WhatsApp o Discord donde se comunicarán problemas generales, sobre el desarollo,
 relacionados al tutor IAy RAG, problemas sobre el proyecto y decisiones tomadas.
 
 
