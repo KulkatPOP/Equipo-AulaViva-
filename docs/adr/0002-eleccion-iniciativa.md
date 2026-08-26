@@ -14,11 +14,11 @@ Por lo tanto, el Tutor IA debe ser capaz de utilizar estos materiales como fuent
 
 ## Decisión
 
-Se utilizará un enfoque **RAG (Retrieval-Augmented Generation)** para implementar el Tutor IA de AulaViva.
+Se utilizará un enfoque RAG (Retrieval-Augmented Generation) para implementar el Tutor IA de AulaViva.
 Cuando un estudiante realice una pregunta, el sistema deberá buscar información relevante dentro de los materiales correspondientes a su curso y utilizar el contenido recuperado como contexto para generar la respuesta.
 El flujo general será:
 
-**Pregunta del estudiante → búsqueda en materiales del curso → recuperación de información relevante → generación de respuesta mediante IA → respuesta al estudiante.**
+Pregunta del estudiante → búsqueda en materiales del curso → recuperación de información relevante → generación de respuesta mediante IA → respuesta al estudiante.
 
 El Tutor IA deberá limitar sus respuestas al contexto disponible en los materiales correspondientes al curso.
 Si el sistema no encuentra información suficiente para responder una pregunta, deberá informar al estudiante que no dispone de información suficiente en lugar de generar una respuesta sin respaldo en los materiales.
