@@ -6,16 +6,16 @@
 
 ## Contexto
 
-AulaViva busca aumentar la retención de contenidos y el rendimiento escolar en un 25% durante el primer semestre de adopción de la plataforma en los colegios asociados.
-Dentro del Impact Map se identificó al **estudiante** como uno de los actores principales y la necesidad de mejorar la resolución autónoma de dudas fuera del horario de clases.
-Para responder a esta necesidad se definió como entregable una **interfaz de chat interactivo con un Tutor IA contextualizado por asignatura**.
-Además, los estudiantes tendrán acceso a un repositorio de materiales de cada curso, incluyendo guías, lecturas y otros contenidos proporcionados por los docentes.
+AulaViva busca mejorar la retención de contenido y el rendimiento escolar en un 25% durante el primer semestre de implementación de la plataforma en los colegios.
+Dentro del Impact Map se identificó al estudiante como uno de los actores principales y la necesidad de mejorar las dudas de forma autónoma fuera del horario de clases.
+Para responder a esta necesidad se definió como entregable una interfaz de chat interactivo con un Tutor IA contextualizado por asignatura.
+Además, los estudiantes tendrán acceso a un repositorio donde encontraran materiales de cada curso, incluyendo guías, lecturas y otros contenidos proporcionados por los docentes.
 Por lo tanto, el Tutor IA debe ser capaz de utilizar estos materiales como fuente de información para responder consultas relacionadas con cada asignatura.
 
 ## Decisión
 
-Se utilizará un enfoque **RAG (Retrieval-Augmented Generation)** para implementar el Tutor IA de AulaViva.
-Cuando un estudiante realice una pregunta, el sistema deberá buscar información relevante dentro de los materiales correspondientes a su curso y utilizar el contenido recuperado como contexto para generar la respuesta.
+Se utilizará un enfoque RAG (Retrieval-Augmented Generation) para implementar el Tutor IA de AulaViva.
+Cuando un estudiante realice una pregunta, el sistema deberá buscar información relevante dentro de los materiales correspondientes a su curso y utilizar el contenido  como contexto para generar la respuesta.
 El flujo general será:
 
 **Pregunta del estudiante → búsqueda en materiales del curso → recuperación de información relevante → generación de respuesta mediante IA → respuesta al estudiante.**
@@ -57,7 +57,7 @@ Esta alternativa permite encontrar contenido, pero no entrega directamente una e
 ### 3. Utilizar RAG sobre los materiales del curso
 
 Esta alternativa permite recuperar información relevante de los materiales y entregarla como contexto al modelo de IA antes de generar una respuesta.
-**Se selecciona esta alternativa** porque se ajusta al objetivo de disponer de un Tutor IA contextualizado por asignatura y permite aprovechar el repositorio de materiales definido para AulaViva.
+Se selecciona esta alternativa porque se ajusta al objetivo de disponer de un Tutor IA contextualizado por asignatura y permite aprovechar el repositorio de materiales definido para AulaViva.
 
 ## Criterios asociados
 
@@ -70,5 +70,5 @@ La decisión deberá permitir cumplir, al menos, los siguientes comportamientos 
 
 ## Resultado
 
-AulaViva adoptará **RAG como enfoque para el Tutor IA**, utilizando los materiales de cada curso como fuente de contexto para generar respuestas a las consultas de los estudiantes.
+AulaViva adoptará RAG como enfoque para el Tutor IA, utilizando los materiales de cada curso como fuente de contexto para generar respuestas a las consultas de los estudiantes.
 La selección de tecnologías concretas para implementar el RAG se realizará posteriormente, cuando el equipo avance en la definición de la arquitectura del sistema.
