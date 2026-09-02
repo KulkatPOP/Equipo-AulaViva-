@@ -1,4 +1,4 @@
-# ADR 0002: Elección de Estilo Arquitectónico para Aula Viva
+# ADR 0003: Elección de Estilo Arquitectónico para Aula Viva
 
 ## Estado
 Aceptado — 2026-09-02
