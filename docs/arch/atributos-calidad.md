@@ -1,79 +1,10 @@
-# Atributos de Calidad — AulaViva
+# Atributos de Calidad Prioritarios — Aula Viva
 
-## 1. Seguridad
-
-**Prioridad:** Alta
-
-AulaViva es una plataforma educativa SaaS Multi-Tenant, por lo que los
-datos de cada colegio deben mantenerse aislados.
-
-Además, el sistema posee distintos roles de usuario:
-- Estudiante
-- Docente
-- Apoderado
-- Coordinador Académico
-- Sostenedor
-
-### Impacto en la arquitectura
-
-- Autenticación de usuarios.
-- Autorización mediante RBAC.
-- Validación de permisos en el backend.
-- Identificación del tenant en las operaciones.
-- Aislamiento de datos entre colegios.
-- Protección de información académica.
-
----
-
-## 2. Mantenibilidad
-
-**Prioridad:** Alta
-
-La arquitectura debe permitir incorporar nuevas funcionalidades sin
-afectar innecesariamente las funcionalidades existentes.
-
-### Impacto en la arquitectura
-
-El backend se organizará como un Monolito Modular con módulos
-claramente separados:
-
-- Autenticación y RBAC.
-- Multi-Tenancy.
-- Gestión académica.
-- Evaluaciones.
-- Seguimiento académico.
-- Tutor IA.
-
-Cada módulo tendrá responsabilidades claramente delimitadas.
-
----
-
-## 3. Escalabilidad
-
-**Prioridad:** Alta
-
-AulaViva es una plataforma SaaS que debe permitir incorporar
-progresivamente nuevos colegios y usuarios.
-
-El Tutor IA y el procesamiento de materiales pueden generar cargas
-variables, por lo que la arquitectura debe permitir crecer sin
-rediseñar completamente el sistema.
-
-### Impacto en la arquitectura
-
-- Backend stateless.
-- Escalamiento horizontal.
-- Procesamiento asíncrono mediante Redis + BullMQ.
-- PostgreSQL + pgvector para datos y embeddings.
-- Posibilidad de extraer posteriormente módulos que requieran
-  escalamiento independiente.
-
----
-
-## Priorización
-
-| Atributo | Prioridad | Motivo |
-|---|---|---|
-| Seguridad | Alta | Aislamiento Multi-Tenant y control de acceso por roles. |
-| Mantenibilidad | Alta | Facilitar la evolución del MVP y mantener módulos separados. |
-| Escalabilidad | Alta | Permitir crecimiento de colegios, usuarios y carga del Tutor IA. |
+| Prioridad | Atributo | Métrica / Escenario Objetivo | Impacto en la Arquitectura |
+|:---:|---|---|---|
+| **1** | **Seguridad y Privacidad** | Cumplimiento de confidencialidad de notas y roles estrictos. Zero-trust e IAM granular para perfiles (Estudiante, Docente, Apoderado)[cite: 2]. | Autenticación basada en JWT, control de acceso basado en roles (RBAC) y segmentación de red aislando la base de datos[cite: 2]. |
+| **2** | **Disponibilidad** | SLA/SLO de 99.5% durante horario escolar (08:00 a 18:00 hrs)[cite: 2]. Cero caídas durante evaluaciones. | Despliegue redundante con health checks configurados y circuit breakers para evitar que una caída del Tutor IA afecte el resto del sistema[cite: 2]. |
+| **3** | **Rendimiento (Performance)** | Latencia p95 menor a 500ms para navegación y carga de materiales[cite: 2]. | Uso de caché en memoria (Redis) para sesiones y lecturas replicadas[cite: 2], además de procesamiento asíncrono para las respuestas del LLM. |
+| **4** | **Escalabilidad** | Soporte para elasticidad ante picos de múltiples usuarios concurrentes rindiendo exámenes de forma simultánea[cite: 2]. | Diseño stateless (sin estado local) en la capa de API para permitir autoscaling horizontal inmediato[cite: 2]. |
+| **5** | **Mantenibilidad** | Módulos con fronteras claras y alta testabilidad[cite: 2]. Facilitar la modificación de código sin romper otras áreas. | Arquitectura de Monolito Modular con separación estricta por paquetes (ej. usando interfaces en Java) para mantener los contextos aislados[cite: 2]. |
+| **6** | **Observabilidad** | Cobertura total de logs, métricas y traces[cite: 2] para detectar rápidamente si un estudiante tiene problemas subiendo un archivo. | Implementación de logs estructurados (structured logging) y correlation IDs para rastrear las peticiones a través de todo el monolito[cite: 2]. |
