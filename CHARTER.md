@@ -21,7 +21,7 @@ Se define qué funcionalidades serán desarrolladas.
 - Tech Lead: Sebastian Yañez
 - DevSecOps: Sharick Jimenez
 - AI/Data: Kein Ramos
-- QA: QA
+- QA: Eduardo Erazo
 - UX/UI: Basthian Reyes
 
 Propósito:
