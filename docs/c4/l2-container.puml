@@ -1,0 +1,26 @@
+@startuml C4_Nivel2_Contenedores
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+LAYOUT_WITH_LEGEND()
+
+title Diagrama de Contenedores (Nivel 2) — Aula Viva
+
+Person(usuario, "Usuario Escolar", "Estudiante, Docente o Apoderado.")
+
+System_Boundary(c1, "Aula Viva") {
+    Container(spa, "Single Page Application", "React / Vue", "Interfaz web interactiva para todos los roles.")
+    Container(api, "Monolito Backend API", "Java Spring Boot / Node.js", "Expone API REST; orquesta la lógica modular de cursos, notas e IA.")
+    ContainerDb(db, "Base de Datos Relacional", "PostgreSQL", "Almacena usuarios, cursos, preguntas, respuestas y calificaciones.")
+    ContainerDb(cache, "Caché en Memoria", "Redis", "Gestión de sesiones de usuario y rate-limiting de consultas.")
+}
+
+System_Ext(llm_service, "Servicio LLM / OpenAI", "API externa de modelo de lenguaje.")
+System_Ext(cloud_storage, "Object Storage (S3)", "Almacén en la nube para guías y evaluaciones en PDF.")
+
+Rel(usuario, spa, "Interactúa con la plataforma", "HTTPS")
+Rel(spa, api, "Llamadas a API", "JSON/HTTPS")
+Rel(api, db, "Lee y escribe datos", "JDBC/TCP")
+Rel(api, cache, "Consulta sesiones y límites", "RESP/TCP")
+Rel(api, llm_service, "Envía prompts de estudio", "HTTPS/REST")
+Rel(api, cloud_storage, "Genera URLs firmadas para archivos", "HTTPS")
+@enduml

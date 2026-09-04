@@ -1,0 +1,30 @@
+@startuml C4_Nivel1_Contexto
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+LAYOUT_WITH_LEGEND()
+
+title Diagrama de Contexto de Sistema (Nivel 1) — Aula Viva
+
+Person(estudiante, "Estudiante", "Accede a materiales, rinde evaluaciones y consulta al Tutor IA.")
+Person(docente, "Docente", "Carga contenidos, diseña evaluaciones y califica.")
+Person(apoderado, "Apoderado", "Monitorea el progreso y notas de su pupilo.")
+Person(coordinador, "Coordinador Académico", "Gestiona cursos, matrículas y docentes.")
+Person(sostenedor, "Sostenedor", "Supervisa indicadores académicos e institucionales.")
+
+System(aulaviva, "Aula Viva", "Plataforma educativa modular para la gestión escolar y soporte pedagógico.")
+
+System_Ext(llm_service, "Servicio LLM / OpenAI", "Motor de inferencia para respuestas del Tutor IA.")
+System_Ext(storage_ext, "Cloud Object Storage", "Almacenamiento de guías, documentos y recursos pedagógicos.")
+System_Ext(smtp, "Servicio de Notificaciones", "Envío de alertas académicas por correo a apoderados.")
+
+Rel(estudiante, aulaviva, "Consulta material y rinde tests", "HTTPS")
+Rel(docente, aulaviva, "Gestiona cursos y evaluaciones", "HTTPS")
+Rel(apoderado, aulaviva, "Revisa desempeño escolar", "HTTPS")
+Rel(coordinador, aulaviva, "Gestiona cursos y docentes", "HTTPS")
+Rel(sostenedor, aulaviva, "Consulta indicadores institucionales", "HTTPS")
+
+Rel(aulaviva, llm_service, "Envía consultas contextuales de estudio", "HTTPS/REST")
+Rel(aulaviva, storage_ext, "Carga y descarga de archivos PDF/materiales", "HTTPS/S3 API")
+Rel(aulaviva, smtp, "Envía correos y notificaciones", "SMTP/API")
+
+@enduml
