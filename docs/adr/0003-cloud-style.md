@@ -6,17 +6,20 @@ Propuesto
 
 ## Contexto
 
-AulaViva requiere definir una estrategia cloud que permita escalabilidad,
-seguridad y operación eficiente.
+AulaViva necesita definir una estrategia de arquitectura cloud que permita
+escalabilidad, seguridad y una operación eficiente de la plataforma educativa.
+
+La solución debe soportar múltiples instituciones manteniendo separación de datos
+y permitiendo integrar servicios externos como almacenamiento, bases de datos e IA.
 
 ## Decisión
 
-Pendiente de definición.
+Pendiente de definición por el equipo técnico.
 
 ## Consecuencias
 
 Pendiente.
 
-## Alternativas
+## Alternativas descartadas
 
 Pendiente.
