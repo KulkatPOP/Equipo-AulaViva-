@@ -1,0 +1,36 @@
+@startuml C4_Nivel2_Contenedores_Cloud_AulaViva
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+LAYOUT_WITH_LEGEND()
+
+title Diagrama de Contenedores (Nivel 2) con Tecnologías Cloud — Aula Viva
+
+Person(usuario, "Usuario Escolar", "Estudiante, Docente, Apoderado o Coordinador Institucional.")
+
+System_Boundary(c1, "Aula Viva — Infraestructura AWS Cloud") {
+Container(spa, "Single Page Application (SPA)", "React / AWS S3 + Amazon CloudFront", "Frontend web interactivo multi-tenant; entrega vistas especializadas para cada rol escolar vía HTTPS y CDN.")
+
+Container(api, "Backend Monolito Modular", "NestJS (TypeScript) / AWS ECS (AWS Fargate)", "Contenedor serverless; expone API REST, orquesta autenticación RBAC, gestión académica, tareas asíncronas y flujo RAG.")
+
+ContainerDb(db, "Base de Datos Relacional y Vectorial", "Amazon RDS for PostgreSQL (pgvector)", "Persistencia relacional multi-tenant (usuarios, cursos, notas) y almacenamiento de embeddings para el Tutor IA.")
+
+ContainerDb(cache, "Caché y Cola de Tareas", "Amazon ElastiCache for Redis", "Manejo de sesiones distribuidas, rate limiting por colegio y encolamiento de tareas en segundo plano mediante BullMQ.")
+
+ContainerDb(s3, "Almacenamiento de Archivos", "Amazon S3 (Simple Storage Service)", "Almacén escalable para guías pedagógicas, rúbricas, evaluaciones y PDFs de estudio.")
+
+
+}
+
+System_Ext(llm, "API de OpenAI", "Servicio externo de LLM para generación de respuestas contextualizadas del Tutor IA.")
+System_Ext(cloudwatch, "Amazon CloudWatch", "Servicio cloud gestionado para centralización de logs (stdout), métricas operacionales y alarmas.")
+
+Rel(usuario, spa, "Interactúa y visualiza datos escolares", "HTTPS / CDN")
+Rel(spa, api, "Consume endpoints REST y envía credenciales", "JSON / HTTPS")
+
+Rel(api, db, "Consultas transaccionales y búsqueda de similitud vectorial", "TypeORM / TCP :5432")
+Rel(api, cache, "Gestión de sesiones y despacho de jobs asíncronos", "BullMQ / RESP :6379")
+Rel(api, s3, "Genera Presigned URLs para carga y descarga segura", "AWS SDK / HTTPS")
+Rel(api, llm, "Envía prompts con contexto recuperado (RAG)", "HTTPS / REST API")
+Rel(api, cloudwatch, "Transmite logs estructurados en JSON y métricas", "CloudWatch Agent / HTTPS")
+
+@enduml
