@@ -1,0 +1,18 @@
+extends:
+  - spectral:oas
+
+rules:
+
+  operation-description:
+    description: Las operaciones deben tener descripción
+    given: $.paths[*][*]
+    then:
+      field: description
+      function: truthy
+
+  operation-id:
+    description: Cada endpoint debe tener operationId
+    given: $.paths[*][*]
+    then:
+      field: operationId
+      function: truthy
