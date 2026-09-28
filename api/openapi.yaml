@@ -1,0 +1,17 @@
+openapi: 3.0.3
+
+info:
+  title: AulaViva API
+  version: 1.0.0
+  description: Contrato API principal AulaViva
+
+servers:
+  - url: /api/v1
+
+paths:
+
+components:
+
+  schemas:
+
+  securitySchemes:
