@@ -3,15 +3,541 @@ openapi: 3.0.3
 info:
   title: AulaViva API
   version: 1.0.0
-  description: Contrato API principal AulaViva
+  description: |
+    Contrato API principal de AulaViva.
+    La API permite gestionar estudiantes, cursos, evaluaciones
+    y consultas al Tutor IA.
 
 servers:
   - url: /api/v1
+    description: API versión 1
+
+tags:
+  - name: Students
+    description: Gestión de estudiantes
+  - name: Courses
+    description: Gestión de cursos
+  - name: Evaluations
+    description: Gestión de evaluaciones
+  - name: Tutor IA
+    description: Consultas al Tutor IA
 
 paths:
 
+  /students:
+
+    post:
+      tags:
+        - Students
+      summary: Crear estudiante
+      description: Crea un nuevo estudiante dentro de una institución.
+      operationId: createStudent
+
+      security:
+        - bearerAuth: []
+
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateStudentRequest'
+            example:
+              firstName: "Ana"
+              lastName: "González"
+              email: "ana.gonzalez@example.com"
+              institutionId: "550e8400-e29b-41d4-a716-446655440000"
+
+      responses:
+        '201':
+          description: Estudiante creado correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Student'
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+        '409':
+          $ref: '#/components/responses/Conflict'
+
+  /students/{studentId}:
+
+    get:
+      tags:
+        - Students
+      summary: Obtener estudiante
+      description: Obtiene la información de un estudiante mediante su identificador.
+      operationId: getStudent
+
+      security:
+        - bearerAuth: []
+
+      parameters:
+        - $ref: '#/components/parameters/StudentId'
+
+      responses:
+        '200':
+          description: Información del estudiante.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Student'
+
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /courses:
+
+    get:
+      tags:
+        - Courses
+      summary: Listar cursos
+      description: Obtiene los cursos disponibles para una institución.
+      operationId: listCourses
+
+      security:
+        - bearerAuth: []
+
+      parameters:
+        - name: institutionId
+          in: query
+          required: true
+          description: Identificador de la institución.
+          schema:
+            type: string
+            format: uuid
+
+      responses:
+        '200':
+          description: Lista de cursos.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Course'
+
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /courses/{courseId}:
+
+    get:
+      tags:
+        - Courses
+      summary: Obtener curso
+      description: Obtiene la información de un curso mediante su identificador.
+      operationId: getCourse
+
+      security:
+        - bearerAuth: []
+
+      parameters:
+        - $ref: '#/components/parameters/CourseId'
+
+      responses:
+        '200':
+          description: Información del curso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Course'
+
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /evaluations:
+
+    post:
+      tags:
+        - Evaluations
+      summary: Crear evaluación
+      description: Crea una nueva evaluación asociada a un curso.
+      operationId: createEvaluation
+
+      security:
+        - bearerAuth: []
+
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateEvaluationRequest'
+            example:
+              title: "Evaluación Unidad 1"
+              description: "Evaluación de contenidos de la primera unidad."
+              courseId: "750e8400-e29b-41d4-a716-446655440000"
+              institutionId: "550e8400-e29b-41d4-a716-446655440000"
+
+      responses:
+        '201':
+          description: Evaluación creada correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Evaluation'
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+        '409':
+          $ref: '#/components/responses/Conflict'
+
+  /evaluations/{evaluationId}:
+
+    get:
+      tags:
+        - Evaluations
+      summary: Obtener evaluación
+      description: Obtiene una evaluación mediante su identificador.
+      operationId: getEvaluation
+
+      security:
+        - bearerAuth: []
+
+      parameters:
+        - $ref: '#/components/parameters/EvaluationId'
+
+      responses:
+        '200':
+          description: Información de la evaluación.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Evaluation'
+
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /tutor/query:
+
+    post:
+      tags:
+        - Tutor IA
+      summary: Consultar al Tutor IA
+      description: |
+        Envía una consulta al Tutor IA de AulaViva.
+        El sistema utiliza el contexto educativo disponible para generar
+        una respuesta relacionada con los contenidos del curso.
+      operationId: queryTutor
+
+      security:
+        - bearerAuth: []
+
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TutorQuery'
+            example:
+              question: "¿Qué es la fotosíntesis?"
+              courseId: "750e8400-e29b-41d4-a716-446655440000"
+
+      responses:
+        '200':
+          description: Respuesta generada por el Tutor IA.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TutorResponse'
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
 components:
+
+  securitySchemes:
+
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Token JWT utilizado para autenticar las solicitudes.
+
+  parameters:
+
+    StudentId:
+      name: studentId
+      in: path
+      required: true
+      description: Identificador único del estudiante.
+      schema:
+        type: string
+        format: uuid
+
+    CourseId:
+      name: courseId
+      in: path
+      required: true
+      description: Identificador único del curso.
+      schema:
+        type: string
+        format: uuid
+
+    EvaluationId:
+      name: evaluationId
+      in: path
+      required: true
+      description: Identificador único de la evaluación.
+      schema:
+        type: string
+        format: uuid
+
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: true
+      description: |
+        Clave única utilizada para evitar la duplicación de operaciones
+        que modifican datos.
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 255
 
   schemas:
 
-  securitySchemes:
+    Student:
+      type: object
+      description: Información de un estudiante.
+      required:
+        - id
+        - firstName
+        - lastName
+        - email
+        - institutionId
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Identificador único del estudiante.
+        firstName:
+          type: string
+          description: Nombre del estudiante.
+        lastName:
+          type: string
+          description: Apellido del estudiante.
+        email:
+          type: string
+          format: email
+          description: Correo electrónico del estudiante.
+        institutionId:
+          type: string
+          format: uuid
+          description: Institución a la que pertenece el estudiante.
+
+    CreateStudentRequest:
+      type: object
+      description: Datos necesarios para crear un estudiante.
+      required:
+        - firstName
+        - lastName
+        - email
+        - institutionId
+      properties:
+        firstName:
+          type: string
+          description: Nombre del estudiante.
+        lastName:
+          type: string
+          description: Apellido del estudiante.
+        email:
+          type: string
+          format: email
+          description: Correo electrónico del estudiante.
+        institutionId:
+          type: string
+          format: uuid
+          description: Institución a la que pertenece el estudiante.
+
+    Course:
+      type: object
+      description: Información de un curso.
+      required:
+        - id
+        - name
+        - institutionId
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Identificador único del curso.
+        name:
+          type: string
+          description: Nombre del curso.
+        description:
+          type: string
+          description: Descripción del curso.
+        institutionId:
+          type: string
+          format: uuid
+          description: Institución a la que pertenece el curso.
+
+    Evaluation:
+      type: object
+      description: Información de una evaluación.
+      required:
+        - id
+        - title
+        - courseId
+        - institutionId
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Identificador único de la evaluación.
+        title:
+          type: string
+          description: Título de la evaluación.
+        description:
+          type: string
+          description: Descripción de la evaluación.
+        courseId:
+          type: string
+          format: uuid
+          description: Curso asociado a la evaluación.
+        institutionId:
+          type: string
+          format: uuid
+          description: Institución asociada.
+
+    CreateEvaluationRequest:
+      type: object
+      description: Datos necesarios para crear una evaluación.
+      required:
+        - title
+        - courseId
+        - institutionId
+      properties:
+        title:
+          type: string
+          description: Título de la evaluación.
+        description:
+          type: string
+          description: Descripción de la evaluación.
+        courseId:
+          type: string
+          format: uuid
+          description: Curso asociado a la evaluación.
+        institutionId:
+          type: string
+          format: uuid
+          description: Institución asociada.
+
+    TutorQuery:
+      type: object
+      description: Consulta enviada al Tutor IA.
+      required:
+        - question
+        - courseId
+      properties:
+        question:
+          type: string
+          description: Pregunta realizada por el estudiante.
+        courseId:
+          type: string
+          format: uuid
+          description: Curso cuyo contenido se utilizará como contexto.
+
+    TutorResponse:
+      type: object
+      description: Respuesta generada por el Tutor IA.
+      required:
+        - answer
+      properties:
+        answer:
+          type: string
+          description: Respuesta generada por el Tutor IA.
+        sources:
+          type: array
+          description: Fuentes utilizadas para construir la respuesta.
+          items:
+            type: string
+
+    Problem:
+      type: object
+      description: |
+        Formato estándar de error basado en RFC 7807.
+      required:
+        - type
+        - title
+        - status
+      properties:
+        type:
+          type: string
+          format: uri
+          description: URI que identifica el tipo de problema.
+        title:
+          type: string
+          description: Resumen del problema.
+        status:
+          type: integer
+          description: Código HTTP del error.
+        detail:
+          type: string
+          description: Explicación específica del problema.
+        instance:
+          type: string
+          format: uri
+          description: URI que identifica la ocurrencia específica del problema.
+
+  responses:
+
+    BadRequest:
+      description: Solicitud inválida.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+
+    Unauthorized:
+      description: Autenticación requerida o token inválido.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+
+    NotFound:
+      description: Recurso no encontrado.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+
+    Conflict:
+      description: Conflicto con el estado actual del recurso.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
