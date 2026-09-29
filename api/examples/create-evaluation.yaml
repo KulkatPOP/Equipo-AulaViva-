@@ -1,1 +1,20 @@
+request:
+  method: POST
+  url: /api/v1/students
+  headers:
+    Authorization: Bearer <jwt-token>
+    Content-Type: application/json
+  body:
+    firstName: "Sebastián"
+    lastName: "Chacón"
+    email: "sebastian@example.com"
+    institutionId: "550e8400-e29b-41d4-a716-446655440000"
 
+response:
+  status: 201
+  body:
+    id: "650e8400-e29b-41d4-a716-446655440000"
+    firstName: "Sebastián"
+    lastName: "Chacón"
+    email: "sebastian@example.com"
+    institutionId: "550e8400-e29b-41d4-a716-446655440000"
