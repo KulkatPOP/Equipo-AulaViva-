@@ -1,20 +1,21 @@
 request:
   method: POST
-  url: /api/v1/students
+  url: /api/v1/evaluations
   headers:
     Authorization: Bearer <jwt-token>
     Content-Type: application/json
+    Idempotency-Key: evaluation-001
   body:
-    firstName: "Sebastián"
-    lastName: "Chacón"
-    email: "sebastian@example.com"
+    title: "Evaluación Unidad 1"
+    description: "Evaluación de contenidos de la primera unidad."
+    courseId: "750e8400-e29b-41d4-a716-446655440000"
     institutionId: "550e8400-e29b-41d4-a716-446655440000"
 
 response:
   status: 201
   body:
-    id: "650e8400-e29b-41d4-a716-446655440000"
-    firstName: "Sebastián"
-    lastName: "Chacón"
-    email: "sebastian@example.com"
+    id: "850e8400-e29b-41d4-a716-446655440000"
+    title: "Evaluación Unidad 1"
+    description: "Evaluación de contenidos de la primera unidad."
+    courseId: "750e8400-e29b-41d4-a716-446655440000"
     institutionId: "550e8400-e29b-41d4-a716-446655440000"
