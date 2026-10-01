@@ -1,0 +1,46 @@
+### ============================================
+### AULA VIVA API - EJEMPLOS EJECUTABLES
+### ============================================
+
+@baseUrl = http://localhost/Aula%20viva/api/v1
+
+@usuario = profesor1
+@password = Profesor123!
+
+### 0. Iniciar sesión como profesor
+POST {{baseUrl}}/auth/login/
+Content-Type: application/json
+Accept: application/json
+
+{
+    "identificador": "{{usuario}}",
+    "password": "{{password}}"
+}
+
+### 1. Obtener las aulas del profesor
+GET {{baseUrl}}/aulas/
+Accept: application/json
+
+
+### 2. Obtener el detalle del aula 1
+GET {{baseUrl}}/aulas/detalle/?id=1
+Accept: application/json
+
+
+### 3. Obtener los alumnos del aula 1
+GET {{baseUrl}}/aulas/alumnos/?id=1
+Accept: application/json
+
+
+### 4. Crear invitación con idempotencia
+POST {{baseUrl}}/invitaciones/
+Content-Type: application/json
+Accept: application/json
+Idempotency-Key: invitacion-alumno5-001
+
+{
+    "email": "alumno5@prueba.cl",
+    "rut": "55555555-5",
+    "username": "alumno5",
+    "rol": "alumno"
+}
