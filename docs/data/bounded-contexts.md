@@ -1,27 +1,32 @@
-# Bounded Contexts - AulaViva
+# Bounded Contexts y Context Map — AulaViva
 
-Aplicando Domain-Driven Design (DDD), hemos dividido AulaViva en 4 Bounded Contexts principales para evitar que conceptos como "Usuario" o "Curso" se vuelvan monolíticos.
+Aplicando Domain-Driven Design (DDD), hemos dividido la iniciativa de AulaViva en 4 *Bounded Contexts* (Contextos Delimitados) para evitar un modelo monolítico gigante y asegurar que nuestro Lenguaje Ubicuo sea claro en cada área.
 
-### 1. Contexto Académico (Academic Context)
-* **Responsabilidad:** Gestión de instituciones, usuarios (alumnos, docentes), cursos y matrículas.
-* **Agregados principales:** `Institution`, `Course`, `User`.
-* **Lenguaje Ubicuo:** Matrícula, Docente, Estudiante, Curso.
+## 1. Contexto Académico
+* **Responsabilidad:** Gestionar las instituciones, los usuarios (alumnos, docentes) y la estructura de los cursos y matrículas.
+* **Agregados principales:** `Institucion`, `Curso`, `Usuario`.
+* **Lenguaje Ubicuo:** Matrícula, Docente, Estudiante, Curso, Institución.
 
-### 2. Contexto de Evaluación (Evaluation Context)
-* **Responsabilidad:** Creación de evaluaciones, recepción de respuestas (submissions) y autocorrección.
-* **Agregados principales:** `Evaluation`, `Submission`.
-* **Lenguaje Ubicuo:** Intento (Attempt), Calificación (Score), Pauta de corrección.
+## 2. Contexto de Evaluación
+* **Responsabilidad:** Creación de las evaluaciones por parte del docente, recepción de las entregas de los estudiantes y el proceso de autocorrección.
+* **Agregados principales:** `Evaluacion`, `Entrega`.
+* **Lenguaje Ubicuo:** Evaluación, Entrega, Calificación, Intento.
 
-### 3. Contexto de Tutoría IA (Tutor AI Context)
-* **Responsabilidad:** Generación de respuestas basadas en el contexto del curso usando RAG (Retrieval-Augmented Generation) y OpenAI.
-* **Agregados principales:** `KnowledgeBase` (Embeddings), `TutorInteraction`.
-* **Lenguaje Ubicuo:** Prompt, Embedding, Similitud vectorial, Fuentes.
+## 3. Contexto del Tutor IA
+* **Responsabilidad:** Responder las dudas de los estudiantes basándose en los documentos del curso, utilizando RAG y servicios externos de LLM.
+* **Agregados principales:** `RegistroConsultaTutor`, `BaseConocimiento` (Embeddings).
+* **Lenguaje Ubicuo:** Prompt, Vector, Consulta, Respuesta de IA, Contexto.
 
-### 4. Contexto de Seguimiento Familiar (Tracking Context)
-* **Responsabilidad:** Agrupar el rendimiento del alumno para mostrar el progreso a los apoderados.
-* **Agregados principales:** `StudentProgress`.
-* **Lenguaje Ubicuo:** Apoderado, Reporte de progreso, Alerta de rendimiento.
+## 4. Contexto de Seguimiento
+* **Responsabilidad:** Agrupar el rendimiento del alumno en sus evaluaciones para mostrar el progreso escolar a los apoderados.
+* **Agregados principales:** `ProgresoEstudiante`.
+* **Lenguaje Ubicuo:** Apoderado, Reporte de progreso, Rendimiento.
 
-### Context Map (Relaciones)
-* `Evaluación` y `Tutoría IA` consumen eventos de `Académico` (para saber en qué cursos está el alumno).
-* `Seguimiento Familiar` consume eventos de `Evaluación` (para actualizar notas) mediante el patrón CQRS.
+---
+
+## Mapa de Contextos (Context Map)
+
+Las relaciones entre estos contextos se dan principalmente mediante eventos de dominio (Coreografía):
+
+1. **Evaluación y Tutor IA** actúan como consumidores (Downstream) del **Contexto Académico** (Upstream). Necesitan saber cuándo un estudiante se matricula o cuándo se crea un curso.
+2. **Seguimiento** actúa como consumidor (Downstream) del **Contexto de Evaluación** y **Tutor IA**. Escucha los eventos de "evaluación calificada" y "consulta respondida" para actualizar los reportes del apoderado.
