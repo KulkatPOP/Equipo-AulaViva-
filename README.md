@@ -34,3 +34,6 @@ Equipo
 - CHARTER.md 
 
 - docs/adr/0001-eleccion-iniciativa.md 
+
+
+![Evidencia K8s](evidencia.png)
