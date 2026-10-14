@@ -1,1 +1,16 @@
-
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: aulaviva-ingress
+spec:
+  rules:
+    - host: api.aulaviva.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: aulaviva-service
+                port:
+                  number: 80
