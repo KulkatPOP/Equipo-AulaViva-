@@ -85,6 +85,37 @@ para su reconciliación.
 
 ## Responsabilidades
 
+
+### Repositorio de aplicación
+
+- Mantener el código fuente y las pruebas automatizadas.
+- Ejecutar los controles de calidad y seguridad mediante CI.
+- Construir y publicar imágenes identificadas por el SHA del commit.
+- Proponer la promoción de la imagen al repositorio GitOps mediante un Pull Request.
+
+### Repositorio GitOps
+
+- Mantener los manifiestos Kubernetes versionados.
+- Organizar la configuración común en `base/`.
+- Mantener las configuraciones específicas en `overlays/dev/` y `overlays/prod/`.
+- Permitir revisar y auditar los cambios de despliegue.
+
+### Equipo de plataforma y Tech Lead
+
+- Coordinar la configuración y los permisos entre repositorios.
+- Verificar la validez de los manifiestos Kustomize.
+- Coordinar la configuración de Argo CD y la integración con Kubernetes.
+- Registrar las evidencias de validación y los bloqueos pendientes.
+
+## Criterios de validación
+
+- La estructura del repositorio GitOps está creada.
+- Los manifiestos Kustomize se validan correctamente.
+- La promoción de imagen se realiza mediante un cambio revisable.
+- La integración de Argo CD se verifica en un clúster configurado.
+- El estado `Synced` y `Healthy` se registra únicamente cuando se comprueba en Argo CD.
+
+
 - CI/CD: ejecutar controles, construir y publicar la imagen.
 - Repositorio GitOps: mantener la configuración declarativa.
 - Argo CD: reconciliar el estado deseado con Kubernetes.
