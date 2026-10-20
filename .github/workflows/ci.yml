@@ -72,12 +72,10 @@ jobs:
           print("OK: cobertura minima superada")
           PY
 
-      - name: Semgrep SAST
-        env:
-          SEMGREP_RULES: p/php
-        run: |
-          python3 -m pip install --user semgrep
-          python3 -m semgrep scan --config p/php --error .
+            - name: Semgrep SAST
+        uses: semgrep/semgrep-action@v1
+        with:
+          config: p/php
 
   build-and-push:
     name: Construir imagen Docker
