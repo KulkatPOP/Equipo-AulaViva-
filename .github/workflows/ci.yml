@@ -55,16 +55,61 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          push: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
+          push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
           tags: ghcr.io/kulkatpop/aulaviva-api:${{ github.sha }}
 
+  
   promote:
     needs: build-and-push
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+
     steps:
-      - name: Promoción GitOps a AulaViva-GitOps
+      - name: Descargar repositorio GitOps
+        uses: actions/checkout@v4
+        with:
+          repository: kevinramosr/AulaViva-GitOps
+          token: ${{ secrets.GITOPS_TOKEN }}
+          path: gitops
+
+      - name: Actualizar imagen de DEV
+        working-directory: gitops
+        env:
+          IMAGE_TAG: ${{ github.sha }}
         run: |
-          echo "Iniciando promoción GitOps..."
-          echo "Actualizando manifiestos con la nueva imagen: ghcr.io/${{ github.repository_owner }}/aulaviva-api:${{ github.sha }}"
-          echo "Pull Request creado exitosamente en el repositorio GitOps."
+          python3 - <<'PY'
+          from pathlib import Path
+          import os
+          import re
+
+          path = Path("overlays/dev/kustomization.yaml")
+          content = path.read_text()
+
+          updated, count = re.subn(
+              r"(?m)^(\s*newTag:\s*).*$",
+              lambda match: match.group(1) + os.environ["IMAGE_TAG"],
+              content,
+          )
+
+          if count != 1:
+              raise SystemExit("No se encontró exactamente un newTag en DEV")
+
+          path.write_text(updated)
+          PY
+
+      - name: Crear Pull Request en GitOps
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITOPS_TOKEN }}
+          path: gitops
+          branch: automation/update-dev-image
+          delete-branch: true
+          commit-message: "chore(gitops): actualizar imagen DEV"
+          title: "chore(gitops): actualizar imagen AulaViva DEV"
+          body: |
+            Promoción automática generada desde AulaViva S08.
+
+            Imagen: ghcr.io/kulkatpop/aulaviva-api:${{ github.sha }}
+
+            Entorno: DEV
+          base: main
