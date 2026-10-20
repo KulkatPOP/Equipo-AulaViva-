@@ -1,7 +1,11 @@
 <?php
 
 require_once __DIR__ . '/../../_helpers/api.php';
-require_once __DIR__ . '/../../../../config/conexion.php';
+
+// Permite inyectar una conexión de prueba sin acceder a Supabase.
+if (!isset($pdo) || !($pdo instanceof PDO)) {
+    require_once __DIR__ . '/../../../../config/conexion.php';
+}
 
 header('Content-Type: application/json; charset=utf-8');
 
@@ -26,7 +30,11 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
 exigirRolApi('profesor');
 
 // Validar ID recibido por la URL
-$aulaId = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+$idRecibido = PHP_SAPI === 'cli'
+    ? ($_GET['id'] ?? null)
+    : filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+
+$aulaId = filter_var($idRecibido, FILTER_VALIDATE_INT);
 
 if (!$aulaId || $aulaId < 1) {
     responderProblema(

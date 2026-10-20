@@ -1,22 +1,21 @@
 <?php
 
-/* CONFIGURACIÓN SEGURA DE LA COOKIE DE SESIÓN */
+/* CONFIGURACIÓN SEGURA E INICIO DE SESIÓN */
 
-ini_set('session.use_strict_mode', '1');
-ini_set('session.use_only_cookies', '1');
+if (session_status() === PHP_SESSION_NONE) {
 
-session_set_cookie_params([
-    'lifetime' => 0,
-    'path' => '/',
-    'domain' => '',
-    'secure' => !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off',
-    'httponly' => true,
-    'samesite' => 'Lax'
-]);
+    ini_set('session.use_strict_mode', '1');
+    ini_set('session.use_only_cookies', '1');
 
-/* INICIAR SESIÓN */
+    session_set_cookie_params([
+        'lifetime' => 0,
+        'path' => '/',
+        'domain' => '',
+        'secure' => !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off',
+        'httponly' => true,
+        'samesite' => 'Lax'
+    ]);
 
-if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
 }
 

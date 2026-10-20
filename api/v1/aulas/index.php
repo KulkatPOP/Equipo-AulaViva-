@@ -1,7 +1,12 @@
 <?php
 
 require_once __DIR__ . '/../_helpers/api.php';
-require_once __DIR__ . '/../../../config/conexion.php';
+
+// Permite inyectar una conexión de prueba sin acceder a Supabase.
+if (!isset($pdo) || !($pdo instanceof PDO)) {
+    require_once __DIR__ . '/../../../config/conexion.php';
+}
+
 
 header('Content-Type: application/json; charset=utf-8');
 

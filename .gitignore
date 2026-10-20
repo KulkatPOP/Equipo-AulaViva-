@@ -24,3 +24,8 @@ config/conexion.php
 crear_profesor_prueba.php
 crear_usuario_prueba.php
 prueba_privada.php
+/vendor/
+/.phpunit.cache/
+/coverage/
+/coverage.xml
+/debug_aula.txt
