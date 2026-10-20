@@ -72,9 +72,9 @@ jobs:
           print("OK: cobertura minima superada")
           PY
 
-            - name: Semgrep SAST
-        uses: semgrep/semgrep-action@v1
-        with:
+          - name: Semgrep SAST
+          uses: semgrep/semgrep-action@v1
+          with:
           config: p/php
 
   build-and-push:
