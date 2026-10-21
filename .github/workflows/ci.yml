@@ -1,0 +1,158 @@
+name: AulaViva S08 CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  quality:
+    name: PHPUnit, cobertura y seguridad
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar codigo
+        uses: actions/checkout@v4
+
+      - name: Configurar PHP 8.2 y Xdebug
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, dom, xml, pdo, pdo_sqlite, sqlite3
+          coverage: xdebug
+          tools: composer:v2
+
+      - name: Instalar dependencias PHP
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Comprobar sintaxis PHP
+        shell: bash
+        run: |
+          find api config -type f -name '*.php' -print0 |
+            xargs -0 -n1 php -l
+
+      - name: Ejecutar PHPUnit y generar cobertura real
+        shell: bash
+        run: |
+          XDEBUG_MODE=coverage vendor/bin/phpunit \
+            --no-progress \
+            --coverage-text \
+            --coverage-clover coverage.xml
+
+      - name: Exigir cobertura minima del 70%
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import xml.etree.ElementTree as ET
+
+          root = ET.parse("coverage.xml").getroot()
+          metrics = root.find("./project/metrics")
+
+          if metrics is None:
+              raise SystemExit("ERROR: no se encontraron metricas de cobertura")
+
+          total = int(metrics.attrib["statements"])
+          covered = int(metrics.attrib["coveredstatements"])
+
+          if total == 0:
+              raise SystemExit("ERROR: no hay lineas para medir")
+
+          coverage = covered / total * 100
+
+          print(f"Cobertura real: {coverage:.2f}% ({covered}/{total})")
+
+          if coverage < 70:
+              raise SystemExit("ERROR: cobertura inferior al 70%")
+
+          print("OK: cobertura minima superada")
+          PY
+
+      - name: Semgrep SAST
+        uses: semgrep/semgrep-action@v1
+        with:
+          config: p/php
+
+  build-and-push:
+    name: Construir imagen Docker
+    needs: quality
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar codigo
+        uses: actions/checkout@v4
+
+      - name: Iniciar sesion en GHCR
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Construir y subir imagen Docker
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+          tags: ghcr.io/kulkatpop/aulaviva-api:${{ github.sha }}
+
+  promote:
+    name: Actualizar repositorio GitOps
+    needs: build-and-push
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar repositorio GitOps
+        uses: actions/checkout@v4
+        with:
+          repository: kevinramosr/AulaViva-GitOps
+          token: ${{ secrets.GITOPS_TOKEN }}
+          path: gitops
+
+      - name: Actualizar imagen de DEV
+        working-directory: gitops
+        env:
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import os
+          import re
+
+          path = Path("overlays/dev/kustomization.yaml")
+          content = path.read_text()
+
+          updated, count = re.subn(
+              r"(?m)^(\s*newTag:\s*).*$",
+              lambda match: match.group(1) + os.environ["IMAGE_TAG"],
+              content,
+          )
+
+          if count != 1:
+              raise SystemExit("No se encontro exactamente un newTag en DEV")
+
+          path.write_text(updated)
+          PY
+
+      - name: Crear Pull Request en GitOps
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITOPS_TOKEN }}
+          path: gitops
+          branch: automation/update-dev-image
+          delete-branch: true
+          commit-message: "chore(gitops): actualizar imagen DEV"
+          title: "chore(gitops): actualizar imagen AulaViva DEV"
+          body: |
+            Promocion automatica generada desde AulaViva S08.
+
+            Imagen: ghcr.io/kulkatpop/aulaviva-api:${{ github.sha }}
+
+            Entorno: DEV
+          base: main
