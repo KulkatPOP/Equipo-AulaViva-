@@ -34,9 +34,11 @@ jobs:
             --config .semgrep/php-sql-http-input.yml \
             --config .semgrep/php-hardcoded-secret.yml \
             --sarif \
-            --output semgrep.sarif \
+            --output /tmp/semgrep.sarif \
             --error \
             --metrics=off
+
+          docker cp "$(docker ps -alq)":/tmp/semgrep.sarif "$GITHUB_WORKSPACE/semgrep.sarif"
 
       - name: Publicar reporte Semgrep
         if: ${{ always() }}
