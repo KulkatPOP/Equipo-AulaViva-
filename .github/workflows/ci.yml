@@ -4,23 +4,29 @@ on:
   pull_request:
     branches: [main]
   push:
-    branches: [main]
+    branches: ["**"]
+  workflow_dispatch:
 
 permissions:
   contents: read
   packages: write
 
 jobs:
+  security:
+    uses: ./.github/workflows/security.yml
+    permissions:
+      contents: read
+
   quality:
     name: PHPUnit, cobertura y seguridad
     runs-on: ubuntu-latest
 
     steps:
       - name: Descargar codigo
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
       - name: Configurar PHP 8.2 y Xdebug
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # v2
         with:
           php-version: '8.2'
           extensions: mbstring, dom, xml, pdo, pdo_sqlite, sqlite3
@@ -72,30 +78,26 @@ jobs:
           print("OK: cobertura minima superada")
           PY
 
-      - name: Semgrep SAST
-        uses: semgrep/semgrep-action@v1
-        with:
-          config: p/php
-
   build-and-push:
     name: Construir imagen Docker
-    needs: quality
+    needs: [quality, security]
+    if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
 
     steps:
       - name: Descargar codigo
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
       - name: Iniciar sesion en GHCR
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        uses: docker/login-action@v3
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Construir y subir imagen Docker
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@ca052bb54ab0790a636c9b5f226502c73d547a25 # v5
         with:
           context: .
           push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
@@ -109,7 +111,7 @@ jobs:
 
     steps:
       - name: Descargar repositorio GitOps
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           repository: kevinramosr/AulaViva-GitOps
           token: ${{ secrets.GITOPS_TOKEN }}
@@ -141,7 +143,7 @@ jobs:
           PY
 
       - name: Crear Pull Request en GitOps
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@22a9089034f40e5a961c8808d113e2c98fb63676 # v7
         with:
           token: ${{ secrets.GITOPS_TOKEN }}
           path: gitops

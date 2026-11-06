@@ -1,0 +1,19 @@
+rules:
+  - id: aulaviva-php-request-to-pdo
+    message: Usa parámetros de PDO para valores procedentes de la solicitud HTTP.
+    languages: [php]
+    severity: ERROR
+    mode: taint
+    pattern-sources:
+      - pattern-either:
+          - pattern: $_GET[$KEY]
+          - pattern: $_POST[$KEY]
+          - pattern: $_REQUEST[$KEY]
+        exact: true
+    pattern-sinks:
+      - patterns:
+          - pattern-either:
+              - pattern: $PDO->query($SQL, ...)
+              - pattern: $PDO->exec($SQL, ...)
+              - pattern: $PDO->prepare($SQL, ...)
+          - focus-metavariable: $SQL
