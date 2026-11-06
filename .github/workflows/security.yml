@@ -18,8 +18,26 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Ejecutar Semgrep
-        uses: semgrep/semgrep-action@v1
+            - name: Ejecutar Semgrep SAST
+        shell: bash
+        run: |
+          docker run --rm \
+            -v "$GITHUB_WORKSPACE:/src:ro" \
+            --workdir /src \
+            semgrep/semgrep \
+            semgrep scan \
+            --config p/owasp-top-ten \
+            --config .semgrep/php-sql-http-input.yml \
+            --config .semgrep/php-hardcoded-secret.yml \
+            --sarif \
+            --output semgrep.sarif \
+            --error \
+            --metrics=off
+
+      - name: Publicar reporte Semgrep
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
         with:
-          config: p/owasp-top-ten
-          generateSarif: true
+          name: semgrep-sarif
+          path: semgrep.sarif
+          if-no-files-found: warn
