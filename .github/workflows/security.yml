@@ -22,11 +22,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Ejecutar Semgrep SAST
+           - name: Ejecutar Semgrep SAST
         shell: bash
         run: |
+          mkdir -p "$RUNNER_TEMP/semgrep"
+
           docker run --rm \
             -v "$GITHUB_WORKSPACE:/src:ro" \
+            -v "$RUNNER_TEMP/semgrep:/reports" \
             --workdir /src \
             semgrep/semgrep \
             semgrep scan \
@@ -34,12 +37,11 @@ jobs:
             --config .semgrep/php-sql-http-input.yml \
             --config .semgrep/php-hardcoded-secret.yml \
             --sarif \
-            --output /tmp/semgrep.sarif \
+            --output /reports/semgrep.sarif \
             --error \
             --metrics=off
 
-          docker cp "$(docker ps -alq)":/tmp/semgrep.sarif "$GITHUB_WORKSPACE/semgrep.sarif"
-
+          cp "$RUNNER_TEMP/semgrep/semgrep.sarif" "$GITHUB_WORKSPACE/semgrep.sarif"
       - name: Publicar reporte Semgrep
         if: ${{ always() }}
         uses: actions/upload-artifact@v4
