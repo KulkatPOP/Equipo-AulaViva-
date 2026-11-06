@@ -1,0 +1,9 @@
+# Claves de idempotencia de ejemplos. No autentican usuarios.
+6a4e9d8402e5b35fb62b76ce7d189d8f980d002d:api/examples/invitaciones.http:generic-api-key:7
+9e5bb882431e380b00fd050bbeb54981566216a0:api/examples/invitaciones.http:generic-api-key:7
+3617b4072e05ac698822219d9e34ae40a6c082a7:api/examples/invitaciones.http:generic-api-key:7
+3617b4072e05ac698822219d9e34ae40a6c082a7:test/api.http:generic-api-key:39
+5d5b77d139be747177310d0a3ef53668f17d08e6:api/examples/create-evaluation.yaml:generic-api-key:7
+
+# Contraseña ficticia del usuario de una prueba automatizada.
+7f9893788c0224df0c385913d57941b1074e76cd:tests/LoginHttpTest.php:generic-api-key:111

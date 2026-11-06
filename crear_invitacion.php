@@ -1,4 +1,9 @@
 <?php
+// Este generador de invitaciones de prueba solo se ejecuta desde CLI.
+if (PHP_SAPI !== 'cli') {
+    http_response_code(404);
+    exit;
+}
 
 if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();

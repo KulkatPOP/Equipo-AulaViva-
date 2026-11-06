@@ -1,0 +1,17 @@
+rules:
+  - id: aulaviva-php-request-to-session-role
+    message: Asigna el rol de sesión desde la identidad validada en el servidor.
+    languages: [php]
+    severity: ERROR
+    mode: taint
+    pattern-sources:
+      - pattern-either:
+          - pattern: $_GET[$KEY]
+          - pattern: $_POST[$KEY]
+          - pattern: $_REQUEST[$KEY]
+          - pattern: json_decode(file_get_contents('php://input'), ...)
+        exact: true
+    pattern-sinks:
+      - patterns:
+          - pattern: $_SESSION['rol'] = $ROLE
+          - focus-metavariable: $ROLE
