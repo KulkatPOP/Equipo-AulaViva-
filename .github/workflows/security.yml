@@ -4,7 +4,6 @@ on:
   pull_request:
     branches:
       - main
-
   push:
     branches:
       - main
@@ -22,15 +21,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-           - name: Ejecutar Semgrep SAST
+      - name: Preparar directorio de reportes
+        run: mkdir -p "$RUNNER_TEMP/semgrep"
+
+      - name: Ejecutar Semgrep SAST
         shell: bash
         run: |
-          mkdir -p "$RUNNER_TEMP/semgrep"
-
           docker run --rm \
             -v "$GITHUB_WORKSPACE:/src:ro" \
             -v "$RUNNER_TEMP/semgrep:/reports" \
-            --workdir /src \
+            -w /src \
             semgrep/semgrep \
             semgrep scan \
             --config p/owasp-top-ten \
@@ -41,11 +41,10 @@ jobs:
             --error \
             --metrics=off
 
-          cp "$RUNNER_TEMP/semgrep/semgrep.sarif" "$GITHUB_WORKSPACE/semgrep.sarif"
       - name: Publicar reporte Semgrep
         if: ${{ always() }}
         uses: actions/upload-artifact@v4
         with:
           name: semgrep-sarif
-          path: semgrep.sarif
+          path: ${{ runner.temp }}/semgrep/semgrep.sarif
           if-no-files-found: warn
