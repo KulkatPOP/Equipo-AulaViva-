@@ -1,0 +1,83 @@
+
+name: AulaViva S10 Supply Chain
+
+on:
+  workflow_call:
+    inputs:
+      image-ref:
+        description: "Imagen Docker publicada con su tag SHA"
+        required: true
+        type: string
+      image-digest:
+        description: "Digest SHA256 de la imagen"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  container-scan:
+    name: Escaneo de imagen con Trivy
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+
+    steps:
+      - name: Escanear imagen publicada
+        uses: aquasecurity/trivy-action@0.33.1
+        with:
+          image-ref: ${{ inputs.image-ref }}
+          format: table
+          vuln-type: os,library
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          exit-code: '1'
+
+  sign-and-attest:
+    name: Firma Cosign y procedencia SLSA
+    needs: container-scan
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+      attestations: write
+
+    steps:
+      - name: Instalar Cosign
+        uses: sigstore/cosign-installer@v3.10.0
+
+      - name: Preparar referencia por digest
+        id: image
+        shell: bash
+        env:
+          IMAGE_REF: ${{ inputs.image-ref }}
+          IMAGE_DIGEST: ${{ inputs.image-digest }}
+        run: |
+          IMAGE_NAME="${IMAGE_REF%:*}"
+          DIGEST_REF="${IMAGE_NAME}@${IMAGE_DIGEST}"
+          echo "digest_ref=$DIGEST_REF" >> "$GITHUB_OUTPUT"
+          echo "Imagen a firmar: $DIGEST_REF"
+
+      - name: Firmar imagen con Cosign keyless
+        env:
+          DIGEST_REF: ${{ steps.image.outputs.digest_ref }}
+        run: |
+          cosign sign --yes "$DIGEST_REF"
+
+      - name: Verificar firma Cosign
+        env:
+          DIGEST_REF: ${{ steps.image.outputs.digest_ref }}
+        run: |
+          cosign verify "$DIGEST_REF" \
+            --certificate-oidc-issuer \
+            "https://token.actions.githubusercontent.com"
+
+      - name: Generar attestation de procedencia SLSA
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-name: ${{ inputs.image-ref }}
+          subject-digest: ${{ fromJSON(format('{{"sha256":"{0}"}}', inputs.image-digest)).sha256 }}
+          push-to-registry: true
