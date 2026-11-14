@@ -150,10 +150,86 @@ jobs:
     with:
       image-ref: ghcr.io/kulkatpop/aulaviva-api:${{ github.sha }}
       image-digest: ${{ needs.build-and-push.outputs.image-digest }}
+  dast:
+    name: Analisis dinamico con ZAP
+    needs: [quality, security, iac-scan, build-and-push, supply-chain]
+    if: >-
+      always() &&
+      needs.quality.result == 'success' &&
+      needs.security.result == 'success' &&
+      needs.iac-scan.result == 'success' &&
+      (github.ref != 'refs/heads/main' ||
+      needs.supply-chain.result == 'success')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      packages: read
+    steps:
+      - name: Descargar codigo
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: Iniciar sesion en GHCR
+        if: github.ref == 'refs/heads/main'
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Preparar staging temporal
+        env:
+          DIGEST: ${{ needs.build-and-push.outputs.image-digest }}
+        run: |
+          if [ "$GITHUB_REF" = "refs/heads/main" ]; then
+            image="ghcr.io/kulkatpop/aulaviva-api@$DIGEST"
+            docker pull "$image"
+          else
+            docker build -t aulaviva:dast .
+            image=aulaviva:dast
+          fi
+          docker run -d --name aulaviva-staging \
+            -p 127.0.0.1:8080:80 \
+            -e DB_DSN=sqlite:/tmp/staging.sqlite "$image"
+          for i in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:8080/login.php > /dev/null; then
+              exit 0
+            fi
+            sleep 2
+          done
+          docker logs aulaviva-staging
+          exit 1
+
+      - name: Ejecutar ZAP y bloquear riesgos medios o altos
+        run: |
+          mkdir -p evidence
+          chmod 777 evidence
+          set +e
+          docker run --rm --network host \
+            -v "$PWD/evidence:/zap/wrk:rw" \
+            ghcr.io/zaproxy/zaproxy:stable \
+            zap-baseline.py -t http://127.0.0.1:8080/login.php \
+            -m 2 -T 5 -J zap.json -r zap.html
+          status=$?
+          set -e
+          if [ "$status" -gt 2 ]; then exit "$status"; fi
+          python3 scripts/zap_gate.py evidence/zap.json
+
+      - name: Guardar informe ZAP
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: dast-report
+          path: evidence/
+          if-no-files-found: error
+
+      - name: Finalizar staging
+        if: always()
+        run: docker rm -f aulaviva-staging || true
 
   promote:
     name: Actualizar repositorio GitOps
-    needs: [build-and-push, supply-chain]
+    needs: [build-and-push, supply-chain, dast]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
 
