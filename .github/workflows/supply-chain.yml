@@ -53,6 +53,11 @@ jobs:
       attestations: write
 
     steps:
+      - name: Descargar codigo
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
       - name: Instalar Cosign
         uses: sigstore/cosign-installer@d7543c93d881b35a8faa02e8e3605f69b7a1ce62 # v3.10.0
 
@@ -89,8 +94,25 @@ jobs:
           --certificate-identity "https://github.com/KulkatPOP/Equipo-AulaViva-/.github/workflows/supply-chain.yml@refs/heads/main" \
           --certificate-oidc-issuer "https://token.actions.githubusercontent.com"
       - name: Generar attestation de procedencia SLSA
+        id: provenance
         uses: actions/attest-build-provenance@e8998f949152b193b063cb0ec769d69d929409be # v2
         with:
           subject-name: ghcr.io/kulkatpop/aulaviva-api
           subject-digest: ${{ fromJSON(format('{{"sha256":"{0}"}}', inputs.image-digest)).sha256 }}
           push-to-registry: true
+
+      - name: Adjuntar y verificar provenance con Cosign
+        env:
+          DIGEST_REF: ${{ steps.image.outputs.digest_ref }}
+          BUNDLE: ${{ steps.provenance.outputs.bundle-path }}
+          GH_TOKEN: ${{ github.token }}
+        run: bash scripts/verify_provenance.sh
+
+      - name: Guardar evidencias de firma y provenance
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: signatures-and-provenance
+          path: evidence/
+          if-no-files-found: error
+

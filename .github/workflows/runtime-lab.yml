@@ -1,0 +1,51 @@
+name: AulaViva S10 Runtime Lab
+on:
+  workflow_dispatch:
+    inputs:
+      digest:
+        description: 'Digest real sha256 de la imagen firmada por CI de main'
+        required: true
+        type: string
+permissions: {contents: read, packages: write}
+jobs:
+  admission-and-runtime:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      DIGEST: ${{ inputs.digest }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with: {persist-credentials: false}
+      - name: Validar referencia de laboratorio
+        run: |
+          [[ "$DIGEST" =~ ^sha256:[a-f0-9]{64}$ ]]
+          echo "IMAGE=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/aulaviva-api@$DIGEST" >> "$GITHUB_ENV"
+      - uses: helm/kind-action@a1b0e391336a6ee6713a0583f8c6240d70863de3
+        with:
+          cluster_name: aulaviva-s10
+          wait: 120s
+      - uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Pruebas de admision y runtime en cluster desechable
+        env:
+          KYVERNO_CHART_VERSION: '3.10.0'
+          FALCO_CHART_VERSION: '9.2.2'
+        run: bash scripts/runtime_lab.sh
+      - name: Diagnostico sin secretos
+        if: always()
+        run: |
+          mkdir -p evidence
+          kubectl get pods -A -o wide > evidence/pods.txt || true
+          kubectl get events -A --sort-by=.lastTimestamp > evidence/events.txt || true
+          kubectl -n falco logs -l app.kubernetes.io/name=falco --all-containers --tail=300 > evidence/falco.log 2>&1 || true
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with: {name: runtime-lab-evidence, path: evidence/}
+      - name: Finalizar cluster del laboratorio
+        if: always()
+        run: kind delete cluster --name aulaviva-s10
