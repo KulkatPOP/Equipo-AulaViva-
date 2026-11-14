@@ -1,4 +1,4 @@
-FROM php:8.2.35-apache
+FROM php:8.4.27-apache
 
 RUN apt-get update && apt-get upgrade -y && apt-get install -y --no-install-recommends libsqlite3-dev && docker-php-ext-install mysqli pdo_mysql pdo_sqlite && rm -rf /var/lib/apt/lists/*
 
