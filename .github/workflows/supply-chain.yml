@@ -25,10 +25,17 @@ jobs:
       packages: read
 
     steps:
+      - name: Iniciar sesion en GHCR para escanear
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Escanear imagen publicada
         uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8 # v0.33.1
         with:
-          image-ref: ${{ inputs.image-ref }}
+          image-ref: ghcr.io/kulkatpop/aulaviva-api@${{ inputs.image-digest }}
           format: table
           vuln-type: os,library
           severity: HIGH,CRITICAL
