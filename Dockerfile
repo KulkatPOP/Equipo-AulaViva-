@@ -1,6 +1,6 @@
-FROM php:8.2-apache
+FROM php:8.2.35-apache
 
-RUN apt-get update && apt-get install -y --no-install-recommends libsqlite3-dev && docker-php-ext-install mysqli pdo_mysql pdo_sqlite && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get upgrade -y && apt-get install -y --no-install-recommends libsqlite3-dev && docker-php-ext-install mysqli pdo_mysql pdo_sqlite && rm -rf /var/lib/apt/lists/*
 
 RUN a2enmod rewrite headers
 
@@ -12,4 +12,4 @@ WORKDIR /var/www/html
 
 EXPOSE 80
 
-COPY deploy/security.conf /etc/apache2/conf-enabled/security-aulaviva.conf
+COPY deploy/security.conf /etc/apache2/conf-enabled/zzz-aulaviva.conf
