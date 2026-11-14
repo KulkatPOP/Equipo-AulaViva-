@@ -82,7 +82,9 @@ jobs:
     name: Construir imagen Docker
     needs: [quality, security]
     if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
+        runs-on: ubuntu-latest
+    outputs:
+      image-digest: ${{ steps.build.outputs.digest }}
 
     steps:
       - name: Descargar codigo
@@ -96,16 +98,31 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Construir y subir imagen Docker
+            - name: Construir y subir imagen Docker
+        id: build
         uses: docker/build-push-action@ca052bb54ab0790a636c9b5f226502c73d547a25 # v5
         with:
           context: .
           push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
           tags: ghcr.io/kulkatpop/aulaviva-api:${{ github.sha }}
 
+  supply-chain:
+    name: Controles S10
+    needs: build-and-push
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    uses: ./.github/workflows/supply-chain.yml
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+      attestations: write
+    with:
+      image-ref: ghcr.io/kulkatpop/aulaviva-api:${{ github.sha }}
+      image-digest: ${{ needs.build-and-push.outputs.image-digest }}
+
   promote:
     name: Actualizar repositorio GitOps
-    needs: build-and-push
+    needs: [build-and-push, supply-chain]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
 
