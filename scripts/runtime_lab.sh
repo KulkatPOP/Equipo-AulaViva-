@@ -94,7 +94,7 @@ kubectl -n aulaviva wait pod/runtime-fixture --for=condition=Ready --timeout=180
 # Reintentar estímulos de laboratorio hasta que los metadatos se hayan enriquecido.
 # Se ejecutan en un pod nuevo y sin datos reales.
 for attempt in $(seq 1 12); do
-  script -q -c 'kubectl exec -it -n aulaviva runtime-fixture -- sh -c "echo AulaViva-lab-shell"' /dev/null
+  script -q -c 'kubectl exec -it -n aulaviva runtime-fixture -- bash -ic "echo AulaViva-lab-shell; sleep 1"' /dev/null
   kubectl -n aulaviva exec runtime-fixture -- sh -c 'echo AulaViva-lab > /etc/aulaviva-lab-test'
   kubectl -n aulaviva exec runtime-fixture -- php -r '$s=fsockopen("incident-receiver.falco.svc.cluster.local",8081,$errno,$errstr,3); if (!$s) {exit(1);} fwrite($s,"GET / HTTP/1.0\r\nHost: lab\r\n\r\n"); fclose($s);'
   sleep 5
