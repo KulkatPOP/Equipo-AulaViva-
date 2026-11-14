@@ -61,6 +61,13 @@ jobs:
           echo "digest_ref=$DIGEST_REF" >> "$GITHUB_OUTPUT"
           echo "Imagen a firmar: $DIGEST_REF"
 
+      - name: Iniciar sesion en GHCR para firmar
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Firmar imagen con Cosign keyless
         env:
           DIGEST_REF: ${{ steps.image.outputs.digest_ref }}
@@ -72,12 +79,11 @@ jobs:
           DIGEST_REF: ${{ steps.image.outputs.digest_ref }}
         run: |
           cosign verify "$DIGEST_REF" \
-            --certificate-oidc-issuer \
-            "https://token.actions.githubusercontent.com"
-
+          --certificate-identity "https://github.com/KulkatPOP/Equipo-AulaViva-/.github/workflows/supply-chain.yml@refs/heads/main" \
+          --certificate-oidc-issuer "https://token.actions.githubusercontent.com"
       - name: Generar attestation de procedencia SLSA
         uses: actions/attest-build-provenance@e8998f949152b193b063cb0ec769d69d929409be # v2
         with:
-          subject-name: ${{ inputs.image-ref }}
+          subject-name: ghcr.io/kulkatpop/aulaviva-api
           subject-digest: ${{ fromJSON(format('{{"sha256":"{0}"}}', inputs.image-digest)).sha256 }}
           push-to-registry: true
