@@ -1,0 +1,118 @@
+
+name: AulaViva S10 Supply Chain
+
+on:
+  workflow_call:
+    inputs:
+      image-ref:
+        description: "Imagen Docker publicada con su tag SHA"
+        required: true
+        type: string
+      image-digest:
+        description: "Digest SHA256 de la imagen"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  container-scan:
+    name: Escaneo de imagen con Trivy
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+
+    steps:
+      - name: Iniciar sesion en GHCR para escanear
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Escanear imagen publicada
+        uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8 # v0.33.1
+        with:
+          image-ref: ghcr.io/kulkatpop/aulaviva-api@${{ inputs.image-digest }}
+          format: table
+          vuln-type: os,library
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          exit-code: '1'
+
+  sign-and-attest:
+    name: Firma Cosign y procedencia SLSA
+    needs: container-scan
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+      attestations: write
+
+    steps:
+      - name: Descargar codigo
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - name: Instalar Cosign
+        uses: sigstore/cosign-installer@d7543c93d881b35a8faa02e8e3605f69b7a1ce62 # v3.10.0
+
+      - name: Preparar referencia por digest
+        id: image
+        shell: bash
+        env:
+          IMAGE_REF: ${{ inputs.image-ref }}
+          IMAGE_DIGEST: ${{ inputs.image-digest }}
+        run: |
+          IMAGE_NAME="${IMAGE_REF%:*}"
+          DIGEST_REF="${IMAGE_NAME}@${IMAGE_DIGEST}"
+          echo "digest_ref=$DIGEST_REF" >> "$GITHUB_OUTPUT"
+          echo "Imagen a firmar: $DIGEST_REF"
+
+      - name: Iniciar sesion en GHCR para firmar
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Firmar imagen con Cosign keyless
+        env:
+          DIGEST_REF: ${{ steps.image.outputs.digest_ref }}
+        run: |
+          cosign sign --yes "$DIGEST_REF"
+
+      - name: Verificar firma Cosign
+        env:
+          DIGEST_REF: ${{ steps.image.outputs.digest_ref }}
+        run: |
+          cosign verify "$DIGEST_REF" \
+          --certificate-identity "https://github.com/KulkatPOP/Equipo-AulaViva-/.github/workflows/supply-chain.yml@refs/heads/main" \
+          --certificate-oidc-issuer "https://token.actions.githubusercontent.com"
+      - name: Generar attestation de procedencia SLSA
+        id: provenance
+        uses: actions/attest-build-provenance@e8998f949152b193b063cb0ec769d69d929409be # v2
+        with:
+          subject-name: ghcr.io/kulkatpop/aulaviva-api
+          subject-digest: ${{ fromJSON(format('{{"sha256":"{0}"}}', inputs.image-digest)).sha256 }}
+          push-to-registry: true
+
+      - name: Adjuntar y verificar provenance con Cosign
+        env:
+          DIGEST_REF: ${{ steps.image.outputs.digest_ref }}
+          BUNDLE: ${{ steps.provenance.outputs.bundle-path }}
+          GH_TOKEN: ${{ github.token }}
+        run: bash scripts/verify_provenance.sh
+
+      - name: Guardar evidencias de firma y provenance
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: signatures-and-provenance
+          path: evidence/
+          if-no-files-found: error
+

@@ -1,0 +1,11 @@
+driver:
+  kind: modern_ebpf
+collectors:
+  kubernetes:
+    enabled: true
+falcosidekick:
+  enabled: true
+  config:
+    webhook:
+      address: "" # Definir receptor HTTPS real de incidentes al instalar
+      minimumpriority: error

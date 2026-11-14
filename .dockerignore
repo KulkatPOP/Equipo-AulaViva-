@@ -6,3 +6,15 @@ node_modules
 .env.*
 *.log
 tests/
+
+terraform/
+k8s/
+falco/
+docs/
+scripts/
+evidence/
+*.tar
+
+security/
+
+deploy/lab-receiver.php
