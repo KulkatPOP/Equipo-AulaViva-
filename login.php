@@ -1,7 +1,16 @@
 <?php
 
 if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_set_cookie_params([
+        'httponly' => true,
+        'secure' => !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off',
+        'samesite' => 'Lax',
+    ]);
     session_start();
+}
+
+if (!isset($_SESSION['csrf_token']) || !is_string($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 }
 
 // En producción utiliza la conexión normal.
@@ -12,7 +21,13 @@ if (!isset($pdo) || !($pdo instanceof PDO)) {
 
 $error = '';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && (
+    !is_string($_POST['csrf_token'] ?? null) ||
+    !hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])
+)) {
+    http_response_code(403);
+    $error = 'Solicitud no válida. Recarga la página e inténtalo nuevamente.';
+} elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $identificador = trim($_POST['identificador'] ?? '');
     $password = $_POST['password'] ?? '';
@@ -74,7 +89,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Iniciar sesión | AulaIA</title>
     <link rel="stylesheet" href="css/login.css">
-        <link rel="stylesheet" href="css/login.css">
 </head>
 <body>
     <header>
@@ -94,6 +108,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <?php endif; ?>
             <form method="POST">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8') ?>">
                 <label for="identificador">RUT o nombre de usuario</label>
                 
                 <input 

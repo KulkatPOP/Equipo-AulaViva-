@@ -38,15 +38,21 @@ final class LoginCoberturaTest extends TestCase
             'name="password"',
             $html
         );
+        $this->assertStringContainsString('name="csrf_token"', $html);
     }
 
     #[RunInSeparateProcess]
     #[PreserveGlobalState(false)]
     public function testRechazaCamposVacios(): void
     {
+        if (session_status() !== PHP_SESSION_ACTIVE) {
+            session_start();
+        }
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
         $_SERVER['REQUEST_METHOD'] = 'POST';
 
         $_POST = [
+            'csrf_token' => $_SESSION['csrf_token'],
             'identificador' => '',
             'password' => ''
         ];
@@ -71,9 +77,14 @@ final class LoginCoberturaTest extends TestCase
     #[PreserveGlobalState(false)]
     public function testRechazaUsuarioInexistente(): void
     {
+        if (session_status() !== PHP_SESSION_ACTIVE) {
+            session_start();
+        }
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
         $_SERVER['REQUEST_METHOD'] = 'POST';
 
         $_POST = [
+            'csrf_token' => $_SESSION['csrf_token'],
             'identificador' => 'usuario_inexistente',
             'password' => 'clave123'
         ];
@@ -109,9 +120,14 @@ final class LoginCoberturaTest extends TestCase
     #[PreserveGlobalState(false)]
     public function testRechazaContrasenaIncorrecta(): void
     {
+        if (session_status() !== PHP_SESSION_ACTIVE) {
+            session_start();
+        }
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
         $_SERVER['REQUEST_METHOD'] = 'POST';
 
         $_POST = [
+            'csrf_token' => $_SESSION['csrf_token'],
             'identificador' => 'profesor1',
             'password' => 'clave_incorrecta'
         ];
@@ -165,9 +181,14 @@ final class LoginCoberturaTest extends TestCase
     #[PreserveGlobalState(false)]
     public function testManejaErrorDeBaseDeDatos(): void
     {
+        if (session_status() !== PHP_SESSION_ACTIVE) {
+            session_start();
+        }
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
         $_SERVER['REQUEST_METHOD'] = 'POST';
 
         $_POST = [
+            'csrf_token' => $_SESSION['csrf_token'],
             'identificador' => 'profesor1',
             'password' => 'clave123'
         ];
@@ -190,4 +211,42 @@ final class LoginCoberturaTest extends TestCase
         );
     }
 
+
+    #[RunInSeparateProcess]
+    #[PreserveGlobalState(false)]
+    public function testRechazaPostSinTokenCsrf(): void
+    {
+        $this->comprobarRechazoCsrf([]);
+    }
+
+    #[RunInSeparateProcess]
+    #[PreserveGlobalState(false)]
+    public function testRechazaPostConTokenCsrfIncorrecto(): void
+    {
+        $this->comprobarRechazoCsrf(['csrf_token' => 'incorrecto']);
+    }
+
+    #[RunInSeparateProcess]
+    #[PreserveGlobalState(false)]
+    public function testRechazaPostConTokenCsrfComoArray(): void
+    {
+        $this->comprobarRechazoCsrf(['csrf_token' => ['incorrecto']]);
+    }
+
+    private function comprobarRechazoCsrf(array $campos): void
+    {
+        if (session_status() !== PHP_SESSION_ACTIVE) {
+            session_start();
+        }
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+        $_SERVER['REQUEST_METHOD'] = 'POST';
+        $_POST = $campos + ['identificador' => 'prueba', 'password' => 'prueba'];
+        $pdo = new PDO('sqlite::memory:');
+        http_response_code(200);
+        ob_start();
+        require __DIR__ . '/../login.php';
+        $html = ob_get_clean();
+        $this->assertSame(403, http_response_code());
+        $this->assertStringContainsString('Solicitud no válida', $html);
+    }
 }
