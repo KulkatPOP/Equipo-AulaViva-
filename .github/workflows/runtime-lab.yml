@@ -33,7 +33,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Pruebas de admision y runtime en cluster desechable
         env:
-          KYVERNO_CHART_VERSION: '3.10.0'
+          KYVERNO_CHART_VERSION: '3.9.2'
           FALCO_CHART_VERSION: '9.2.2'
         run: bash scripts/runtime_lab.sh
       - name: Diagnostico sin secretos
