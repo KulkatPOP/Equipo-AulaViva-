@@ -82,7 +82,7 @@ jobs:
     name: Construir imagen Docker
     needs: [quality, security]
     if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
-        runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
     outputs:
       image-digest: ${{ steps.build.outputs.digest }}
 
@@ -98,7 +98,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-            - name: Construir y subir imagen Docker
+      - name: Construir y subir imagen Docker
         id: build
         uses: docker/build-push-action@ca052bb54ab0790a636c9b5f226502c73d547a25 # v5
         with:
