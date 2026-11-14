@@ -17,8 +17,7 @@ Thumbs.db
 .vscode/
 .idea/
 
-# Configuración local con credenciales
-config/conexion.php
+# La conexión versionada lee credenciales desde variables de entorno
 
 # Scripts locales de prueba
 crear_profesor_prueba.php
@@ -29,3 +28,9 @@ prueba_privada.php
 /coverage/
 /coverage.xml
 /debug_aula.txt
+
+/evidence/
+*.tar
+.terraform/
+*.tfstate*
+*.tfplan
