@@ -3,6 +3,8 @@ driver:
 collectors:
   kubernetes:
     enabled: true
+falco:
+  rule_matching: all
 falcosidekick:
   enabled: true
   config:
