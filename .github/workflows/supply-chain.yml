@@ -76,7 +76,7 @@ jobs:
             "https://token.actions.githubusercontent.com"
 
       - name: Generar attestation de procedencia SLSA
-       uses: actions/attest-build-provenance@e8998f949152b193b063cb0ec769d69d929409be # v2
+        uses: actions/attest-build-provenance@e8998f949152b193b063cb0ec769d69d929409be # v2
         with:
           subject-name: ${{ inputs.image-ref }}
           subject-digest: ${{ fromJSON(format('{{"sha256":"{0}"}}', inputs.image-digest)).sha256 }}
