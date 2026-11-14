@@ -27,11 +27,20 @@ jobs:
           cp .semgrep/*.yaml tests/semgrep/*.php "$RUNNER_TEMP/semgrep-tests/"
           semgrep scan --test "$RUNNER_TEMP/semgrep-tests"
 
-      - name: Bloquear hallazgos SAST
-        run: |
+           - name: Bloquear hallazgos SAST
+             run: |
           semgrep scan --error --strict --metrics=off --disable-nosem \
+            --json-output "$RUNNER_TEMP/semgrep-report.json" \
             --config p/owasp-top-ten --config p/php --config .semgrep/ \
             --exclude tests/semgrep/ .
+
+      - name: Guardar informe Semgrep
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: semgrep-report
+          path: ${{ runner.temp }}/semgrep-report.json
+          if-no-files-found: error
 
   sca:
     runs-on: ubuntu-latest
