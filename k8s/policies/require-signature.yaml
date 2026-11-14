@@ -1,0 +1,51 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: require-image-signature
+spec:
+  validationFailureAction: Enforce
+  background: false
+  webhookConfiguration:
+    failurePolicy: Fail
+  rules:
+    - name: only-approved-registry
+      match:
+        any:
+          - resources:
+              kinds: [Pod]
+              namespaces: [aulaviva]
+      validate:
+        message: Solo se admiten imagenes AulaViva del registro oficial
+        pattern:
+          spec:
+            containers:
+              - image: ghcr.io/kulkatpop/aulaviva-api@sha256:*
+            =(initContainers):
+              - image: ghcr.io/kulkatpop/aulaviva-api@sha256:*
+            =(ephemeralContainers):
+              - image: ghcr.io/kulkatpop/aulaviva-api@sha256:*
+    - name: verify-official-workflow
+      match:
+        any:
+          - resources:
+              kinds: [Pod]
+              namespaces: [aulaviva]
+      verifyImages:
+        - imageReferences: ["ghcr.io/kulkatpop/aulaviva-api*"]
+          required: true
+          mutateDigest: false
+          verifyDigest: true
+          attestors:
+            - entries:
+                - keyless:
+                    subject: https://github.com/KulkatPOP/Equipo-AulaViva-/.github/workflows/supply-chain.yml@refs/heads/main
+                    issuer: https://token.actions.githubusercontent.com
+                    rekor: {url: https://rekor.sigstore.dev}
+          attestations:
+            - predicateType: https://slsa.dev/provenance/v1
+              attestors:
+                - entries:
+                    - keyless:
+                        subject: https://github.com/KulkatPOP/Equipo-AulaViva-/.github/workflows/supply-chain.yml@refs/heads/main
+                        issuer: https://token.actions.githubusercontent.com
+                        rekor: {url: https://rekor.sigstore.dev}
