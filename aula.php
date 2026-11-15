@@ -76,6 +76,44 @@ try {
     mostrarErrorAula('No se pudo cargar el aula.');
 }
 
+$busquedaAlumno = trim(filter_input(INPUT_GET, 'alumno_usuario') ?? '');
+$candidato = null;
+$errorBusqueda = false;
+
+if ($busquedaAlumno !== '') {
+    try {
+        $stmt = $pdo->prepare(
+            "SELECT u.id, u.nombre, u.apellido, u.username
+             FROM usuarios AS u
+             WHERE u.username = :username
+               AND u.colegio_id = :colegio_id
+               AND u.rol = 'alumno'
+               AND u.activo = TRUE
+               AND NOT EXISTS (
+                   SELECT 1 FROM aula_alumnos AS aa
+                   WHERE aa.aula_id = :aula_id AND aa.alumno_id = u.id
+               )
+             LIMIT 1"
+        );
+        $stmt->execute([
+            ':username' => $busquedaAlumno,
+            ':colegio_id' => $colegioId,
+            ':aula_id' => $aulaId,
+        ]);
+        $candidato = $stmt->fetch();
+    } catch (PDOException $e) {
+        $errorBusqueda = true;
+    }
+}
+
+$_SESSION['csrf_asignar_alumno'] ??= bin2hex(random_bytes(32));
+$avisoAsignacion = $_SESSION['aviso_asignacion'] ?? null;
+if (($avisoAsignacion['aula_id'] ?? null) === $aulaId) {
+    unset($_SESSION['aviso_asignacion']);
+} else {
+    $avisoAsignacion = null;
+}
+
 function mostrarErrorAula(string $mensaje): void
 {
     ?>
@@ -141,6 +179,44 @@ function mostrarErrorAula(string $mensaje): void
                 <p class="panel-resumen"><?= $totalAlumnos ?> <?= $totalAlumnos === 1 ? 'alumno' : 'alumnos' ?></p>
             <?php endif; ?>
         </div>
+
+        <section id="agregar-alumno" class="curso panel-asignacion" aria-labelledby="titulo-agregar-alumno">
+            <h2 id="titulo-agregar-alumno" class="panel-subtitulo">Agregar alumno</h2>
+
+            <?php if ($avisoAsignacion): ?>
+                <p class="panel-resultado <?= $avisoAsignacion['exito'] ? 'panel-resultado-exito' : 'panel-resultado-error' ?>"
+                    role="<?= $avisoAsignacion['exito'] ? 'status' : 'alert' ?>">
+                    <?= htmlspecialchars($avisoAsignacion['mensaje'], ENT_QUOTES, 'UTF-8') ?>
+                </p>
+            <?php endif; ?>
+
+            <form method="get" action="aula.php#agregar-alumno">
+                <input type="hidden" name="id" value="<?= $aulaId ?>">
+                <label for="alumno-usuario">Nombre de usuario exacto</label>
+                <div class="panel-asignacion-busqueda">
+                    <input id="alumno-usuario" name="alumno_usuario" type="search" required
+                        value="<?= htmlspecialchars($busquedaAlumno, ENT_QUOTES, 'UTF-8') ?>">
+                    <button class="panel-boton" type="submit">Buscar</button>
+                </div>
+            </form>
+
+            <?php if ($errorBusqueda): ?>
+                <p class="panel-resultado panel-resultado-error" role="alert">No se pudo buscar al alumno. Inténtalo nuevamente.</p>
+            <?php elseif ($candidato): ?>
+                <form class="panel-asignacion-candidato" method="post" action="asignar_alumno.php">
+                    <input type="hidden" name="aula_id" value="<?= $aulaId ?>">
+                    <input type="hidden" name="alumno_id" value="<?= (int) $candidato['id'] ?>">
+                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_asignar_alumno'], ENT_QUOTES, 'UTF-8') ?>">
+                    <div>
+                        <strong><?= htmlspecialchars($candidato['nombre'] . ' ' . $candidato['apellido'], ENT_QUOTES, 'UTF-8') ?></strong>
+                        <p>Usuario: <?= htmlspecialchars($candidato['username'], ENT_QUOTES, 'UTF-8') ?></p>
+                    </div>
+                    <button class="panel-boton" type="submit">Agregar alumno</button>
+                </form>
+            <?php elseif ($busquedaAlumno !== ''): ?>
+                <p class="panel-resultado" role="status">No se encontró un alumno disponible con ese nombre de usuario.</p>
+            <?php endif; ?>
+        </section>
 
         <section aria-labelledby="titulo-alumnos">
             <h2 id="titulo-alumnos" class="panel-subtitulo">Alumnos</h2>

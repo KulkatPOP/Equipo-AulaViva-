@@ -379,6 +379,82 @@ footer .correo a:hover {
     color: #8b2017;
 }
 
+.panel-docente .panel-asignacion {
+    margin-bottom: 32px;
+    padding: clamp(16px, 3vw, 25px);
+}
+
+.panel-docente .panel-asignacion label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+}
+
+.panel-asignacion-busqueda,
+.panel-asignacion-candidato {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+}
+
+.panel-asignacion-busqueda input {
+    flex: 1 1 220px;
+    min-width: 0;
+    max-width: 100%;
+    min-height: 44px;
+    padding: 8px 12px;
+    border: 1px solid #40516a;
+    border-radius: 6px;
+    font: inherit;
+    color: inherit;
+}
+
+.panel-docente .panel-asignacion button {
+    margin: 0;
+    min-height: 44px;
+    border: 0;
+    font: inherit;
+    cursor: pointer;
+}
+
+.panel-asignacion :is(input, button):focus-visible {
+    outline: 2px solid #0b192e;
+    outline-offset: 3px;
+}
+
+.panel-asignacion-candidato {
+    justify-content: space-between;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #ddd;
+}
+
+.panel-asignacion-candidato > div {
+    min-width: 0;
+}
+
+.panel-asignacion-candidato p {
+    margin: 2px 0 0;
+    color: #40516a;
+}
+
+.panel-asignacion .panel-resultado {
+    padding: 10px 12px;
+    border-radius: 6px;
+    background: #eaf4ff;
+}
+
+.panel-asignacion .panel-resultado-exito {
+    color: #165a38;
+    background: #eaf7ef;
+}
+
+.panel-asignacion .panel-resultado-error {
+    color: #8b2017;
+    background: #fff0f0;
+}
+
 @media (max-width: 600px) {
     .panel-tarjetas-alumnos {
         grid-template-columns: minmax(0, 1fr);
