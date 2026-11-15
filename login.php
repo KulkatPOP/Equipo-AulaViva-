@@ -44,6 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ) {
 
                 session_regenerate_id(true);
+                unset($_SESSION['clave_borradores_us02']);
 
                 $_SESSION['usuario_id'] = (int) $usuario['id'];
                 $_SESSION['colegio_id'] = (int) $usuario['colegio_id'];
@@ -76,6 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Iniciar sesión | AulaIA</title>
     <link rel="stylesheet" href="css/login.css">
+    <script src="js/evaluacion-limpiar-borradores.js" defer></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>

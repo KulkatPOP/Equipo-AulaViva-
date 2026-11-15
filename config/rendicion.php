@@ -47,10 +47,11 @@ function cerrarRendicion(PDO $pdo, array $entrega): void
             FROM preguntas p WHERE p.evaluacion_id = ?
         )
         UPDATE entregas e SET estado = 'calificada', puntaje_maximo = maximo, puntaje_obtenido = obtenido,
-            calificacion = round(CASE WHEN obtenido * 100 < maximo * 60
-                THEN 1 + 5 * obtenido / maximo
-                ELSE 4 + (obtenido * 100 - maximo * 60) * 3 / (maximo * 40)
-            END, 1)
+            -- Para redondear a décimas, sumar media décima y tomar el cociente entero exacto.
+            calificacion = (CASE WHEN obtenido * 100 < maximo * 60
+                THEN div(21 * maximo + 100 * obtenido, 2 * maximo)
+                ELSE div(150 * obtenido - 9 * maximo, 2 * maximo)
+            END) * 0.1
         FROM puntos WHERE e.id = ?
         RETURNING puntaje_obtenido, puntaje_maximo, calificacion
     ", [$id, $entrega['evaluacion_id'], $id])->fetch();

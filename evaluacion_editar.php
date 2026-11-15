@@ -142,6 +142,7 @@ try {
     exit('No se pudo abrir el formulario de evaluación.');
 }
 $_SESSION['csrf_evaluacion'] ??= bin2hex(random_bytes(32));
+$_SESSION['clave_borradores_us02'] ??= base64_encode(random_bytes(32));
 $clave = implode(':', ['us02', $_SESSION['colegio_id'], $_SESSION['usuario_id'], $aulaId]);
 ?>
 <!DOCTYPE html>
@@ -152,6 +153,7 @@ $clave = implode(':', ['us02', $_SESSION['colegio_id'], $_SESSION['usuario_id'],
     <title>Editar evaluación | Aula Viva</title>
     <link rel="stylesheet" href="css/styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="js/evaluacion-limpiar-borradores.js" defer></script>
     <script src="js/evaluacion-editar.js" defer></script>
 </head>
 <body class="panel-docente">
@@ -166,6 +168,7 @@ $clave = implode(':', ['us02', $_SESSION['colegio_id'], $_SESSION['usuario_id'],
     <noscript><p>Activa JavaScript para editar la evaluación y recuperar borradores sin conexión.</p></noscript>
     <form id="form-evaluacion" class="curso panel-editor-evaluacion" hidden
           data-clave="<?= escaparMaterial($clave) ?>"
+          data-cifrado="<?= escaparMaterial($_SESSION['clave_borradores_us02']) ?>"
           data-csrf="<?= escaparMaterial($_SESSION['csrf_evaluacion']) ?>"
           data-borrador="<?= escaparMaterial(json_encode($borrador, JSON_THROW_ON_ERROR)) ?>">
         <fieldset id="campos-evaluacion">

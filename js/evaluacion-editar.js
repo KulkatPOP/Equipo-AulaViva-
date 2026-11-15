@@ -5,44 +5,30 @@ const campos = document.querySelector('#campos-evaluacion');
 const titulo = document.querySelector('#titulo-evaluacion');
 const lista = document.querySelector('#preguntas-evaluacion');
 const estado = document.querySelector('#estado-evaluacion');
-const sinServidor = formulario.dataset.offline === 'true';
 const ruta = new URL(location.href);
-const sesion = 'us02-editor:' + ruta.search;
-let borrador;
-let clave;
+let borrador = JSON.parse(formulario.dataset.borrador);
+let clave = 'us02-cifrado:' + formulario.dataset.clave + ':' + (borrador.id || 'nuevo');
+const claveCifrado = crypto.subtle?.importKey(
+    'raw', Uint8Array.from(atob(formulario.dataset.cifrado), c => c.charCodeAt(0)),
+    'AES-GCM', false, ['encrypt', 'decrypt']
+);
+delete formulario.dataset.cifrado;
 
-function leerLocal() {
-    try {
-        return JSON.parse(localStorage.getItem(clave));
-    } catch {
-        return null;
-    }
+function parametrosCifrado(iv) {
+    return { name: 'AES-GCM', iv, additionalData: new TextEncoder().encode(clave) };
 }
 
-if (sinServidor) {
+async function leerLocal() {
     try {
-        clave = sessionStorage.getItem(sesion);
-        borrador = clave && leerLocal();
+        const copia = JSON.parse(localStorage.getItem(clave));
+        if (!copia || !claveCifrado) return null;
+        const iv = Uint8Array.from(copia.iv);
+        const datos = Uint8Array.from(atob(copia.datos), c => c.charCodeAt(0));
+        const texto = await crypto.subtle.decrypt(parametrosCifrado(iv), await claveCifrado, datos);
+        const local = JSON.parse(new TextDecoder().decode(texto));
+        return borrador.id && borrador.id !== local.id ? null : local;
     } catch {
-        borrador = null;
-    }
-    window.addEventListener('online', () => location.reload());
-    if (!borrador) {
-        estado.textContent = 'Sin conexión. Reconecta para abrir el formulario.';
-    }
-} else {
-    borrador = JSON.parse(formulario.dataset.borrador);
-    clave = formulario.dataset.clave + ':' + (borrador.id || 'nuevo');
-    try {
-        sessionStorage.setItem(sesion, clave);
-    } catch {
-        // El guardado en el servidor sigue disponible.
-    }
-    const local = leerLocal();
-    if (local) {
-        borrador = local;
-    } else if (!borrador.id) {
-        borrador.id = crypto.randomUUID();
+        return null;
     }
 }
 
@@ -112,32 +98,35 @@ function leerFormulario() {
     };
 }
 
-function guardarLocal(datos, desconectado) {
+async function guardarLocal(datos, desconectado) {
     try {
-        localStorage.setItem(clave, JSON.stringify(datos));
+        if (!claveCifrado) throw new Error('Cifrado no disponible');
+        const iv = crypto.getRandomValues(new Uint8Array(12));
+        const texto = new TextEncoder().encode(JSON.stringify(datos));
+        const cifrado = await crypto.subtle.encrypt(parametrosCifrado(iv), await claveCifrado, texto);
+        const contenido = Array.from(new Uint8Array(cifrado), byte => String.fromCharCode(byte)).join('');
+        localStorage.setItem(clave, JSON.stringify({ iv: Array.from(iv), datos: btoa(contenido) }));
         estado.textContent = desconectado
             ? 'Sin conexión. Guardado en este dispositivo. Se intentará guardar al reconectar.'
             : 'Guardado en este dispositivo';
-        return true;
     } catch {
         estado.textContent = 'No se pudo guardar en este dispositivo. Mantén abierto el formulario.';
-        return false;
     }
 }
 
 let guardando = false;
 async function guardar(publicar) {
     if (guardando) return;
-    const datos = leerFormulario();
-    if (!publicar) guardarLocal(datos, sinServidor || !navigator.onLine);
-    if (sinServidor || !navigator.onLine) {
-        if (publicar) estado.textContent = 'Reconecta para publicar la evaluación.';
-        return;
-    }
-
     guardando = true;
     campos.disabled = true;
+    const datos = leerFormulario();
     try {
+        if (!publicar) await guardarLocal(datos, !navigator.onLine);
+        if (!navigator.onLine) {
+            if (publicar) estado.textContent = 'Reconecta para publicar la evaluación.';
+            return;
+        }
+
         let respuesta;
         try {
             respuesta = await fetch(ruta, {
@@ -147,7 +136,7 @@ async function guardar(publicar) {
                 redirect: 'error'
             });
         } catch {
-            guardarLocal(datos, true);
+            await guardarLocal(datos, true);
             return;
         }
         const resultado = await respuesta.json();
@@ -166,12 +155,7 @@ async function guardar(publicar) {
         }
         ruta.searchParams.set('id', resultado.id);
         history.replaceState(null, '', ruta);
-        clave = formulario.dataset.clave + ':' + resultado.id;
-        try {
-            sessionStorage.setItem('us02-editor:' + ruta.search, clave);
-        } catch {
-            // La URL conserva el acceso al borrador del servidor.
-        }
+        clave = 'us02-cifrado:' + formulario.dataset.clave + ':' + resultado.id;
         estado.textContent = 'Guardado';
     } catch {
         estado.textContent = 'No se pudo confirmar el guardado. Vuelve a abrir el formulario si la sesión caducó.';
@@ -181,7 +165,10 @@ async function guardar(publicar) {
     }
 }
 
-if (borrador) {
+async function abrirEditor() {
+    const local = await leerLocal();
+    if (local) borrador = local;
+    if (!borrador.id) borrador.id = crypto.randomUUID();
     titulo.value = borrador.titulo;
     borrador.preguntas.forEach(agregarPregunta);
     formulario.hidden = false;
@@ -190,21 +177,24 @@ if (borrador) {
         evento.preventDefault();
         void guardar(evento.submitter?.value === 'publicar');
     });
-    if (!sinServidor) {
-        window.addEventListener('online', () => {
-            if (leerLocal()) void guardar(false);
-        });
-        if (leerLocal()) {
-            estado.textContent = 'Guardado en este dispositivo';
-            if (navigator.onLine) void guardar(false);
-        }
-    } else {
-        estado.textContent = 'Sin conexión. Guardado en este dispositivo.';
+    window.addEventListener('online', async () => {
+        if (await leerLocal()) void guardar(false);
+    });
+    if (local) {
+        estado.textContent = 'Guardado en este dispositivo';
+        if (navigator.onLine) void guardar(false);
     }
 }
 
-if (!sinServidor && 'serviceWorker' in navigator) {
-    navigator.serviceWorker.register('evaluaciones-offline.js').catch(() => {
-        // El almacenamiento local sigue funcionando en el formulario abierto.
-    });
-}
+window.addEventListener('pagehide', () => {
+    formulario.hidden = true;
+    titulo.value = '';
+    lista.replaceChildren();
+});
+window.addEventListener('pageshow', evento => {
+    if (evento.persisted) location.reload();
+});
+window.addEventListener('storage', evento => {
+    if (evento.key === 'us02-salida') location.reload();
+});
+void abrirEditor();
