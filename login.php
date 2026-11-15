@@ -2,6 +2,9 @@
 
 session_start();
 
+$cuentaActivada = $_SESSION['cuenta_activada'] ?? false;
+unset($_SESSION['cuenta_activada']);
+
 require_once __DIR__ . '/config/conexion.php';
 
 $error = '';
@@ -80,6 +83,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <img src="img/Logo.png" alt="Logo AulaIA" class="logo-login">
             <h1>Iniciar sesión</h1>
             <p class="subtitulo">Ingresa a tu aula virtual</p>
+            <?php if ($cuentaActivada): ?>
+                <p role="status">Tu cuenta fue activada. Ya puedes iniciar sesión.</p>
+            <?php endif; ?>
             
                         <?php if ($error !== ''): ?>
                 <p class="error">

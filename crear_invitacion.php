@@ -1,6 +1,9 @@
 <?php
 
-session_start();
+if (PHP_SAPI !== 'cli') {
+    http_response_code(404);
+    exit('Recurso no disponible.');
+}
 
 require_once __DIR__ . '/config/conexion.php';
 
