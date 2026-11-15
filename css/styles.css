@@ -579,6 +579,56 @@ footer .correo a:hover {
     padding: 0;
 }
 
+.panel-docente .panel-filtros-invitaciones {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    gap: 12px;
+}
+
+.panel-filtros-invitaciones > div:first-child {
+    flex: 1 1 260px;
+    min-width: 0;
+}
+
+.panel-filtros-invitaciones :is(input, select) {
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 44px;
+    padding: 8px 12px;
+    border: 1px solid #40516a;
+    border-radius: 6px;
+    font: inherit;
+    color: inherit;
+    background: white;
+}
+
+.panel-filtros-invitaciones select:focus-visible {
+    outline: 2px solid #0b192e;
+    outline-offset: 3px;
+}
+
+.panel-docente .panel-listado-invitaciones {
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 295px), 1fr));
+}
+
+.panel-listado-invitaciones dl {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 6px 12px;
+    width: 100%;
+    margin: 0;
+    font-size: 14px;
+}
+
+.panel-listado-invitaciones dt {
+    font-weight: 500;
+}
+
+.panel-listado-invitaciones dd {
+    margin: 0;
+}
+
 @media (max-width: 600px) {
     .panel-tarjetas-alumnos {
         grid-template-columns: minmax(0, 1fr);

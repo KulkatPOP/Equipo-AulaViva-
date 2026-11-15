@@ -57,6 +57,7 @@ try {
         <span class="panel-identidad">$nombreDocente</span>
         <nav aria-label="Panel docente">
             <a href="mis_aulas.php" class="nav-link activo" aria-current="page">Mis aulas</a>
+            <a href="invitaciones.php" class="nav-link">Invitaciones</a>
             <a href="logout.php" class="nav-link">Cerrar sesión</a>
         </nav>
     </header>
@@ -90,6 +91,7 @@ HTML
         <span class="panel-identidad"><?= htmlspecialchars($_SESSION['nombre'] ?? '', ENT_QUOTES, 'UTF-8') ?></span>
         <nav aria-label="Panel docente">
             <a href="mis_aulas.php" class="nav-link activo" aria-current="page">Mis aulas</a>
+            <a href="invitaciones.php" class="nav-link">Invitaciones</a>
             <a href="logout.php" class="nav-link">Cerrar sesión</a>
         </nav>
     </header>
