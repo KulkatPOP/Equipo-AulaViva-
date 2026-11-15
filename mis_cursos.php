@@ -10,6 +10,20 @@ try {
     $stmt = $pdo->prepare(consultaAulasMateriales(false) . ' ORDER BY a.nombre, a.id');
     $stmt->execute(parametrosAulasMateriales());
     $cursos = $stmt->fetchAll();
+    $historial = [];
+    if ($pdo->query("SELECT to_regclass('entregas')")->fetchColumn()) {
+        $stmt = $pdo->prepare("
+            SELECT e.id, v.titulo FROM entregas e
+            JOIN evaluaciones v ON v.id = e.evaluacion_id
+            JOIN aulas a ON a.id = v.aula_id
+            JOIN usuarios u ON u.id = e.estudiante_id AND u.colegio_id = a.colegio_id
+            WHERE e.estudiante_id = ? AND a.colegio_id = ? AND u.activo AND u.rol = 'alumno'
+              AND v.publicada_en IS NOT NULL AND e.estado = 'calificada'
+            ORDER BY e.fecha_entrega DESC
+        ");
+        $stmt->execute([$_SESSION['usuario_id'], $_SESSION['colegio_id']]);
+        $historial = $stmt->fetchAll();
+    }
 } catch (RuntimeException $e) {
     http_response_code(500);
     $error = true;
@@ -53,6 +67,18 @@ try {
                     </li>
                 <?php endforeach; ?>
             </ul>
+        <?php endif; ?>
+        <?php if (!empty($historial)): ?>
+            <section>
+                <h2>Resultados de evaluaciones</h2>
+                <ul>
+                    <?php foreach ($historial as $resultado): ?>
+                        <li><a class="panel-volver" href="evaluacion_resultado.php?id=<?= escaparMaterial($resultado['id']) ?>">
+                            <?= escaparMaterial($resultado['titulo']) ?>
+                        </a></li>
+                    <?php endforeach; ?>
+                </ul>
+            </section>
         <?php endif; ?>
     </main>
 </body>

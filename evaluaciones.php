@@ -62,6 +62,9 @@ $volver = $seleccion ? $base : ($profesor ? 'aula.php?id=' . $aulaId : 'mis_curs
         <p class="panel-resumen"><?= escaparMaterial($aula['nombre']) ?></p>
     </div>
     <?php if ($seleccion): ?>
+        <?php if (!$profesor): ?>
+            <p><a class="panel-boton" href="<?= escaparMaterial('evaluacion_rendir.php?aula_id=' . $aulaId . '&id=' . $id) ?>">Rendir evaluación</a></p>
+        <?php endif; ?>
         <ol>
             <?php foreach ($preguntas as $pregunta): ?>
                 <li class="curso panel-pregunta">

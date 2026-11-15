@@ -38,7 +38,7 @@ function guardarEvaluacion(PDO $pdo, int $aulaId): never
         $alternativas = $pregunta['alternativas'] ?? null;
         if (!is_string($enunciado) || str_contains($enunciado, "\0") || !is_array($alternativas)
             || !array_is_list($alternativas) || !is_string($puntaje)
-            || preg_match('/\A[+-]?[0-9]{1,30}(?:\.[0-9]{1,30})?\z/', $puntaje) !== 1) {
+            || preg_match('/\A[+]?[0-9]{1,30}(?:\.[0-9]{1,30})?\z/', $puntaje) !== 1) {
             responderEvaluacion(422, ['error' => 'Revisa el enunciado y el puntaje de cada pregunta.']);
         }
         $tieneCorrecta = false;
