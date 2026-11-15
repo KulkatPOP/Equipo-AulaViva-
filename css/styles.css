@@ -629,6 +629,30 @@ footer .correo a:hover {
     margin: 0;
 }
 
+.panel-docente .panel-subir-material input:not([type="hidden"]) {
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 420px;
+    margin-bottom: 16px;
+    padding: 8px 12px;
+    border: 1px solid #40516a;
+    border-radius: 6px;
+    font: inherit;
+    color: inherit;
+}
+
+.panel-acciones-material {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+}
+
+.panel-docente .panel-acciones-material .panel-volver {
+    margin: 0;
+}
+
 @media (max-width: 600px) {
     .panel-tarjetas-alumnos {
         grid-template-columns: minmax(0, 1fr);

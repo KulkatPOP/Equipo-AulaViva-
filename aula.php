@@ -183,6 +183,7 @@ function mostrarErrorAula(string $mensaje): void
         <div class="panel-intro panel-intro-aula">
             <a class="panel-volver" href="mis_aulas.php">← Volver a mis aulas</a>
             <h1><?= htmlspecialchars($aula['nombre'], ENT_QUOTES, 'UTF-8') ?></h1>
+            <a class="panel-boton" href="materiales.php?aula_id=<?= $aulaId ?>">Materiales</a>
             <?php if ($totalAlumnos > 0): ?>
                 <p class="panel-resumen"><?= $totalAlumnos ?> <?= $totalAlumnos === 1 ? 'alumno' : 'alumnos' ?></p>
             <?php endif; ?>
