@@ -37,7 +37,8 @@ try {
 } catch (PDOException $e) {
 
     http_response_code(500);
-    exit(<<<'HTML'
+    $nombreDocente = htmlspecialchars($_SESSION['nombre'] ?? '', ENT_QUOTES, 'UTF-8');
+    exit(<<<HTML
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -53,6 +54,7 @@ try {
             <img src="img/Logo.png" alt="">
             <span class="title-header">Aula Viva</span>
         </a>
+        <span class="panel-identidad">$nombreDocente</span>
         <nav aria-label="Panel docente">
             <a href="mis_aulas.php" class="nav-link activo" aria-current="page">Mis aulas</a>
             <a href="logout.php" class="nav-link">Cerrar sesión</a>
@@ -85,15 +87,17 @@ HTML
             <img src="img/Logo.png" alt="">
             <span class="title-header">Aula Viva</span>
         </a>
+        <span class="panel-identidad"><?= htmlspecialchars($_SESSION['nombre'] ?? '', ENT_QUOTES, 'UTF-8') ?></span>
         <nav aria-label="Panel docente">
             <a href="mis_aulas.php" class="nav-link activo" aria-current="page">Mis aulas</a>
             <a href="logout.php" class="nav-link">Cerrar sesión</a>
         </nav>
     </header>
     <main class="panel-contenido">
+        <?php $totalAulas = count($aulas); ?>
         <div class="panel-intro">
             <h1>Mis aulas</h1>
-            <p>Profesor: <?= htmlspecialchars($_SESSION['nombre'], ENT_QUOTES, 'UTF-8') ?></p>
+            <p class="panel-resumen"><?= $totalAulas ?> <?= $totalAulas === 1 ? 'aula asignada' : 'aulas asignadas' ?></p>
         </div>
 
         <?php if (!$aulas): ?>

@@ -94,6 +94,7 @@ function mostrarErrorAula(string $mensaje): void
             <img src="img/Logo.png" alt="">
             <span class="title-header">Aula Viva</span>
         </a>
+        <span class="panel-identidad"><?= htmlspecialchars($_SESSION['nombre'] ?? '', ENT_QUOTES, 'UTF-8') ?></span>
         <nav aria-label="Panel docente">
             <a href="mis_aulas.php" class="nav-link activo">Mis aulas</a>
             <a href="logout.php" class="nav-link">Cerrar sesión</a>
@@ -125,15 +126,20 @@ function mostrarErrorAula(string $mensaje): void
             <img src="img/Logo.png" alt="">
             <span class="title-header">Aula Viva</span>
         </a>
+        <span class="panel-identidad"><?= htmlspecialchars($_SESSION['nombre'] ?? '', ENT_QUOTES, 'UTF-8') ?></span>
         <nav aria-label="Panel docente">
             <a href="mis_aulas.php" class="nav-link activo">Mis aulas</a>
             <a href="logout.php" class="nav-link">Cerrar sesión</a>
         </nav>
     </header>
     <main class="panel-contenido">
-        <div class="panel-intro">
+        <?php $totalAlumnos = count($alumnos); ?>
+        <div class="panel-intro panel-intro-aula">
             <a class="panel-volver" href="mis_aulas.php">← Volver a mis aulas</a>
             <h1><?= htmlspecialchars($aula['nombre'], ENT_QUOTES, 'UTF-8') ?></h1>
+            <?php if ($totalAlumnos > 0): ?>
+                <p class="panel-resumen"><?= $totalAlumnos ?> <?= $totalAlumnos === 1 ? 'alumno' : 'alumnos' ?></p>
+            <?php endif; ?>
         </div>
 
         <section aria-labelledby="titulo-alumnos">
