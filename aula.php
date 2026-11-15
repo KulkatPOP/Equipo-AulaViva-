@@ -13,7 +13,7 @@ $aulaId = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
 
 if (!$aulaId || $aulaId < 1) {
     http_response_code(400);
-    exit('Aula inválida.');
+    mostrarErrorAula('Aula inválida.');
 }
 
 $profesorId = (int) $_SESSION['usuario_id'];
@@ -45,7 +45,7 @@ try {
 
     if (!$aula) {
         http_response_code(403);
-        exit('No tienes permiso para acceder a esta aula.');
+        mostrarErrorAula('No tienes permiso para acceder a esta aula.');
     }
 
     /* OBTENER ALUMNOS DEL AULA */
@@ -73,69 +73,93 @@ try {
 } catch (PDOException $e) {
 
     http_response_code(500);
-    exit('No se pudo cargar el aula.');
+    mostrarErrorAula('No se pudo cargar el aula.');
 }
 
-?>
+function mostrarErrorAula(string $mensaje): void
+{
+    ?>
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title><?= htmlspecialchars($aula['nombre'], ENT_QUOTES, 'UTF-8') ?> | Aula Viva</title>
+    <title>Detalle de aula | Aula Viva</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
-
-<body>
-
-    <p>
-        <a href="mis_aulas.php">← Volver a mis aulas</a>
-    </p>
-
-    <h1>
-        <?= htmlspecialchars($aula['nombre'], ENT_QUOTES, 'UTF-8') ?>
-    </h1>
-
-    <h2>Alumnos</h2>
-
-    <?php if (!$alumnos): ?>
-
-        <p>No hay alumnos asignados a esta aula.</p>
-
-    <?php else: ?>
-
-        <?php foreach ($alumnos as $alumno): ?>
-
-            <div>
-
-                <strong>
-                    <?= htmlspecialchars(
-                        $alumno['nombre'] . ' ' . $alumno['apellido'],
-                        ENT_QUOTES,
-                        'UTF-8'
-                    ) ?>
-                </strong>
-
-                <p>
-                    Usuario:
-                    <?= htmlspecialchars(
-                        $alumno['username'] ?? '',
-                        ENT_QUOTES,
-                        'UTF-8'
-                    ) ?>
-                </p>
-
-            </div>
-
-        <?php endforeach; ?>
-
-    <?php endif; ?>
-
-    <p>
-        <a href="logout.php">Cerrar sesión</a>
-    </p>
-
+<body class="panel-docente">
+    <header>
+        <a href="mis_aulas.php" class="logo">
+            <img src="img/Logo.png" alt="">
+            <span class="title-header">Aula Viva</span>
+        </a>
+        <nav aria-label="Panel docente">
+            <a href="mis_aulas.php" class="nav-link activo">Mis aulas</a>
+            <a href="logout.php" class="nav-link">Cerrar sesión</a>
+        </nav>
+    </header>
+    <main class="panel-contenido">
+        <h1>Detalle de aula</h1>
+        <p class="curso panel-aviso panel-aviso-error"><?= htmlspecialchars($mensaje, ENT_QUOTES, 'UTF-8') ?></p>
+        <a class="panel-boton" href="mis_aulas.php">Volver a mis aulas</a>
+    </main>
 </body>
+</html>
+    <?php
+    exit;
+}
+?>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?= htmlspecialchars($aula['nombre'], ENT_QUOTES, 'UTF-8') ?> | Aula Viva</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="panel-docente">
+    <header>
+        <a href="mis_aulas.php" class="logo">
+            <img src="img/Logo.png" alt="">
+            <span class="title-header">Aula Viva</span>
+        </a>
+        <nav aria-label="Panel docente">
+            <a href="mis_aulas.php" class="nav-link activo">Mis aulas</a>
+            <a href="logout.php" class="nav-link">Cerrar sesión</a>
+        </nav>
+    </header>
+    <main class="panel-contenido">
+        <div class="panel-intro">
+            <a class="panel-volver" href="mis_aulas.php">← Volver a mis aulas</a>
+            <h1><?= htmlspecialchars($aula['nombre'], ENT_QUOTES, 'UTF-8') ?></h1>
+        </div>
 
+        <section aria-labelledby="titulo-alumnos">
+            <h2 id="titulo-alumnos" class="panel-subtitulo">Alumnos</h2>
+
+            <?php if (!$alumnos): ?>
+                <p class="curso panel-aviso">No hay alumnos asignados a esta aula.</p>
+            <?php else: ?>
+                <ul class="panel-tarjetas" role="list">
+                    <?php foreach ($alumnos as $alumno): ?>
+                        <li class="curso">
+                            <h3><?= htmlspecialchars(
+                                $alumno['nombre'] . ' ' . $alumno['apellido'],
+                                ENT_QUOTES,
+                                'UTF-8'
+                            ) ?></h3>
+                            <p>Usuario: <?= htmlspecialchars(
+                                $alumno['username'] ?? '',
+                                ENT_QUOTES,
+                                'UTF-8'
+                            ) ?></p>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            <?php endif; ?>
+        </section>
+    </main>
+</body>
 </html>

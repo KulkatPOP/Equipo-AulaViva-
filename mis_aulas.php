@@ -37,55 +37,78 @@ try {
 } catch (PDOException $e) {
 
     http_response_code(500);
-    exit('No se pudieron cargar las aulas.');
+    exit(<<<'HTML'
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis aulas | Aula Viva</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="panel-docente">
+    <header>
+        <a href="mis_aulas.php" class="logo">
+            <img src="img/Logo.png" alt="">
+            <span class="title-header">Aula Viva</span>
+        </a>
+        <nav aria-label="Panel docente">
+            <a href="mis_aulas.php" class="nav-link activo" aria-current="page">Mis aulas</a>
+            <a href="logout.php" class="nav-link">Cerrar sesión</a>
+        </nav>
+    </header>
+    <main class="panel-contenido">
+        <h1>Mis aulas</h1>
+        <p class="curso panel-aviso panel-aviso-error">No se pudieron cargar las aulas.</p>
+        <a class="panel-boton" href="mis_aulas.php">Reintentar</a>
+    </main>
+</body>
+</html>
+HTML
+    );
 }
 
 ?>
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Mis aulas | Aula Viva</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
+<body class="panel-docente">
+    <header>
+        <a href="mis_aulas.php" class="logo">
+            <img src="img/Logo.png" alt="">
+            <span class="title-header">Aula Viva</span>
+        </a>
+        <nav aria-label="Panel docente">
+            <a href="mis_aulas.php" class="nav-link activo" aria-current="page">Mis aulas</a>
+            <a href="logout.php" class="nav-link">Cerrar sesión</a>
+        </nav>
+    </header>
+    <main class="panel-contenido">
+        <div class="panel-intro">
+            <h1>Mis aulas</h1>
+            <p>Profesor: <?= htmlspecialchars($_SESSION['nombre'], ENT_QUOTES, 'UTF-8') ?></p>
+        </div>
 
-<body>
-
-    <h1>Mis aulas</h1>
-
-    <p>
-        Profesor:
-        <?= htmlspecialchars($_SESSION['nombre'], ENT_QUOTES, 'UTF-8') ?>
-    </p>
-
-    <?php if (!$aulas): ?>
-
-        <p>No tienes aulas asignadas.</p>
-
-    <?php else: ?>
-
-        <?php foreach ($aulas as $aula): ?>
-
-            <div>
-
-                <h2>
-                    <a href="aula.php?id=<?= (int) $aula['id'] ?>">
-                        <?= htmlspecialchars($aula['nombre'], ENT_QUOTES, 'UTF-8') ?>
-                    </a>
-                </h2>
-
-            </div>
-
-        <?php endforeach; ?>
-
-    <?php endif; ?>
-
-    <p>
-        <a href="logout.php">Cerrar sesión</a>
-    </p>
-
+        <?php if (!$aulas): ?>
+            <p class="curso panel-aviso">No tienes aulas asignadas.</p>
+        <?php else: ?>
+            <ul class="panel-tarjetas" role="list">
+                <?php foreach ($aulas as $aula): ?>
+                    <li class="curso">
+                        <h2><?= htmlspecialchars($aula['nombre'], ENT_QUOTES, 'UTF-8') ?></h2>
+                        <a class="panel-boton" href="aula.php?id=<?= (int) $aula['id'] ?>"
+                            aria-label="Ver aula: <?= htmlspecialchars($aula['nombre'], ENT_QUOTES, 'UTF-8') ?>">Ver aula</a>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+        <?php endif; ?>
+    </main>
 </body>
-
 </html>
