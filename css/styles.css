@@ -398,7 +398,8 @@ footer .correo a:hover {
     gap: 12px;
 }
 
-.panel-asignacion-busqueda input {
+.panel-asignacion-busqueda input,
+.panel-docente .panel-buscar-alumno input {
     flex: 1 1 220px;
     min-width: 0;
     max-width: 100%;
@@ -418,7 +419,8 @@ footer .correo a:hover {
     cursor: pointer;
 }
 
-.panel-asignacion :is(input, button):focus-visible {
+.panel-asignacion :is(input, button):focus-visible,
+.panel-docente .panel-buscar-alumno input:focus-visible {
     outline: 2px solid #0b192e;
     outline-offset: 3px;
 }
@@ -517,6 +519,30 @@ footer .correo a:hover {
 .panel-docente :is(.panel-confirmacion button, .panel-boton-secundario):focus-visible {
     outline: 2px solid #0b192e;
     outline-offset: 3px;
+}
+
+.panel-docente .panel-buscar-alumno {
+    max-width: 420px;
+    margin-bottom: 16px;
+}
+
+.panel-docente .panel-buscar-alumno label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+}
+
+.panel-docente .panel-buscar-alumno input {
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.panel-docente #listado-alumnos > li[hidden] {
+    display: none;
+}
+
+.panel-docente #aviso-busqueda-alumnos:empty {
+    margin: 0;
 }
 
 @media (max-width: 600px) {

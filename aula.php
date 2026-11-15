@@ -239,7 +239,13 @@ function mostrarErrorAula(string $mensaje): void
             <?php if (!$alumnos): ?>
                 <p class="curso panel-aviso">No hay alumnos asignados a esta aula.</p>
             <?php else: ?>
-                <ul class="panel-tarjetas panel-tarjetas-alumnos" role="list">
+                <div class="panel-buscar-alumno" hidden>
+                    <label for="buscar-alumno">Buscar alumno</label>
+                    <input id="buscar-alumno" type="search" placeholder="Buscar por nombre o usuario..."
+                        aria-controls="listado-alumnos">
+                </div>
+                <p id="aviso-busqueda-alumnos" role="status"></p>
+                <ul id="listado-alumnos" class="panel-tarjetas panel-tarjetas-alumnos" role="list">
                     <?php foreach ($alumnos as $alumno): ?>
                         <li class="curso">
                             <h3><?= htmlspecialchars(
@@ -247,11 +253,11 @@ function mostrarErrorAula(string $mensaje): void
                                 ENT_QUOTES,
                                 'UTF-8'
                             ) ?></h3>
-                            <p>Usuario: <?= htmlspecialchars(
+                            <p>Usuario: <span data-usuario-alumno><?= htmlspecialchars(
                                 $alumno['username'] ?? '',
                                 ENT_QUOTES,
                                 'UTF-8'
-                            ) ?></p>
+                            ) ?></span></p>
                             <button type="button" class="panel-boton-secundario" data-desasignar="<?= (int) $alumno['id'] ?>"
                                 aria-haspopup="dialog"
                                 aria-label="Desasignar a <?= htmlspecialchars($alumno['nombre'] . ' ' . $alumno['apellido'], ENT_QUOTES, 'UTF-8') ?>">
@@ -280,22 +286,8 @@ function mostrarErrorAula(string $mensaje): void
                     </form>
                 </div>
             </dialog>
-            <script>
-                const dialogoDesasignacion = document.getElementById('confirmar-desasignacion');
-                let botonDesasignacion;
-
-                for (const boton of document.querySelectorAll('[data-desasignar]')) {
-                    boton.addEventListener('click', () => {
-                        botonDesasignacion = boton;
-                        document.getElementById('id-desasignacion').value = boton.dataset.desasignar;
-                        document.getElementById('alumno-desasignacion').textContent =
-                            boton.closest('li').querySelector('h3').textContent.trim();
-                        dialogoDesasignacion.showModal();
-                    });
-                }
-
-                dialogoDesasignacion.addEventListener('close', () => botonDesasignacion?.focus());
-            </script>
+            <script src="js/desasignar-alumno.js" defer></script>
+            <script src="js/buscar-alumnos.js" defer></script>
         <?php endif; ?>
     </main>
 </body>
