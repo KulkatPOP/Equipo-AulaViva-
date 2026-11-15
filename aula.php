@@ -114,6 +114,14 @@ if (($avisoAsignacion['aula_id'] ?? null) === $aulaId) {
     $avisoAsignacion = null;
 }
 
+$_SESSION['csrf_desasignar_alumno'] ??= bin2hex(random_bytes(32));
+$avisoDesasignacion = $_SESSION['aviso_desasignacion'] ?? null;
+if (($avisoDesasignacion['aula_id'] ?? null) === $aulaId) {
+    unset($_SESSION['aviso_desasignacion']);
+} else {
+    $avisoDesasignacion = null;
+}
+
 function mostrarErrorAula(string $mensaje): void
 {
     ?>
@@ -218,8 +226,15 @@ function mostrarErrorAula(string $mensaje): void
             <?php endif; ?>
         </section>
 
-        <section aria-labelledby="titulo-alumnos">
+        <section id="alumnos" aria-labelledby="titulo-alumnos">
             <h2 id="titulo-alumnos" class="panel-subtitulo">Alumnos</h2>
+
+            <?php if ($avisoDesasignacion): ?>
+                <p class="panel-resultado <?= $avisoDesasignacion['exito'] ? 'panel-resultado-exito' : 'panel-resultado-error' ?>"
+                    role="<?= $avisoDesasignacion['exito'] ? 'status' : 'alert' ?>">
+                    <?= htmlspecialchars($avisoDesasignacion['mensaje'], ENT_QUOTES, 'UTF-8') ?>
+                </p>
+            <?php endif; ?>
 
             <?php if (!$alumnos): ?>
                 <p class="curso panel-aviso">No hay alumnos asignados a esta aula.</p>
@@ -237,11 +252,51 @@ function mostrarErrorAula(string $mensaje): void
                                 ENT_QUOTES,
                                 'UTF-8'
                             ) ?></p>
+                            <button type="button" class="panel-boton-secundario" data-desasignar="<?= (int) $alumno['id'] ?>"
+                                aria-haspopup="dialog"
+                                aria-label="Desasignar a <?= htmlspecialchars($alumno['nombre'] . ' ' . $alumno['apellido'], ENT_QUOTES, 'UTF-8') ?>">
+                                Desasignar
+                            </button>
                         </li>
                     <?php endforeach; ?>
                 </ul>
             <?php endif; ?>
         </section>
+        <?php if ($alumnos): ?>
+            <dialog class="panel-confirmacion" id="confirmar-desasignacion"
+                aria-labelledby="titulo-desasignacion" aria-describedby="alumno-desasignacion detalle-desasignacion">
+                <h2 id="titulo-desasignacion">Desasignar alumno</h2>
+                <p id="alumno-desasignacion"></p>
+                <p id="detalle-desasignacion">Se quitará a este alumno de esta aula. Su cuenta y sus otras aulas se conservarán.</p>
+                <div class="panel-confirmacion-acciones">
+                    <form method="dialog">
+                        <button type="submit" class="panel-boton-secundario" autofocus>Cancelar</button>
+                    </form>
+                    <form method="post" action="desasignar_alumno.php">
+                        <input type="hidden" name="aula_id" value="<?= $aulaId ?>">
+                        <input type="hidden" name="alumno_id" id="id-desasignacion">
+                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_desasignar_alumno'], ENT_QUOTES, 'UTF-8') ?>">
+                        <button type="submit" class="panel-boton">Desasignar</button>
+                    </form>
+                </div>
+            </dialog>
+            <script>
+                const dialogoDesasignacion = document.getElementById('confirmar-desasignacion');
+                let botonDesasignacion;
+
+                for (const boton of document.querySelectorAll('[data-desasignar]')) {
+                    boton.addEventListener('click', () => {
+                        botonDesasignacion = boton;
+                        document.getElementById('id-desasignacion').value = boton.dataset.desasignar;
+                        document.getElementById('alumno-desasignacion').textContent =
+                            boton.closest('li').querySelector('h3').textContent.trim();
+                        dialogoDesasignacion.showModal();
+                    });
+                }
+
+                dialogoDesasignacion.addEventListener('close', () => botonDesasignacion?.focus());
+            </script>
+        <?php endif; ?>
     </main>
 </body>
 </html>

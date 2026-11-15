@@ -439,20 +439,84 @@ footer .correo a:hover {
     color: #40516a;
 }
 
-.panel-asignacion .panel-resultado {
+.panel-docente .panel-resultado {
     padding: 10px 12px;
     border-radius: 6px;
     background: #eaf4ff;
 }
 
-.panel-asignacion .panel-resultado-exito {
+.panel-docente .panel-resultado-exito {
     color: #165a38;
     background: #eaf7ef;
 }
 
-.panel-asignacion .panel-resultado-error {
+.panel-docente .panel-resultado-error {
     color: #8b2017;
     background: #fff0f0;
+}
+
+.panel-tarjetas-alumnos .panel-boton-secundario {
+    margin-top: 6px;
+}
+
+.panel-docente .panel-boton-secundario,
+.panel-docente .panel-confirmacion button {
+    min-height: 44px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font: inherit;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.panel-docente .panel-boton-secundario {
+    border: 1px solid #8b2017;
+    color: #8b2017;
+    background: white;
+}
+
+.panel-docente .panel-boton-secundario:hover {
+    background: #fff0f0;
+}
+
+.panel-docente .panel-confirmacion {
+    box-sizing: border-box;
+    width: min(460px, calc(100% - 32px));
+    padding: 24px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    color: #0b192e;
+    background: white;
+}
+
+.panel-confirmacion::backdrop {
+    background: rgb(11 25 46 / 55%);
+}
+
+.panel-confirmacion h2 {
+    margin-top: 0;
+    font-size: 20px;
+}
+
+#alumno-desasignacion {
+    font-weight: 600;
+}
+
+.panel-confirmacion-acciones {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+.panel-docente .panel-confirmacion .panel-boton {
+    border: 1px solid #8b2017;
+    background: #8b2017;
+}
+
+.panel-docente :is(.panel-confirmacion button, .panel-boton-secundario):focus-visible {
+    outline: 2px solid #0b192e;
+    outline-offset: 3px;
 }
 
 @media (max-width: 600px) {
