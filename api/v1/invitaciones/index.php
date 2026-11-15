@@ -17,7 +17,10 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 exigirRolApi('profesor');
 
-$colegioId = (int) $_SESSION['colegio_id'];
+$colegioId = filter_var($_SESSION['colegio_id'] ?? null, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
+if ($colegioId === false) {
+    responderProblema(403, 'Acceso denegado', 'La sesión no tiene un colegio válido.', '/errors/acceso-denegado');
+}
 
 
 /*

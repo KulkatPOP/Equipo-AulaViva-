@@ -226,6 +226,37 @@ function mostrarErrorAula(string $mensaje): void
             <?php endif; ?>
         </section>
 
+        <details class="curso panel-asignacion panel-invitacion">
+            <summary>Invitar alumno</summary>
+            <form id="form-invitar-alumno" action="api/v1/invitaciones/" method="post" hidden>
+                <div class="panel-invitacion-campos">
+                    <div>
+                        <label for="invitacion-email">Correo electrónico</label>
+                        <input type="email" id="invitacion-email" name="email" required>
+                    </div>
+                    <div>
+                        <label for="invitacion-rut">RUT</label>
+                        <input type="text" id="invitacion-rut" name="rut" required>
+                    </div>
+                    <div>
+                        <label for="invitacion-usuario">Nombre de usuario</label>
+                        <input type="text" id="invitacion-usuario" name="username" required>
+                    </div>
+                </div>
+                <button type="submit" class="panel-boton">Crear invitación</button>
+            </form>
+            <p id="mensaje-invitacion" class="panel-resultado" role="status"></p>
+            <div id="resultado-invitacion" hidden>
+                <label for="enlace-invitacion">Enlace de activación:</label>
+                <div class="panel-asignacion-busqueda">
+                    <input type="text" id="enlace-invitacion" readonly>
+                    <button type="button" id="copiar-invitacion" class="panel-boton">Copiar enlace</button>
+                </div>
+                <p id="mensaje-copia-invitacion" role="status"></p>
+            </div>
+        </details>
+        <script src="js/invitar-alumno.js" defer></script>
+
         <section id="alumnos" aria-labelledby="titulo-alumnos">
             <h2 id="titulo-alumnos" class="panel-subtitulo">Alumnos</h2>
 
