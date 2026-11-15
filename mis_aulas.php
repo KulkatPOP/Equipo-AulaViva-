@@ -99,7 +99,7 @@ HTML
         <?php if (!$aulas): ?>
             <p class="curso panel-aviso">No tienes aulas asignadas.</p>
         <?php else: ?>
-            <ul class="panel-tarjetas" role="list">
+            <ul class="panel-tarjetas panel-tarjetas-aulas" role="list">
                 <?php foreach ($aulas as $aula): ?>
                     <li class="curso">
                         <h2><?= htmlspecialchars($aula['nombre'], ENT_QUOTES, 'UTF-8') ?></h2>

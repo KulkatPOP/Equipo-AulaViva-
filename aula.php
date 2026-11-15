@@ -142,7 +142,7 @@ function mostrarErrorAula(string $mensaje): void
             <?php if (!$alumnos): ?>
                 <p class="curso panel-aviso">No hay alumnos asignados a esta aula.</p>
             <?php else: ?>
-                <ul class="panel-tarjetas" role="list">
+                <ul class="panel-tarjetas panel-tarjetas-alumnos" role="list">
                     <?php foreach ($alumnos as $alumno): ?>
                         <li class="curso">
                             <h3><?= htmlspecialchars(

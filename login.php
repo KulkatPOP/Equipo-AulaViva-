@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['nombre'] = $usuario['nombre'];
                 $_SESSION['rol'] = $usuario['rol'];
 
-                header('Location: index.html');
+                header('Location: ' . ($usuario['rol'] === 'profesor' ? 'mis_aulas.php' : 'index.html'));
                 exit;
             }
 
