@@ -682,3 +682,27 @@ footer .correo a:hover {
         padding: 0 12px;
     }
 }
+
+.panel-docente .panel-editor-evaluacion fieldset {
+    min-inline-size: 0;
+    border: 0;
+}
+
+.panel-docente .panel-pregunta {
+    margin-block: 1rem;
+    overflow-wrap: anywhere;
+}
+
+.panel-docente .panel-editor-evaluacion label {
+    display: block;
+    margin-block: .5rem;
+}
+
+.panel-docente .panel-editor-evaluacion input {
+    max-width: 100%;
+    font: inherit;
+}
+
+.panel-docente .panel-editor-evaluacion .panel-boton {
+    margin: .25rem;
+}

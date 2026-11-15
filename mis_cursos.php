@@ -49,6 +49,7 @@ try {
                         <h2><?= escaparMaterial($curso['nombre']) ?></h2>
                         <a class="panel-boton" href="materiales.php?aula_id=<?= (int) $curso['id'] ?>"
                            aria-label="Ver materiales de <?= escaparMaterial($curso['nombre']) ?>">Ver materiales</a>
+                        <a class="panel-boton" href="evaluaciones.php?aula_id=<?= (int) $curso['id'] ?>">Evaluaciones</a>
                     </li>
                 <?php endforeach; ?>
             </ul>

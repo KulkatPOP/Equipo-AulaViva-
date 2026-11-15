@@ -184,6 +184,7 @@ function mostrarErrorAula(string $mensaje): void
             <a class="panel-volver" href="mis_aulas.php">← Volver a mis aulas</a>
             <h1><?= htmlspecialchars($aula['nombre'], ENT_QUOTES, 'UTF-8') ?></h1>
             <a class="panel-boton" href="materiales.php?aula_id=<?= $aulaId ?>">Materiales</a>
+            <a class="panel-boton" href="evaluaciones.php?aula_id=<?= $aulaId ?>">Evaluaciones</a>
             <?php if ($totalAlumnos > 0): ?>
                 <p class="panel-resumen"><?= $totalAlumnos ?> <?= $totalAlumnos === 1 ? 'alumno' : 'alumnos' ?></p>
             <?php endif; ?>
