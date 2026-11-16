@@ -47,6 +47,7 @@ try {
         <span class="panel-identidad"><?= escaparMaterial($_SESSION['nombre'] ?? '') ?></span>
         <nav aria-label="Navegación">
             <a href="mis_cursos.php" class="nav-link">Mis cursos</a>
+            <a href="tutor.php" class="nav-link">Tutor IA</a>
             <a href="logout.php" class="nav-link">Cerrar sesión</a>
         </nav>
     </header>
