@@ -62,13 +62,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (
             ) {
 
                 session_regenerate_id(true);
+                unset($_SESSION['clave_borradores_us02']);
 
                 $_SESSION['usuario_id'] = (int) $usuario['id'];
                 $_SESSION['colegio_id'] = (int) $usuario['colegio_id'];
                 $_SESSION['nombre'] = $usuario['nombre'];
                 $_SESSION['rol'] = $usuario['rol'];
 
-                header('Location: index.html');
+                $destino = match ($usuario['rol']) {
+                    'profesor' => 'mis_aulas.php',
+                    'alumno' => 'mis_cursos.php',
+                    default => 'index.html',
+                };
+                header('Location: ' . $destino);
                 exit;
             }
 
@@ -89,6 +95,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Iniciar sesión | AulaIA</title>
     <link rel="stylesheet" href="css/login.css">
+    <script src="js/evaluacion-limpiar-borradores.js" defer></script>
 </head>
 <body>
     <header>
