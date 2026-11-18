@@ -63,16 +63,16 @@ $volver = $seleccion ? $base : ($profesor ? 'aula.php?id=' . $aulaId : 'mis_curs
     </div>
     <?php if ($seleccion): ?>
         <?php if (!$profesor): ?>
-            <p><a class="panel-boton" href="<?= escaparMaterial('evaluacion_rendir.php?aula_id=' . $aulaId . '&id=' . $id) ?>">Rendir evaluación</a></p>
+            <p><a class="panel-boton" href="<?= htmlspecialchars('evaluacion_rendir.php?aula_id=' . $aulaId . '&id=' . $id, ENT_QUOTES, 'UTF-8') ?>">Rendir evaluación</a></p>
         <?php endif; ?>
         <ol>
             <?php foreach ($preguntas as $pregunta): ?>
                 <li class="curso panel-pregunta">
-                    <h2><?= escaparMaterial($pregunta['enunciado']) ?></h2>
-                    <?php if ($profesor): ?><p><?= escaparMaterial((string) $pregunta['puntaje']) ?> puntos</p><?php endif; ?>
+                    <h2><?= htmlspecialchars($pregunta['enunciado'], ENT_QUOTES, 'UTF-8') ?></h2>
+                    <?php if ($profesor): ?><p><?= htmlspecialchars((string) $pregunta['puntaje'], ENT_QUOTES, 'UTF-8') ?> puntos</p><?php endif; ?>
                     <ul>
                         <?php foreach ($pregunta['alternativas'] as $alternativa): ?>
-                            <li><?= escaparMaterial($alternativa['texto']) ?><?= $profesor && $alternativa['es_correcta'] ? ' (correcta)' : '' ?></li>
+                            <li><?= htmlspecialchars($alternativa['texto'], ENT_QUOTES, 'UTF-8') ?><?= $profesor && $alternativa['es_correcta'] ? ' (correcta)' : '' ?></li>
                         <?php endforeach; ?>
                     </ul>
                 </li>
