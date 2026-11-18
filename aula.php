@@ -102,6 +102,11 @@ try {
         <?= htmlspecialchars($aula['nombre'], ENT_QUOTES, 'UTF-8') ?>
     </h1>
 
+    <nav aria-label="Recursos del aula">
+        <a href="materiales.php?aula_id=<?= htmlspecialchars((string) $aulaId, ENT_QUOTES, 'UTF-8') ?>">Materiales</a>
+        <a href="evaluaciones.php?aula_id=<?= htmlspecialchars((string) $aulaId, ENT_QUOTES, 'UTF-8') ?>">Evaluaciones</a>
+    </nav>
+
     <h2>Alumnos</h2>
 
     <?php if (!$alumnos): ?>

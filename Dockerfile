@@ -1,6 +1,6 @@
 FROM php:8.4.27-apache
 
-RUN apt-get update && apt-get upgrade -y && apt-get install -y --no-install-recommends libsqlite3-dev && docker-php-ext-install mysqli pdo_mysql pdo_sqlite && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get upgrade -y && apt-get install -y --no-install-recommends libsqlite3-dev libpq-dev poppler-utils && docker-php-ext-install mysqli pdo_mysql pdo_sqlite pdo_pgsql && rm -rf /var/lib/apt/lists/*
 
 RUN a2enmod rewrite headers
 

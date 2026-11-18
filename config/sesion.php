@@ -28,6 +28,6 @@ if (
         $_SESSION['rol']
     )
 ) {
-    header('Location: /Aula%20viva/login.php');
+    header('Location: /login.php');
     exit;
 }

@@ -34,5 +34,5 @@ session_destroy();
 
 /* VOLVER AL LOGIN */
 
-header('Location: login.php');
+header('Location: login.php?sesion_cerrada=1');
 exit;   
