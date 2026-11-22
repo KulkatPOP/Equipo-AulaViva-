@@ -25,3 +25,30 @@ Se analiza el flujo de emisión de invitaciones desde `POST /api/v1/invitaciones
 ## Criterio de revisión
 
 Revisar este modelo cuando cambien los roles, el aislamiento entre colegios o el flujo de activación. Mantener las mitigaciones pendientes en el backlog hasta contar con una prueba que confirme su funcionamiento.
+## Activación transaccional de cuentas
+
+La activación conserva exclusivamente RUT, username, colegio y rol de la invitación.
+Solo admite alumno/profesor, como la API actual. El colegio debe ser positivo y
+estar respaldado por un docente o admin activo: no existe un catálogo `colegios`.
+El navegador solo aporta nombre, apellido y contraseña; los identificadores
+adicionales enviados por POST no modifican la identidad invitada.
+
+La sesión anónima conserva el hash del token y un CSRF específico. El formulario
+se envía sin token en la query. PostgreSQL bloquea la invitación con `FOR UPDATE`,
+comprueba vigencia con su reloj después del bloqueo y vuelve a comprobarla al
+consumirla. INSERT de usuario y UPDATE de usado comparten una transacción.
+Las restricciones UNIQUE de usuarios resuelven duplicados concurrentes y cualquier
+fallo revierte ambos pasos. No se autentica automáticamente al usuario activado.
+
+Las contraseñas usan `password_hash(PASSWORD_DEFAULT)`, con mínimo de 8 bytes,
+máximo de 72 bytes para evitar truncación con bcrypt y rechazo de NUL. No se
+registran contraseñas, tokens ni errores SQL. `Referrer-Policy: no-referrer`
+evita reenviar el enlace. El formato combined de Apache registra método/ruta,
+sin query ni Referer; una infraestructura externa que use otro formato también
+debe redactar estos valores antes de desplegar.
+
+`migrations/006_invitaciones.sql` crea solo la tabla que ya usa el contrato de
+invitaciones. No ejecutar sobre una tabla existente ni automáticamente al arrancar.
+La inspección de DEV detectó su ausencia; no se aplicó allí. Para instalarla en un
+entorno autorizado: `psql -X -v ON_ERROR_STOP=1 -f migrations/006_invitaciones.sql`.
+No se crean aulas, matrículas o vínculos por activar una cuenta.

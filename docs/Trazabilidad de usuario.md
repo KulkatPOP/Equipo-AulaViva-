@@ -19,3 +19,15 @@
 | HU-03 - Evaluaciones autocorregidas | Must Have | Permite medir resultados y entregar retroalimentación inmediata. |
 | HU-05 - Progreso del apoderado | Should Have | Complementa el seguimiento académico, pero no bloquea el funcionamiento principal. |
 | HU-04 - Tutor IA | Could Have | Funcionalidad innovadora que mejora la experiencia, pero no es esencial para el funcionamiento inicial. |
+
+## Flujo transversal: activación por invitación existente
+
+No constituye una nueva historia numerada. Completa la incorporación de cuentas
+alumno/profesor ya prevista por la API y el Charter. Implementa creación de usuario,
+hash de contraseña y consumo transaccional de la invitación; conserva identidad,
+colegio y rol del registro invitante. Véase `docs/threat-model.md` para límites y
+operación. No amplía las invitaciones a apoderados o administradores.
+
+Las pruebas de activación validan persistencia y rollback, no solo ausencia de
+mensajes de error en el formulario. La tabla requerida se versiona en 006 porque
+no estaba presente en DEV; su aplicación queda pendiente de autorización.

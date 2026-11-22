@@ -1,89 +1,48 @@
 <?php
-
-// Utilizar la conexión proporcionada por las pruebas.
-// En producción se mantiene la conexión habitual.
-if (!isset($pdo) || !($pdo instanceof PDO)) {
-    require_once __DIR__ . '/config/conexion.php';
+require_once __DIR__ . '/config/activacion.php';
+header('Cache-Control: private, no-store');
+header('Referrer-Policy: no-referrer');
+if (session_status() === PHP_SESSION_NONE) {
+    ini_set('session.use_strict_mode', '1');
+    ini_set('session.use_only_cookies', '1');
+    session_set_cookie_params(['httponly' => true, 'secure' => !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off', 'samesite' => 'Lax', 'path' => '/']);
+    session_start();
 }
-
-$token = $_GET['token'] ?? '';
-
-if ($token === '') {
-    exit('Invitación no válida.');
-}
-
-/* Convertimos el token recibido al mismo hash guardado en la base */
-
-$token_hash = hash('sha256', $token);
-
-$stmt = $pdo->prepare(
-    'SELECT id, colegio_id, email, rut, username, rol, expira_en, usado
-     FROM invitaciones
-     WHERE token_hash = :token_hash
-     LIMIT 1'
-);
-
-$stmt->execute([
-    ':token_hash' => $token_hash
-]);
-
-$invitacion = $stmt->fetch();
-
-if (!$invitacion) {
-    exit('Invitación no válida.');
-}
-
-if ($invitacion['usado']) {
-    exit('Esta invitación ya fue utilizada.');
-}
-
-if (strtotime($invitacion['expira_en']) < time()) {
-    exit('Esta invitación ha expirado.');
-}
-
 $error = '';
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-    $nombre = trim($_POST['nombre'] ?? '');
-    $apellido = trim($_POST['apellido'] ?? '');
-    $username = trim($_POST['username'] ?? '');
-    $password = $_POST['password'] ?? '';
-    $confirmar_password = $_POST['confirmar_password'] ?? '';
-
-    if (
-        $nombre === '' ||
-        $apellido === '' ||
-        $username === '' ||
-        $password === '' ||
-        $confirmar_password === ''
-    ) {
-        $error = 'Debes completar todos los campos.';
-    } elseif ($password !== $confirmar_password) {
-        $error = 'Las contraseñas no coinciden.';
-    } elseif (strlen($password) < 8) {
-        $error = 'La contraseña debe tener al menos 8 caracteres.';
-    }
-    else {
-
-    $stmt = $pdo->prepare(
-        'SELECT id
-         FROM usuarios
-         WHERE rut = :rut OR username = :username
-         LIMIT 1'
-    );
-
-    $stmt->execute([
-        ':rut' => $invitacion['rut'],
-        ':username' => $username
-    ]);
-
-    if ($stmt->fetch()) {
-        $error = 'El RUT o nombre de usuario ya está registrado.';
+$invitacion = false;
+$metodo = $_SERVER['REQUEST_METHOD'];
+if (!in_array($metodo, ['GET', 'POST'], true)) {
+    header('Allow: GET, POST'); http_response_code(405); $error = 'Método no permitido.';
+} else {
+    try {
+        if (!isset($pdo) || !($pdo instanceof PDO)) { require __DIR__ . '/config/conexion.php'; }
+        if ($metodo === 'GET') {
+            $token = $_GET['token'] ?? null;
+            if (!tokenActivacionValido($token)) { throw new ErrorActivacion(400, 'Invitación no válida.'); }
+            $hash = hash('sha256', $token);
+            $invitacion = consultarInvitacionActivacion($pdo, $hash);
+            $_SESSION['activacion_cuenta'] = ['hash' => $hash, 'csrf' => bin2hex(random_bytes(32))];
+        } else {
+            $estado = $_SESSION['activacion_cuenta'] ?? null;
+            if (!is_array($estado) || !is_string($estado['hash'] ?? null) || !tokenActivacionValido($estado['hash'])
+                || !is_string($estado['csrf'] ?? null) || !is_string($_POST['csrf_token'] ?? null)
+                || !hash_equals($estado['csrf'], $_POST['csrf_token'])) {
+                throw new ErrorActivacion(403, 'Solicitud no válida. Vuelve a abrir el enlace de invitación.');
+            }
+            $invitacion = consultarInvitacionActivacion($pdo, $estado['hash']);
+            activarInvitacion($pdo, $estado['hash'], $_POST);
+            unset($_SESSION['activacion_cuenta']);
+            header('Location: login.php', true, 303);
+            exit;
+        }
+    } catch (ErrorActivacion $e) {
+        http_response_code($e->estadoHttp);
+        $error = $e->getMessage();
+    } catch (Throwable $e) {
+        http_response_code(500);
+        $error = 'No se pudo activar la cuenta. Inténtalo nuevamente.';
     }
 }
-}
-
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -122,13 +81,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <?php endif; ?>
 
-            <form method="POST">
+            <?php if ($invitacion): ?>
+            <form method="POST" action="activar_cuenta.php">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['activacion_cuenta']['csrf'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
                 <label for="nombre">Nombre</label>
 
                 <input
                     type="text"
                     id="nombre"
                     name="nombre"
+                    maxlength="120"
                     placeholder="Ingresa tu nombre"
                     required>
 
@@ -138,13 +100,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     type="text"
                     id="apellido"
                     name="apellido"
+                    maxlength="120"
                     placeholder="Ingresa tu apellido"
                     required>
 
-                <label>Correo electrónico</label>
+                <label for="email">Correo electrónico</label>
 
                 <input
                     type="email"
+                    id="email"
                     value="<?= htmlspecialchars($invitacion['email'], ENT_QUOTES, 'UTF-8') ?>"
                     disabled>
 
@@ -152,6 +116,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 <input
                     type="text"
+                    id="username"
                     value="<?= htmlspecialchars($invitacion['username'], ENT_QUOTES, 'UTF-8') ?>"
                     disabled>
 
@@ -176,6 +141,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <button type="submit">Crear cuenta</button>
 
             </form>
+            <?php else: ?>
+                <p><a href="login.php">Volver al inicio de sesión</a></p>
+            <?php endif; ?>
 
         </div>
 
