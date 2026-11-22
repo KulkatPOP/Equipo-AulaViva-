@@ -67,14 +67,14 @@ try {
     <?php else: ?>
         <?php foreach ($rendimiento as $aula): ?>
             <section class="curso apoderado-asignatura">
-                <h2><?= escaparApoderados($aula['asignatura']) ?></h2>
-                <p><?= escaparApoderados($aula['nombre']) ?></p>
-                <p><strong>Promedio actual:</strong> <?= $aula['promedio'] === null ? 'Sin calificaciones' : escaparApoderados(str_replace('.', ',', (string) $aula['promedio'])) ?></p>
+                <h2><?= htmlspecialchars(escaparApoderados($aula['asignatura']), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8', false) ?></h2>
+                <p><?= htmlspecialchars(escaparApoderados($aula['nombre']), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8', false) ?></p>
+                <p><strong>Promedio actual:</strong> <?= htmlspecialchars($aula['promedio'] === null ? 'Sin calificaciones' : escaparApoderados(str_replace('.', ',', (string) $aula['promedio'])), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8', false) ?></p>
                 <?php if ($aula['evaluaciones']): ?>
                     <h3>Últimas evaluaciones calificadas</h3>
                     <ul class="apoderado-evaluaciones">
                         <?php foreach ($aula['evaluaciones'] as $evaluacion): ?>
-                            <li><strong><?= escaparApoderados($evaluacion['titulo']) ?></strong><span>Nota: <?= escaparApoderados(str_replace('.', ',', (string) $evaluacion['calificacion'])) ?></span><span>Fecha de entrega: <?= escaparApoderados(formatearFechaApoderados($evaluacion['fecha_entrega'])) ?></span></li>
+                            <li><strong><?= htmlspecialchars(escaparApoderados($evaluacion['titulo']), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8', false) ?></strong><span>Nota: <?= htmlspecialchars(escaparApoderados(str_replace('.', ',', (string) $evaluacion['calificacion'])), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8', false) ?></span><span>Fecha de entrega: <?= htmlspecialchars(escaparApoderados(formatearFechaApoderados($evaluacion['fecha_entrega'])), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8', false) ?></span></li>
                         <?php endforeach; ?>
                     </ul>
                 <?php endif; ?>
