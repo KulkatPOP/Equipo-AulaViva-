@@ -72,6 +72,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (
                 $destino = match ($usuario['rol']) {
                     'profesor' => 'mis_aulas.php',
                     'alumno' => 'mis_cursos.php',
+                    'apoderado' => 'panel_apoderado.php',
+                    'admin' => 'vinculos_apoderado.php',
                     default => 'index.html',
                 };
                 header('Location: ' . $destino);

@@ -10,7 +10,7 @@ declare(strict_types=1);
  */
 function verificarPermisoRol(string $rol, ?string $rolUsuario): ?int
 {
-    $rolesPermitidos = ['alumno', 'profesor', 'admin'];
+    $rolesPermitidos = ['alumno', 'profesor', 'admin', 'apoderado'];
 
     if (!in_array($rol, $rolesPermitidos, true)) {
         return 500;
