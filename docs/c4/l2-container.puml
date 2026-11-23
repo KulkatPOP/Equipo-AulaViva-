@@ -3,7 +3,7 @@
 
 LAYOUT_WITH_LEGEND()
 
-title AulaViva - Contenedores logicos (C4 L2) - Implementacion en main f908f01
+title AulaViva - Contenedores logicos (C4 L2)
 
 Person(usuario, "Usuario", "Estudiante, profesor, apoderado o administrador.")
 System_Ext(ollama, "Ollama", "nomic-embed-text: embeddings de 768 dimensiones. qwen3:1.7b: generacion controlada, think=false.")
