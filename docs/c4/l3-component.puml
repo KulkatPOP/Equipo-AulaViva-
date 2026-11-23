@@ -1,0 +1,39 @@
+@startuml
+title AulaViva — C4 L3: Componentes de la API PHP (main)
+left to right direction
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam componentStyle rectangle
+skinparam packageStyle rectangle
+skinparam defaultFontName Arial
+skinparam ArrowColor #52677C
+skinparam component { BackgroundColor #DDEEFF; BorderColor #2468A0; FontColor #12385A }
+rectangle "Interfaz web AulaViva\n(cliente HTTP)" as web #E9F1FA
+package "Backend PHP — API REST (Apache)" {
+ component "Autenticación / login\napi/v1/auth/login/index.php" as auth
+ component "Gestión de aulas\napi/v1/aulas/index.php" as aulas
+ component "Detalle y alumnos\napi/v1/aulas/{detalle,alumnos}/index.php" as detalle
+ component "Invitaciones\napi/v1/invitaciones/index.php" as invit
+ component "Helpers API y permisos\napi/v1/_helpers/api.php" as helper
+ component "Conexión PDO\nconfig/conexion.php" as pdo
+}
+database "Base de datos SQL\n(motor según configuración)" as db
+web --> auth : Login HTTP/JSON
+web --> aulas : Consulta HTTP/JSON
+web --> detalle : Consulta HTTP/JSON
+web --> invit : Solicitud HTTP/JSON
+auth ..> helper : require_once
+aulas ..> helper : require_once
+detalle ..> helper : require_once
+invit ..> helper : require_once
+auth --> pdo : require_once / SQL
+aulas --> pdo : require_once / SQL
+detalle --> pdo : require_once / SQL
+invit --> pdo : require_once / SQL
+pdo --> db : PDO / SQL
+note bottom of helper
+  Verificación de rol mediante sesión PHP.
+  Las rutas representan módulos lógicos,
+  no microservicios independientes.
+end note
+@enduml
