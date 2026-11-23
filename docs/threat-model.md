@@ -15,10 +15,10 @@ Se analiza el flujo de emisión de invitaciones desde `POST /api/v1/invitaciones
 
 | Categoría | Amenaza en AulaViva | Control existente o aplicado en S09 | Mitigación y verificación pendientes |
 | --- | --- | --- | --- |
-| S — Suplantación | Una persona usa una sesión robada para emitir invitaciones o presenta un enlace que recibió por error. | La API exige una sesión de profesor. El token es aleatorio, se guarda como hash y vence en 24 horas. | Verificar HTTPS y los atributos `Secure`, `HttpOnly` y `SameSite` de la cookie de la API. Probar el rechazo de tokens vencidos. |
-| T — Manipulación | Se intenta alterar una consulta SQL, cambiar el colegio o repetir una solicitud para crear registros duplicados. | La API obtiene el colegio desde la sesión, usa parámetros PDO y busca la clave de idempotencia por colegio. | Verificar en base de datos la unicidad de la clave por colegio y probar dos solicitudes simultáneas. |
+| S — Suplantación | Una persona usa una sesión robada para emitir invitaciones o presenta un enlace que recibió por error. | La API exige una sesión de profesor. El token es aleatorio, se guarda como hash y vence en 24 horas. | Existen pruebas de token vencido en `tests/ActivacionPostgresTest.php`; su presencia no acredita su ejecución en un entorno concreto. La comprobación externa de HTTPS y de los atributos `Secure`, `HttpOnly` y `SameSite` de la cookie de la API sigue pendiente. |
+| T — Manipulación | Se intenta alterar una consulta SQL, cambiar el colegio o repetir una solicitud para crear registros duplicados. | La API obtiene el colegio desde la sesión, usa parámetros PDO y busca la clave de idempotencia por colegio. `migrations/006_invitaciones.sql` define `UNIQUE (colegio_id, idempotency_key)` para claves no nulas. | Comprobar la restricción en el esquema del entorno y probar solicitudes de creación simultáneas. La restricción UNIQUE protege la unicidad, pero no constituye por sí sola una prueba de concurrencia de creación; las pruebas de activación concurrente cubren otro flujo. |
 | R — Repudio | Un profesor niega haber emitido una invitación y el equipo no puede atribuir la acción. | La respuesta indica si se reutilizó una solicitud previa. | Registrar el usuario emisor, el colegio, el ID de invitación y el resultado. Probar que cada emisión se pueda rastrear sin registrar el token. |
-| I — Divulgación | El enlace con el token queda expuesto en el historial, los registros o la cabecera `Referer`. | La base de datos guarda el hash del token. La respuesta a un reintento no vuelve a incluir el enlace. | Evitar registrar el token en las URL de acceso y aplicar `Referrer-Policy: no-referrer` en la página de activación. |
+| I — Divulgación | El enlace con el token queda expuesto en el historial, los registros o la cabecera `Referer`. | La base de datos guarda el hash del token. La respuesta a un reintento no vuelve a incluir el enlace. `deploy/security.conf` configura el log combined de Apache sin query ni Referer y `Referrer-Policy: no-referrer` para la página de activación. | Comprobar la configuración efectiva y los registros de proxies, ingress y demás sistemas externos. La configuración Apache versionada no demuestra ausencia de filtración en esos sistemas. |
 | D — Denegación de servicio | Un usuario satura la API enviando muchas solicitudes de invitación. | La API valida la clave de idempotencia y rechaza duplicados activos. | Definir un límite por usuario y colegio. Probar que, al superarlo, la API responda `429`. |
 | E — Elevación de privilegios | Un usuario intenta emitir invitaciones con un rol no autorizado o invocar el generador de prueba desde la web. | La API restringe la emisión a profesores y valida los roles admitidos. En S09, el generador de prueba devuelve `404` por HTTP. | Confirmar quién puede invitar a otros profesores y probar el rechazo de solicitudes hechas por alumnos o desde otro colegio. |
 
@@ -49,6 +49,13 @@ debe redactar estos valores antes de desplegar.
 
 `migrations/006_invitaciones.sql` crea solo la tabla que ya usa el contrato de
 invitaciones. No ejecutar sobre una tabla existente ni automáticamente al arrancar.
-La inspección de DEV detectó su ausencia; no se aplicó allí. Para instalarla en un
-entorno autorizado: `psql -X -v ON_ERROR_STOP=1 -f migrations/006_invitaciones.sql`.
+Durante la inspección inicial de DEV se detectó su ausencia y no se aplicó en
+aquella etapa. Posteriormente se confirmó su aplicación en DEV durante la
+validación funcional de invitaciones/activación; es evidencia posterior comunicada,
+no una nueva comprobación de la base en esta revisión. Para instalarla en un
+entorno autorizado donde la tabla aún no exista: `psql -X -v ON_ERROR_STOP=1 -f migrations/006_invitaciones.sql`.
 No se crean aulas, matrículas o vínculos por activar una cuenta.
+
+## Referencias de controles y alcance
+
+Las herramientas y gates DevSecOps se describen en [S08 — CI y quality gates](s08-ci-quality-gates.md). La infraestructura, las observaciones DEV y los límites de enforcement se registran en [S07 — Reconciliación de infraestructura](infra/s07-reconciliacion.md). La existencia de una configuración, workflow o política no acredita su ejecución ni enforcement en un entorno concreto.
