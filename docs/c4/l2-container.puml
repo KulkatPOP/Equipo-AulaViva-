@@ -18,6 +18,7 @@ System_Boundary(producto, "AulaViva") {
 }
 
 Rel(usuario, navegador, "Utiliza la interfaz")
+Rel(navegador, usuario, "Muestra paginas, resultados y mensajes")
 Rel(navegador, web, "Paginas, formularios y solicitudes JSON; cookie de sesion", "HTTP en DEV; HTTPS cuando se aprovisione TLS")
 Rel(web, db, "Consulta y modifica datos autorizados; sirve PDF tras comprobar acceso", "PDO PostgreSQL / TCP")
 Rel(web, ollama, "Embeddings de preguntas y generacion con fragmentos autorizados", "HTTP/JSON")
