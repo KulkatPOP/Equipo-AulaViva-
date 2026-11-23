@@ -12,28 +12,34 @@ rectangle "Interfaz web AulaViva\n(cliente HTTP)" as web #E9F1FA
 package "Backend PHP — API REST (Apache)" {
  component "Autenticación / login\napi/v1/auth/login/index.php" as auth
  component "Gestión de aulas\napi/v1/aulas/index.php" as aulas
- component "Detalle y alumnos\napi/v1/aulas/{detalle,alumnos}/index.php" as detalle
+ component "Detalle del aula\napi/v1/aulas/detalle/index.php" as detalle
+ component "Alumnos del aula\napi/v1/aulas/alumnos/index.php" as alumnos
  component "Invitaciones\napi/v1/invitaciones/index.php" as invit
  component "Helpers API y permisos\napi/v1/_helpers/api.php" as helper
  component "Conexión PDO\nconfig/conexion.php" as pdo
 }
-database "Base de datos SQL\n(motor según configuración)" as db
+database "PostgreSQL + pgvector\n(datos académicos)" as db
 web --> auth : Login HTTP/JSON
 web --> aulas : Consulta HTTP/JSON
-web --> detalle : Consulta HTTP/JSON
+web --> detalle : Detalle HTTP/JSON
+web --> alumnos : Alumnos HTTP/JSON
 web --> invit : Solicitud HTTP/JSON
 auth ..> helper : require_once
 aulas ..> helper : require_once
 detalle ..> helper : require_once
+alumnos ..> helper : require_once
 invit ..> helper : require_once
 auth --> pdo : require_once / SQL
 aulas --> pdo : require_once / SQL
 detalle --> pdo : require_once / SQL
+alumnos --> pdo : require_once / SQL
 invit --> pdo : require_once / SQL
 pdo --> db : PDO / SQL
 note bottom of helper
   Verificación de rol mediante sesión PHP.
-  Las rutas representan módulos lógicos,
-  no microservicios independientes.
+  Detalle y alumnos son módulos separados
+  del mismo backend PHP, no microservicios.
+  Este L3 representa solo el subconjunto
+  de endpoints REST mostrado, no toda AulaViva.
 end note
 @enduml
