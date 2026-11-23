@@ -7,3 +7,6 @@
 
 # Contraseña ficticia del usuario de una prueba automatizada.
 7f9893788c0224df0c385913d57941b1074e76cd:tests/LoginHttpTest.php:generic-api-key:111
+
+# SHA público de una imagen Docker, no una credencial; excepción específica al hallazgo de generic-api-key.
+c436fdf834228e7d41e6f29bef2bb4a5417fb0df:docs/arch/deployment.md:generic-api-key:42
