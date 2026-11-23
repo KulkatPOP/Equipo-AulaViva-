@@ -244,24 +244,30 @@ jobs:
       - name: Actualizar imagen de DEV
         working-directory: gitops
         env:
-          IMAGE_TAG: ${{ github.sha }}
+          IMAGE_DIGEST: ${{ needs.build-and-push.outputs.image-digest }}
         run: |
           python3 - <<'PY'
           from pathlib import Path
           import os
           import re
 
+          digest = os.environ["IMAGE_DIGEST"]
+          if not re.fullmatch(r"sha256:[0-9a-f]{64}", digest):
+              raise SystemExit("Digest de imagen ausente o invalido")
+
           path = Path("overlays/dev/kustomization.yaml")
           content = path.read_text()
 
           updated, count = re.subn(
-              r"(?m)^(\s*newTag:\s*).*$",
-              lambda match: match.group(1) + os.environ["IMAGE_TAG"],
+              r"(?m)(?P<entry>^(?P<indent>[ \t]*)newName:[ \t]*"
+              r"ghcr\.io/kulkatpop/aulaviva-api[ \t]*\r?\n)"
+              r"(?P=indent)(?:newTag|digest):[^\r\n]*$",
+              lambda match: match.group("entry") + match.group("indent") + "digest: " + digest,
               content,
           )
 
           if count != 1:
-              raise SystemExit("No se encontro exactamente un newTag en DEV")
+              raise SystemExit("No se encontro exactamente una referencia de imagen AulaViva en DEV")
 
           path.write_text(updated)
           PY
@@ -278,7 +284,7 @@ jobs:
           body: |
             Promocion automatica generada desde AulaViva S08.
 
-            Imagen: ghcr.io/kulkatpop/aulaviva-api:${{ github.sha }}
+            Imagen: ghcr.io/kulkatpop/aulaviva-api@${{ needs.build-and-push.outputs.image-digest }}
 
             Entorno: DEV
           base: main
