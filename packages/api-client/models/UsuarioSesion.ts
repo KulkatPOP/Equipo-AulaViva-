@@ -48,6 +48,8 @@ export interface UsuarioSesion {
 export const UsuarioSesionRolEnum = {
     Alumno: 'alumno',
     Profesor: 'profesor',
+    Admin: 'admin',
+    Apoderado: 'apoderado',
 } as const;
 export type UsuarioSesionRolEnum = typeof UsuarioSesionRolEnum[keyof typeof UsuarioSesionRolEnum];
 

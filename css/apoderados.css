@@ -1,0 +1,30 @@
+.panel-apoderado header { grid-template-columns: minmax(0, 1fr) auto; gap: 12px; padding-block: 12px; }
+.panel-apoderado header .panel-identidad { grid-column: 1; grid-row: 2; justify-self: start; text-align: start; }
+.panel-apoderado header nav { grid-column: 2; grid-row: 1 / 3; }
+.panel-apoderado header .apoderado-selector { grid-column: 1 / -1; grid-row: 3; color: #eaf4ff; }
+.panel-apoderado select { color: #0b192e; background: white; }
+.panel-apoderado .apoderado-selector,
+.panel-apoderado .apoderado-formulario { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem; }
+.panel-apoderado .apoderado-selector { min-width: 0; max-width: 100%; }
+.panel-apoderado select { font: inherit; padding: .6rem; border: 1px solid #737373; border-radius: .5rem; min-width: 0; max-width: 100%; }
+.panel-apoderado .apoderado-formulario { flex-direction: column; align-items: stretch; max-width: 36rem; }
+.panel-apoderado .apoderado-asignatura { margin-block: 1rem; overflow-wrap: anywhere; }
+.panel-apoderado .apoderado-evaluaciones { padding-left: 1.25rem; }
+.panel-apoderado .apoderado-evaluaciones li { display: flex; flex-wrap: wrap; gap: .5rem 1rem; margin-block: 1rem; }
+.panel-apoderado :is(a, button, select):focus-visible { outline: 3px solid #174c39; outline-offset: 3px; }
+@media (max-width: 600px) {
+    .panel-apoderado .apoderado-selector { width: 100%; flex-direction: column; align-items: stretch; }
+    .panel-apoderado .apoderado-evaluaciones li { flex-direction: column; }
+}
+@media (max-width: 600px) {
+    .panel-apoderado header { grid-template-columns: minmax(0, 1fr); }
+    .panel-apoderado header nav { grid-column: 1; grid-row: 4; }
+}
+.panel-apoderado .apoderado-vinculos { list-style: none; padding: 0; display: grid; gap: 1rem; }
+.panel-apoderado .apoderado-vinculo { overflow-wrap: anywhere; }
+.panel-apoderado .apoderado-vinculo dl { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; margin: 0 0 1rem; }
+.panel-apoderado .apoderado-vinculo dt { font-weight: 600; }
+.panel-apoderado .apoderado-vinculo dd { margin: .25rem 0 0; }
+@media (max-width: 600px) {
+    .panel-apoderado .apoderado-vinculo dl { grid-template-columns: minmax(0, 1fr); }
+}

@@ -348,6 +348,8 @@ components:
           enum:
             - alumno
             - profesor
+            - admin
+            - apoderado
           example: profesor
 
     LoginResponse:

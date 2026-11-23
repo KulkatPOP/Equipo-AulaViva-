@@ -25,8 +25,13 @@ final class OllamaAIProvider implements AIProvider
     public function __construct(private string $url, private string $modelo)
     {
         $partes = parse_url($url);
+        $hostDockerPermitido = getenv('OLLAMA_ALLOW_DOCKER_HOST') === 'true'
+            && ($partes['host'] ?? '') === 'host.docker.internal'
+            && ($partes['scheme'] ?? '') === 'http'
+            && ($partes['port'] ?? null) === 11434;
         if (!is_array($partes) || !in_array($partes['scheme'] ?? '', ['http', 'https'], true)
-            || !in_array($partes['host'] ?? '', ['127.0.0.1', 'localhost', '[::1]'], true)
+            || (!in_array($partes['host'] ?? '', ['127.0.0.1', 'localhost', '[::1]'], true)
+                && !$hostDockerPermitido)
             || array_intersect_key($partes, array_flip(['user', 'pass', 'query', 'fragment']))
             || preg_match('/(?:^|[-:])cloud(?:$|[-:])/i', $modelo)
             || !preg_match('/\A[a-zA-Z0-9][a-zA-Z0-9_.:-]{0,80}\z/', $modelo)) {

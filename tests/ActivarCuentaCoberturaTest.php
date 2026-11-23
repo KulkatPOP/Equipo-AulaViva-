@@ -34,10 +34,18 @@ final class ActivarCuentaCoberturaTest extends TestCase
         $pdo->exec(
             'CREATE TABLE usuarios (
                 id INTEGER PRIMARY KEY,
-                rut TEXT,
-                username TEXT
+                colegio_id INTEGER NOT NULL,
+                rut TEXT UNIQUE,
+                username TEXT UNIQUE,
+                nombre TEXT,
+                apellido TEXT,
+                password_hash TEXT,
+                rol TEXT,
+                activo INTEGER NOT NULL DEFAULT 1
             )'
         );
+
+        $pdo->exec("INSERT INTO usuarios (id,colegio_id,rut,username,nombre,apellido,password_hash,rol,activo) VALUES (10,1,'docente-test','docente-test','Docente','Prueba','fixture','profesor',1)");
 
         $stmt = $pdo->prepare(
             'INSERT INTO invitaciones
@@ -54,7 +62,7 @@ final class ActivarCuentaCoberturaTest extends TestCase
             ':username' => 'alumno1',
             ':rol' => 'alumno',
             ':expira_en' => date('Y-m-d H:i:s', time() + 86400),
-            ':token_hash' => hash('sha256', 'token-prueba')
+            ':token_hash' => hash('sha256', str_repeat('a', 64))
         ]);
 
         return $pdo;
@@ -65,8 +73,10 @@ final class ActivarCuentaCoberturaTest extends TestCase
         array $datos = []
     ): string {
         $_SERVER['REQUEST_METHOD'] = $metodo;
-        $_GET['token'] = 'token-prueba';
-        $_POST = $datos;
+        $_GET['token'] = str_repeat('a', 64);
+        if (session_status() !== PHP_SESSION_ACTIVE) { session_start(); }
+        $_SESSION['activacion_cuenta'] = ['hash' => hash('sha256', str_repeat('a', 64)), 'csrf' => 'csrf-prueba'];
+        $_POST = $datos + ['csrf_token' => 'csrf-prueba'];
 
         $pdo = $this->prepararBaseDeDatos();
 
@@ -149,24 +159,21 @@ final class ActivarCuentaCoberturaTest extends TestCase
 
     #[RunInSeparateProcess]
     #[PreserveGlobalState(false)]
-    public function testAceptaDatosValidosSinErrorDeFormulario(): void
+    public function testCreaUsuarioYConsumeInvitacionConDatosValidos(): void
     {
-        $html = $this->ejecutarPagina('POST', [
-            'nombre' => 'Juan',
-            'apellido' => 'Pérez',
-            'username' => 'juan1',
-            'password' => 'Password123',
-            'confirmar_password' => 'Password123'
+        require_once __DIR__ . '/../config/activacion.php';
+        $pdo = $this->prepararBaseDeDatos();
+        $id = activarInvitacion($pdo, hash('sha256', str_repeat('a', 64)), [
+            'nombre' => 'Juan', 'apellido' => 'Pérez',
+            'username' => 'no-confiar', 'colegio_id' => 999, 'rol' => 'admin',
+            'password' => 'Password123', 'confirmar_password' => 'Password123'
         ]);
-
-        $this->assertStringContainsString(
-            'Crear cuenta',
-            $html
-        );
-
-        $this->assertStringNotContainsString(
-            '<p class="error">',
-            $html
-        );
+        $usuario = $pdo->query('SELECT * FROM usuarios WHERE id=' . (int) $id)->fetch(PDO::FETCH_ASSOC);
+        self::assertSame('alumno1', $usuario['username']);
+        self::assertSame('alumno', $usuario['rol']);
+        self::assertSame(1, (int) $usuario['colegio_id']);
+        self::assertTrue(password_verify('Password123', $usuario['password_hash']));
+        self::assertNotSame('Password123', $usuario['password_hash']);
+        self::assertSame(1, (int) $pdo->query('SELECT usado FROM invitaciones WHERE id=1')->fetchColumn());
     }
 }
