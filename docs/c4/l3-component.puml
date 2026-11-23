@@ -7,7 +7,11 @@ skinparam componentStyle rectangle
 skinparam packageStyle rectangle
 skinparam defaultFontName Arial
 skinparam ArrowColor #52677C
-skinparam component { BackgroundColor #DDEEFF; BorderColor #2468A0; FontColor #12385A }
+skinparam component {
+    BackgroundColor #DDEEFF
+    BorderColor #2468A0
+    FontColor #12385A
+}
 rectangle "Interfaz web AulaViva\n(cliente HTTP)" as web #E9F1FA
 package "Backend PHP — API REST (Apache)" {
  component "Autenticación / login\napi/v1/auth/login/index.php" as auth
