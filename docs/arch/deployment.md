@@ -6,6 +6,8 @@ Describe la arquitectura de `main = 1882ac5` y el despliegue DEV observado duran
 
 Los datos de DEV representan una observación del entorno, no una garantía permanente. Los cambios documentales de `main` no actualizan automáticamente la imagen desplegada.
 
+La [reconciliación S07](../infra/s07-reconciliacion.md) registra la revisión del 23 de noviembre de 2026, las brechas de salud y seguridad y la inconsistencia del renderizado PROD. Renderizar un overlay no demuestra su despliegue.
+
 ## Arquitectura lógica
 
 AulaViva es un monolito PHP con páginas renderizadas en servidor y una API REST dentro del mismo código de aplicación.
