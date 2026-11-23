@@ -10,3 +10,6 @@
 
 # SHA público de una imagen Docker, no una credencial; excepción específica al hallazgo de generic-api-key.
 c436fdf834228e7d41e6f29bef2bb4a5417fb0df:docs/arch/deployment.md:generic-api-key:42
+
+# Idempotency-Key ficticio de documentación, no una credencial; excepción limitada a este commit, archivo, regla y línea.
+f1c4c93a125744e40b06dbba3ed01629513903a2:api/examples/invitaciones.http:generic-api-key:10
