@@ -1,6 +1,6 @@
 # AutenticacinApi
 
-All URIs are relative to *http://localhost/Aula%20viva/api/v1*
+All URIs are relative to */api/v1*
 
 | Method | HTTP request | Description |
 |------------- | ------------- | -------------|
@@ -14,7 +14,7 @@ All URIs are relative to *http://localhost/Aula%20viva/api/v1*
 
 Iniciar sesión
 
-Autentica a un usuario mediante su identificador y contraseña e inicia una sesión mediante una cookie PHPSESSID. 
+Autentica a un usuario mediante su identificador y contraseña e inicia una sesión mediante una cookie PHPSESSID. Acepta RUT o username. Este handler JSON no recibe token CSRF; no equivale al formulario de login.php.
 
 ### Example
 

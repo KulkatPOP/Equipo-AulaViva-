@@ -11,7 +11,7 @@ Name | Type
 `rut` | string
 `username` | string
 `rol` | string
-`expiraEn` | Date
+`expiraEn` | string
 `urlActivacion` | string
 
 ## Example
@@ -26,7 +26,7 @@ const example = {
   "rut": 55555555-5,
   "username": alumno5,
   "rol": alumno,
-  "expiraEn": 2026-10-02T00:19:15Z,
+  "expiraEn": 2026-10-02 00:19:15+00,
   "urlActivacion": /activar_cuenta.php?token=token-de-ejemplo,
 } satisfies Invitacion
 

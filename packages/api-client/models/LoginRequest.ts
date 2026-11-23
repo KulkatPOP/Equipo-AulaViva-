@@ -19,6 +19,7 @@ import { mapValues } from '../runtime';
  * @interface LoginRequest
  */
 export interface LoginRequest {
+    [key: string]: any | any;
     /**
      * 
      */
@@ -48,6 +49,7 @@ export function LoginRequestFromJSONTyped(json: any, ignoreDiscriminator: boolea
     }
     return {
         
+            ...json,
         'identificador': json['identificador'],
         'password': json['password'],
     };
@@ -64,6 +66,7 @@ export function LoginRequestToJSONTyped(value?: LoginRequest | null, ignoreDiscr
 
     return {
         
+            ...value,
         'identificador': value['identificador'],
         'password': value['password'],
     };
