@@ -1,5 +1,12 @@
-@baseUrl = http://localhost/Aula%20viva/api/v1
+# Ejemplos para REST Client o un cliente HTTP equivalente.
+# Cambia solo esta base por el origen de tu despliegue (incluido un prefijo si existe).
+@baseUrl = http://localhost:8082/api/v1
+# Ejecuta primero login.http con una cuenta de prueba autorizada.
+# Conserva la cookie PHPSESSID de Set-Cookie y envíala en las solicitudes siguientes.
+# Si el cliente no conserva cookies automáticamente, utiliza su cookie jar.
 
+# Todas estas operaciones requieren una sesión de profesor.
+# Los IDs deben corresponder a aulas asignadas de su colegio.
 ### Obtener aulas del profesor
 GET {{baseUrl}}/aulas/
 Accept: application/json
@@ -12,15 +19,15 @@ Accept: application/json
 GET {{baseUrl}}/aulas/1/alumnos
 Accept: application/json
 
-### Prueba RFC 7807 - método no permitido
+### Método no permitido: 405
 POST {{baseUrl}}/aulas/
 Content-Type: application/json
 Accept: application/problem+json
 
-### Prueba RFC 7807 - ID de aula inválido
+### ID inválido: 400
 GET {{baseUrl}}/aulas/0
 Accept: application/problem+json
 
-### Prueba RFC 7807 - ID inválido en alumnos
+### ID inválido en alumnos: 400
 GET {{baseUrl}}/aulas/0/alumnos
 Accept: application/problem+json

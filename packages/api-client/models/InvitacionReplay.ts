@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-import { mapValues, parseDate, parseDateTime, serializeDate, serializeDateTime } from '../runtime';
+import { mapValues } from '../runtime';
 /**
  * 
  * @export
@@ -40,9 +40,9 @@ export interface InvitacionReplay {
      */
     rol: InvitacionReplayRolEnum;
     /**
-     * 
+     * Fecha de expiración devuelta por PostgreSQL; no se garantiza formato RFC 3339.
      */
-    expiraEn: Date;
+    expiraEn: string;
 }
 
 
@@ -84,7 +84,7 @@ export function InvitacionReplayFromJSONTyped(json: any, ignoreDiscriminator: bo
         'rut': json['rut'],
         'username': json['username'],
         'rol': json['rol'],
-        'expiraEn': (json['expira_en'] == null ? json['expira_en'] : parseDateTime(json['expira_en'])),
+        'expiraEn': json['expira_en'],
     };
 }
 
@@ -104,7 +104,7 @@ export function InvitacionReplayToJSONTyped(value?: InvitacionReplay | null, ign
         'rut': value['rut'],
         'username': value['username'],
         'rol': value['rol'],
-        'expira_en': value['expiraEn'] == null ? value['expiraEn'] : serializeDateTime(value['expiraEn']),
+        'expira_en': value['expiraEn'],
     };
 }
 

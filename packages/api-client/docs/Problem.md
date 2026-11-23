@@ -23,7 +23,7 @@ const example = {
   "title": No autenticado,
   "status": 401,
   "detail": Debes iniciar sesión para utilizar este recurso.,
-  "instance": /Aula%20viva/api/v1/aulas/,
+  "instance": /api/v1/aulas/,
 } satisfies Problem
 
 console.log(example)

@@ -1,6 +1,6 @@
 # InvitacionesApi
 
-All URIs are relative to *http://localhost/Aula%20viva/api/v1*
+All URIs are relative to */api/v1*
 
 | Method | HTTP request | Description |
 |------------- | ------------- | -------------|
@@ -10,11 +10,11 @@ All URIs are relative to *http://localhost/Aula%20viva/api/v1*
 
 ## crearInvitacion
 
-> InvitacionReplayResponse crearInvitacion(idempotencyKey, invitacionRequest)
+> InvitacionResponse | InvitacionReplayResponse crearInvitacion(idempotencyKey, invitacionRequest)
 
 Crear una invitación
 
-Crea una invitación de manera idempotente. Si se repite una solicitud con la misma Idempotency-Key, la API devuelve la invitación creada anteriormente en vez de crear una nueva. 
+Requiere una sesión de profesor. El colegio se obtiene de la sesión, nunca del cuerpo JSON. Idempotency-Key se asocia al colegio. La primera creación devuelve 201 con url_activacion; el token solo se entrega en esa respuesta y se almacena como hash. La invitación vence en 24 horas. Una clave repetida devuelve 200, Idempotent-Replayed y los datos originales, sin token ni url_activacion, aunque el cuerpo del reintento sea diferente. Este handler JSON no implementa el token CSRF de los formularios PHP. Solo permite invitar alumnos o profesores; no crea apoderados ni administradores.
 
 ### Example
 
@@ -34,7 +34,7 @@ async function example() {
   const api = new InvitacionesApi(config);
 
   const body = {
-    // string | Clave única proporcionada por el cliente para evitar que un reintento cree una segunda invitación. 
+    // string | Clave única proporcionada por el cliente para evitar que un reintento cree una segunda invitación. Su ámbito es el colegio de la sesión, no el usuario ni el contenido del cuerpo.
     idempotencyKey: invitacion-alumno5-001,
     // InvitacionRequest
     invitacionRequest: {"email":"alumno5@prueba.cl","rut":"55555555-5","username":"alumno5","rol":"alumno"},
@@ -57,12 +57,12 @@ example().catch(console.error);
 
 | Name | Type | Description  | Notes |
 |------------- | ------------- | ------------- | -------------|
-| **idempotencyKey** | `string` | Clave única proporcionada por el cliente para evitar que un reintento cree una segunda invitación.  | [Defaults to `undefined`] |
+| **idempotencyKey** | `string` | Clave única proporcionada por el cliente para evitar que un reintento cree una segunda invitación. Su ámbito es el colegio de la sesión, no el usuario ni el contenido del cuerpo.  | [Defaults to `undefined`] |
 | **invitacionRequest** | [InvitacionRequest](InvitacionRequest.md) |  | |
 
 ### Return type
 
-[**InvitacionReplayResponse**](InvitacionReplayResponse.md)
+[**InvitacionResponse**](InvitacionResponse.md) (HTTP 201) | [**InvitacionReplayResponse**](InvitacionReplayResponse.md) (HTTP 200)
 
 ### Authorization
 
@@ -77,8 +77,8 @@ example().catch(console.error);
 ### HTTP response details
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
-| **201** | Invitación creada correctamente. |  -  |
-| **200** | Solicitud idempotente repetida. Se devuelve la invitación correspondiente a la operación original.  |  * Idempotent-Replayed - Indica que se reutilizó el resultado anterior. <br>  |
+| **201** | Invitación creada; url_activacion se entrega únicamente en esta respuesta. |  -  |
+| **200** | Solicitud idempotente repetida. Se devuelve la invitación correspondiente a la operación original. No recupera el token ni url_activacion.  |  * Idempotent-Replayed - Indica que se reutilizó el resultado anterior. <br>  |
 | **400** | La solicitud contiene datos inválidos. |  -  |
 | **401** | No existe una sesión autenticada válida. |  -  |
 | **403** | El usuario no tiene permiso para acceder al recurso. |  -  |
