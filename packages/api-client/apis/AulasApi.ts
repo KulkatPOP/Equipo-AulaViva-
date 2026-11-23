@@ -81,7 +81,7 @@ export class AulasApi extends runtime.BaseAPI {
     }
 
     /**
-     * Devuelve los alumnos activos pertenecientes al aula indicada. 
+     * Devuelve los alumnos activos con rol alumno del colegio de la sesión. Requiere profesor autenticado y asignado al aula activa indicada.
      * Obtener los alumnos de un aula
      */
     async obtenerAlumnosAulaRaw(requestParameters: ObtenerAlumnosAulaRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<AlumnosResponse>> {
@@ -92,7 +92,7 @@ export class AulasApi extends runtime.BaseAPI {
     }
 
     /**
-     * Devuelve los alumnos activos pertenecientes al aula indicada. 
+     * Devuelve los alumnos activos con rol alumno del colegio de la sesión. Requiere profesor autenticado y asignado al aula activa indicada.
      * Obtener los alumnos de un aula
      */
     async obtenerAlumnosAula(requestParameters: ObtenerAlumnosAulaRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<AlumnosResponse> {
@@ -128,7 +128,7 @@ export class AulasApi extends runtime.BaseAPI {
     }
 
     /**
-     * Devuelve la información de un aula específica a la que pertenece el profesor autenticado. 
+     * Devuelve la información de un aula específica a la que pertenece el profesor autenticado, del colegio de su sesión. Un aula inexistente o no autorizada produce 403.
      * Obtener un aula
      */
     async obtenerAulaRaw(requestParameters: ObtenerAulaRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<AulaResponse>> {
@@ -139,7 +139,7 @@ export class AulasApi extends runtime.BaseAPI {
     }
 
     /**
-     * Devuelve la información de un aula específica a la que pertenece el profesor autenticado. 
+     * Devuelve la información de un aula específica a la que pertenece el profesor autenticado, del colegio de su sesión. Un aula inexistente o no autorizada produce 403.
      * Obtener un aula
      */
     async obtenerAula(requestParameters: ObtenerAulaRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<AulaResponse> {
@@ -167,7 +167,7 @@ export class AulasApi extends runtime.BaseAPI {
     }
 
     /**
-     * Devuelve las aulas activas asociadas al profesor autenticado. 
+     * Devuelve las aulas activas asociadas al profesor autenticado. Requiere rol profesor; colegio_id se obtiene exclusivamente de la sesión.
      * Obtener las aulas del profesor
      */
     async obtenerAulasRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<AulasResponse>> {
@@ -178,7 +178,7 @@ export class AulasApi extends runtime.BaseAPI {
     }
 
     /**
-     * Devuelve las aulas activas asociadas al profesor autenticado. 
+     * Devuelve las aulas activas asociadas al profesor autenticado. Requiere rol profesor; colegio_id se obtiene exclusivamente de la sesión.
      * Obtener las aulas del profesor
      */
     async obtenerAulas(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<AulasResponse> {

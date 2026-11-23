@@ -1,71 +1,59 @@
-# S08 - DevSecOps Readiness
+# S08 — Estado de preparación DevSecOps
 
-## Objetivo
+## Alcance
 
-Registrar las dependencias y bloqueos identificados antes de implementar
-el pipeline CI/CD y la estrategia GitOps de AulaViva.
+Reconciliación documental contra `main = fa368fe016d38c80e8f386b5eed9ce8435d14f3b`, revisada el 23 de noviembre de 2026. Sustituye los bloqueos de preparación históricos; no integra la rama S08 antigua ni modifica la implementación.
 
-## Estado actual
+**Implementado** significa configuración existente; **observado** requiere una comprobación concreta. Los procedimientos documentados, propuestas y puntos que requieren verificación no se presentan como resultados medidos. No se inspeccionó un run remoto concreto para certificarlo en esta revisión.
 
-La rama S08 parte desde main y actualmente contiene documentación,
-pero las entregas de aplicación e infraestructura de sesiones anteriores
-se encuentran en ramas separadas.
+## IMPLEMENTADO
 
-## Dependencias
+| Capacidad | Fuente |
+|---|---|
+| PHPUnit y cobertura real Clover con umbral del 70 % | `ci.yml`, job quality; `phpunit.xml` |
+| Semgrep y pruebas de reglas | `security.yml`, job sast |
+| SCA y SBOM CycloneDX/SPDX | `security.yml`, job sca |
+| Gitleaks sobre historial completo | `security.yml`, job secrets |
+| Checkov y controles propios | `ci.yml`, job iac-scan |
+| Build y publicación Docker/GHCR condicionados | `ci.yml`, job build-and-push |
+| DAST ZAP en staging temporal | `ci.yml`, job dast |
+| S10: escaneo de imagen, firma y procedencia | `supply-chain.yml`, `scripts/verify_provenance.sh` |
+| Propuesta de promoción GitOps mediante PR | `ci.yml`, job promote |
+| Laboratorio efímero manual de admisión/runtime | `runtime-lab.yml` |
 
-### Aplicación
+Las rutas de workflows son relativas a `.github/workflows/`. Versiones, gates, artefactos y condiciones de omisión se detallan en [quality gates](s08-ci-quality-gates.md), sin duplicarlos aquí.
 
-Se requiere disponer de código ejecutable, dependencias y comandos
-oficiales para lint y pruebas automatizadas.
+## OBSERVADO EN DEV
 
-Responsable:
-Desarrollo / Tech Lead
+La revisión de Argo CD registrada durante la auditoría S08 y la reconciliación S07 comprobó:
 
-### Tests y cobertura
+- Application `aulvaviva-dev`: `Synced / Healthy`.
+- Revisión GitOps `a7a2a7b2d38e31f270311f1dc1e28b3792c439f0`.
+- Sin `syncPolicy.automated` configurado.
 
-Se requiere una suite automatizada que permita medir cobertura y
-cumplir el mínimo del 70%.
+Son observaciones fechadas, no garantía permanente ni prueba de que el último main esté desplegado. El inventario de infraestructura corresponde a [S07](infra/s07-reconciliacion.md).
 
-Responsable:
-QA / Desarrollo
+## REQUIERE VERIFICACIÓN / NO DEMOSTRADO AQUÍ
 
-### Docker
+- Enforcement de firma y procedencia en el namespace DEV: un workflow de firma no demuestra admisión protegida.
+- Rollback realmente ensayado y validado.
+- Vigencia, alcance y permisos efectivos de `GITHUB_TOKEN` y `GITOPS_TOKEN`: solo se revisaron referencias/permisos declarados, no valores de secretos.
+- Ejecución de suites PostgreSQL y consultas Ollama en quality: el job no configura esos servicios; algunas suites se omiten sin DSN.
+- Recorrido educativo autenticado completo en DAST: el staging actual utiliza SQLite temporal y login público.
+- Resultado de una ejecución remota específica de los workflows sobre la base revisada.
 
-Se requiere un Dockerfile funcional y compatible con la aplicación.
+## PROPUESTO / FUTURO
 
-Responsable:
-Responsable S07 / Desarrollo
+1. Ampliar pruebas automatizadas con PostgreSQL/pgvector y, cuando corresponda, Ollama en entornos aislados.
+2. Incorporar generación/compilación TypeScript y pruebas S05 de HTTP 200/201 al CI.
+3. Ampliar DAST con navegación autenticada y datos ficticios controlados.
+4. Validar un procedimiento de rollback GitOps y registrar sus resultados.
+5. Evaluar fortalecimiento del enforcement según los namespaces y límites descritos en S07.
 
-### Kubernetes
+Son ampliaciones de alcance, no fallos críticos declarados ni capacidades ya implementadas. Requieren autorización y pruebas antes de modificar workflows o recursos.
 
-Se requieren manifiestos compatibles con la aplicación y preparados
-para la estrategia GitOps.
+## Responsabilidades y criterio de cierre documental
 
-Responsable:
-Responsable S07 / Infraestructura
+Desarrollo/QA mantiene pruebas y compatibilidad; DevSecOps mantiene gates y evidencia; plataforma administra GitOps y comprueba la reconciliación. La documentación debe separar construir/publicar, proponer promoción, integrar el PR y sincronizar/verificar el entorno.
 
-## Quality Gates S08
-
-El pipeline deberá controlar:
-
-- Lint
-- Tests
-- Cobertura >= 70%
-- SAST con Semgrep
-- Construcción de imagen
-- Publicación de imagen
-- Promoción mediante GitOps
-
-## Bloqueos actuales
-
-- La rama S08 todavía no contiene la aplicación.
-- No existe actualmente una suite automatizada de tests con cobertura.
-- No existe configuración CI/CD.
-- La infraestructura GitOps todavía debe prepararse.
-- La imagen Docker debe ser compatible con el runtime real de AulaViva.
-
-## Criterio para continuar
-
-La implementación completa del pipeline se realizará cuando estén
-disponibles las dependencias necesarias, sin modificar ni reemplazar
-las entregas anteriores de otros integrantes.
+El cierre documental de S08 exige que estas capacidades, límites y condiciones estén descritos sin tests simulados ni resultados inventados. No exige presentar como completadas las ampliaciones anteriores. La decisión de separación y promoción se registra en el [ADR 0005](adr/0005-gitops-strategy.md).

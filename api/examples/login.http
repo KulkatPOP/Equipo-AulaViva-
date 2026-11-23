@@ -1,16 +1,22 @@
-@baseUrl = http://localhost/Aula%20viva/api/v1
+# Ejemplos para REST Client o un cliente HTTP equivalente.
+# Cambia solo esta base por el origen de tu despliegue (incluido un prefijo si existe).
+@baseUrl = http://localhost:8082/api/v1
+# Ejecuta primero login.http con una cuenta de prueba autorizada.
+# Conserva la cookie PHPSESSID de Set-Cookie y envíala en las solicitudes siguientes.
+# Si el cliente no conserva cookies automáticamente, utiliza su cookie jar.
 
-### Iniciar sesión
+# Sustituye estos marcadores localmente; no guardes credenciales reales en Git.
+### Iniciar sesión JSON (sin token CSRF de formulario)
 POST {{baseUrl}}/auth/login/
 Content-Type: application/json
 Accept: application/json
 
 {
-  "identificador": "profesor1",
-  "password": "TU_PASSWORD_DE_PRUEBA"
+  "identificador": "USUARIO_DE_PRUEBA",
+  "password": "CONTRASENA_DE_PRUEBA"
 }
 
-### Prueba RFC 7807 - datos incompletos
+### Datos incompletos: 400 application/problem+json
 POST {{baseUrl}}/auth/login/
 Content-Type: application/json
 Accept: application/problem+json

@@ -1,25 +1,48 @@
-@baseUrl = http://localhost/Aula%20viva/api/v1
+# Ejemplos para REST Client o un cliente HTTP equivalente.
+# Cambia solo esta base por el origen de tu despliegue (incluido un prefijo si existe).
+@baseUrl = http://localhost:8082/api/v1
+# Ejecuta primero login.http con una cuenta de prueba autorizada.
+# Conserva la cookie PHPSESSID de Set-Cookie y envíala en las solicitudes siguientes.
+# Si el cliente no conserva cookies automáticamente, utiliza su cookie jar.
 
-### Crear invitación
+# Requiere sesión de profesor. El colegio procede de la sesión.
+# Usa identidades ficticias que no existan y cambia la clave para una operación nueva.
+@idempotencyKey = ejemplo-invitacion-001
+
+### Primera creación: 201; conservar url_activacion de esta respuesta
 POST {{baseUrl}}/invitaciones/
 Content-Type: application/json
 Accept: application/json
-Idempotency-Key: ejemplo-invitacion-001
+Idempotency-Key: {{idempotencyKey}}
 
 {
-  "email": "alumno-ejemplo@prueba.cl",
+  "email": "alumno-ejemplo@example.com",
   "rut": "66666666-6",
   "username": "alumno-ejemplo",
   "rol": "alumno"
 }
 
-### Prueba RFC 7807 - falta Idempotency-Key
+### Replay: 200, Idempotent-Replayed: true; sin token ni url_activacion
+# La misma clave en el mismo colegio devuelve la invitación original.
+POST {{baseUrl}}/invitaciones/
+Content-Type: application/json
+Accept: application/json
+Idempotency-Key: {{idempotencyKey}}
+
+{
+  "email": "alumno-ejemplo@example.com",
+  "rut": "66666666-6",
+  "username": "alumno-ejemplo",
+  "rol": "alumno"
+}
+
+### Falta Idempotency-Key: 400
 POST {{baseUrl}}/invitaciones/
 Content-Type: application/json
 Accept: application/problem+json
 
 {
-  "email": "prueba@prueba.cl",
+  "email": "prueba@example.com",
   "rut": "77777777-7",
   "username": "prueba",
   "rol": "alumno"

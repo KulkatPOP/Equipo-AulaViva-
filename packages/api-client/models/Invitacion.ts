@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-import { mapValues, parseDate, parseDateTime, serializeDate, serializeDateTime } from '../runtime';
+import { mapValues } from '../runtime';
 /**
  * 
  * @export
@@ -40,13 +40,13 @@ export interface Invitacion {
      */
     rol: InvitacionRolEnum;
     /**
-     * 
+     * Fecha de expiración devuelta por PostgreSQL; no se garantiza formato RFC 3339.
      */
-    expiraEn: Date;
+    expiraEn: string;
     /**
      * 
      */
-    urlActivacion?: string;
+    urlActivacion: string;
 }
 
 
@@ -70,6 +70,7 @@ export function instanceOfInvitacion(value: object): value is Invitacion {
     if (!('username' in value) || value['username'] === undefined) return false;
     if (!('rol' in value) || value['rol'] === undefined) return false;
     if ((!('expiraEn' in (value as Record<string, any>)) && !('expira_en' in (value as Record<string, any>))) || ((value as Record<string, any>)['expiraEn'] === undefined && (value as Record<string, any>)['expira_en'] === undefined)) return false;
+    if ((!('urlActivacion' in (value as Record<string, any>)) && !('url_activacion' in (value as Record<string, any>))) || ((value as Record<string, any>)['urlActivacion'] === undefined && (value as Record<string, any>)['url_activacion'] === undefined)) return false;
     return true;
 }
 
@@ -88,8 +89,8 @@ export function InvitacionFromJSONTyped(json: any, ignoreDiscriminator: boolean)
         'rut': json['rut'],
         'username': json['username'],
         'rol': json['rol'],
-        'expiraEn': (json['expira_en'] == null ? json['expira_en'] : parseDateTime(json['expira_en'])),
-        'urlActivacion': json['url_activacion'] == null ? undefined : json['url_activacion'],
+        'expiraEn': json['expira_en'],
+        'urlActivacion': json['url_activacion'],
     };
 }
 
@@ -109,7 +110,7 @@ export function InvitacionToJSONTyped(value?: Invitacion | null, ignoreDiscrimin
         'rut': value['rut'],
         'username': value['username'],
         'rol': value['rol'],
-        'expira_en': value['expiraEn'] == null ? value['expiraEn'] : serializeDateTime(value['expiraEn']),
+        'expira_en': value['expiraEn'],
         'url_activacion': value['urlActivacion'],
     };
 }

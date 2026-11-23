@@ -1,6 +1,6 @@
 # AulasApi
 
-All URIs are relative to *http://localhost/Aula%20viva/api/v1*
+All URIs are relative to */api/v1*
 
 | Method | HTTP request | Description |
 |------------- | ------------- | -------------|
@@ -16,7 +16,7 @@ All URIs are relative to *http://localhost/Aula%20viva/api/v1*
 
 Obtener los alumnos de un aula
 
-Devuelve los alumnos activos pertenecientes al aula indicada. 
+Devuelve los alumnos activos con rol alumno del colegio de la sesión. Requiere profesor autenticado y asignado al aula activa indicada.
 
 ### Example
 
@@ -92,7 +92,7 @@ example().catch(console.error);
 
 Obtener un aula
 
-Devuelve la información de un aula específica a la que pertenece el profesor autenticado. 
+Devuelve la información de un aula específica a la que pertenece el profesor autenticado, del colegio de su sesión. Un aula inexistente o no autorizada produce 403.
 
 ### Example
 
@@ -168,7 +168,7 @@ example().catch(console.error);
 
 Obtener las aulas del profesor
 
-Devuelve las aulas activas asociadas al profesor autenticado. 
+Devuelve las aulas activas asociadas al profesor autenticado. Requiere rol profesor; colegio_id se obtiene exclusivamente de la sesión.
 
 ### Example
 

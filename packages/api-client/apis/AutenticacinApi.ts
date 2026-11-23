@@ -71,7 +71,7 @@ export class AutenticacinApi extends runtime.BaseAPI {
     }
 
     /**
-     * Autentica a un usuario mediante su identificador y contraseña e inicia una sesión mediante una cookie PHPSESSID. 
+     * Autentica a un usuario mediante su identificador y contraseña e inicia una sesión mediante una cookie PHPSESSID. Acepta RUT o username. Este handler JSON no recibe token CSRF; no equivale al formulario de login.php.
      * Iniciar sesión
      */
     async iniciarSesionRaw(requestParameters: IniciarSesionRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<LoginResponse>> {
@@ -82,7 +82,7 @@ export class AutenticacinApi extends runtime.BaseAPI {
     }
 
     /**
-     * Autentica a un usuario mediante su identificador y contraseña e inicia una sesión mediante una cookie PHPSESSID. 
+     * Autentica a un usuario mediante su identificador y contraseña e inicia una sesión mediante una cookie PHPSESSID. Acepta RUT o username. Este handler JSON no recibe token CSRF; no equivale al formulario de login.php.
      * Iniciar sesión
      */
     async iniciarSesion(requestParameters: IniciarSesionRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<LoginResponse> {

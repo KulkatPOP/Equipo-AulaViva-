@@ -19,6 +19,7 @@ import { mapValues } from '../runtime';
  * @interface InvitacionRequest
  */
 export interface InvitacionRequest {
+    [key: string]: any | any;
     /**
      * 
      */
@@ -69,6 +70,7 @@ export function InvitacionRequestFromJSONTyped(json: any, ignoreDiscriminator: b
     }
     return {
         
+            ...json,
         'email': json['email'],
         'rut': json['rut'],
         'username': json['username'],
@@ -87,6 +89,7 @@ export function InvitacionRequestToJSONTyped(value?: InvitacionRequest | null, i
 
     return {
         
+            ...value,
         'email': value['email'],
         'rut': value['rut'],
         'username': value['username'],
