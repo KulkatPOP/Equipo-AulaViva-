@@ -200,6 +200,79 @@ jobs:
           docker logs aulaviva-staging
           exit 1
 
+      - name: Verificar proteccion de archivos internos
+        run: |
+          set -euo pipefail
+
+          base="http://127.0.0.1:8080"
+
+          rutas=(
+            "/phpunit.xml"
+            "/phpunit.xml.dist"
+            "/openapitools.json"
+            "/.semgrep/"
+            "/.dockerignore"
+            "/.gitleaksignore"
+            "/.spectral.yaml"
+            "/.env"
+            "/README.md"
+            "/CHARTER.md"
+            "/composer.json"
+            "/composer.lock"
+            "/package.json"
+            "/package-lock.json"
+            "/Dockerfile"
+            "/config/conexion.php"
+            "/migrations/002_evaluaciones.sql"
+            "/deploy/security.conf"
+            "/cli/tutor_ingestar.php"
+          )
+
+          for ruta in "${rutas[@]}"; do
+            estado=$(curl -sS --max-time 10 -o /dev/null -w "%{http_code}" "$base$ruta")
+
+            case "$estado" in
+              403|404)
+                echo "OK: $estado $ruta"
+                ;;
+              *)
+                echo "::error::Proteccion incorrecta: HTTP $estado en $ruta"
+                exit 1
+                ;;
+            esac
+          done
+
+          archivos=(
+            "phpunit.xml"
+            "phpunit.xml.dist"
+            "openapitools.json"
+            ".semgrep"
+            ".spectral.yaml"
+            ".gitleaksignore"
+            ".dockerignore"
+            "README.md"
+            "CHARTER.md"
+          )
+
+          for archivo in "${archivos[@]}"; do
+            if docker exec aulaviva-staging test -e "/var/www/html/$archivo"; then
+              echo "::error::Archivo interno presente: $archivo"
+              exit 1
+            else
+              estado=$?
+              if [ "$estado" -ne 1 ]; then
+                echo "::error::No se pudo verificar: $archivo"
+                exit 1
+              fi
+              echo "OK: $archivo excluido"
+            fi
+          done
+
+          curl -fsS --max-time 10 "$base/health/live.php" > /dev/null
+          curl -fsS --max-time 10 "$base/login.php" > /dev/null
+
+          echo "Todas las comprobaciones de seguridad superadas"
+
       - name: Ejecutar ZAP y bloquear riesgos medios o altos
         run: |
           mkdir -p evidence
