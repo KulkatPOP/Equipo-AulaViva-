@@ -36,6 +36,7 @@ final class TutorServiceTest extends TestCase
     {
         return [
             'evidence still authorized' => ['answered', 'ANSWERED'],
+            'nominal instrument answer' => ['instrument', 'ANSWERED'],
             'missing enrollment' => ['denied', 'INSUFFICIENT_EVIDENCE'],
             'no retrievable material' => ['empty', 'INSUFFICIENT_EVIDENCE'],
             'retrieval does not answer the question' => ['unrelated', 'INSUFFICIENT_EVIDENCE'],
@@ -50,6 +51,18 @@ final class TutorServiceTest extends TestCase
     #[DataProvider('scenarios')]
     public function testAnswerRequiresCurrentEvidence(string $scenario, string $status): void
     {
+        $question = $scenario === 'instrument'
+            ? '¿Qué instrumento mide el diámetro?'
+            : self::QUESTION;
+
+        $source = $scenario === 'instrument'
+            ? 'A caliper measures diameter.'
+            : self::SOURCE;
+
+        $fact = $scenario === 'instrument'
+            ? 'Calibre.'
+            : self::SOURCE;
+
         $auth = $this->createMock(PDOStatement::class);
         $auth->method('fetchColumn')->willReturn($scenario !== 'denied');
         $auth->method('execute')->with([7, 3, 11]);
@@ -65,7 +78,7 @@ final class TutorServiceTest extends TestCase
         }));
         $ranked->method('fetchAll')->willReturn([
             ['fragment_id' => 18, 'material_id' => 4, 'page' => 2, 'rrf_score' => 0.03,
-                'text' => $scenario === 'unrelated' ? 'La bolsa pesa dos kilogramos.' : self::SOURCE],
+                'text' => $scenario === 'unrelated' ? 'La bolsa pesa dos kilogramos.' : $source],
         ]);
 
         $live = $this->createMock(PDOStatement::class);
@@ -83,29 +96,59 @@ final class TutorServiceTest extends TestCase
         });
         $embeddings = $this->createMock(EmbeddingProvider::class);
         $embeddings->expects(in_array($scenario, ['denied', 'empty'], true) ? self::never() : self::once())
-            ->method('generar')->with([self::QUESTION])->willReturn([array_fill(0, 768, 0.125)]);
+            ->method('generar')->with([$question])->willReturn([array_fill(0, 768, 0.125)]);
 
         $provider = $this->createMock(AIProvider::class);
         $provider->method('modelo')->willReturn('model-test');
         $provider->expects(in_array($scenario, ['denied', 'empty', 'unrelated', 'stale'], true) ? self::never() : self::once())
-            ->method('generate')->willReturnCallback(static function ($prompt, $question, $context, $timeout) use ($scenario): AIResponse {
-                self::assertSame(self::QUESTION, $question);
-                self::assertSame([['label' => 'F1', 'page' => 2, 'text' => self::SOURCE, 'facts' => ['El juego requiere 4 fichas.']]], $context);
+            ->method('generate')->willReturnCallback(static function ($prompt, $actualQuestion, $context, $timeout) use ($scenario, $question, $source, $fact): AIResponse {
+                self::assertSame($question, $actualQuestion);
+
+                self::assertStringContainsString(
+                    'Copia literalmente cada hecho obligatorio del checklist en el campo text.',
+                    $prompt
+                );
+
+                self::assertStringContainsString(
+                    'No lo reformules, no lo amplíes y no agregues palabras.',
+                    $prompt
+                );
+
+                self::assertSame([
+                    [
+                        'label' => 'F1',
+                        'page' => 2,
+                        'text' => $source,
+                        'facts' => [$fact],
+                    ],
+                ], $context);
+
                 self::assertGreaterThan(0, $timeout);
+
                 return match ($scenario) {
                     'timeout' => throw new TutorGenerationTimeout(),
                     'unavailable' => throw new RuntimeException('Provider unavailable'),
-                    default => new AIResponse('{"claims":[{"text":"El juego requiere 4 fichas.","citation":"[F1, p. 2]"}]}', $scenario !== 'partial'),
+                    default => new AIResponse(
+                        json_encode([
+                            'claims' => [
+                                [
+                                    'text' => $fact,
+                                    'citation' => '[F1, p. 2]',
+                                ],
+                            ],
+                        ], JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE),
+                        $scenario !== 'partial'
+                    ),
                 };
             });
 
         $retriever = new TutorRetriever($pdo, $embeddings, 'english');
         $service = new TutorService($pdo, $retriever, new EvidenceGate(), $provider);
-        $response = $service->ask(11, self::QUESTION);
+        $response = $service->ask(11, $question);
 
         self::assertSame($status, $response->status);
         if ($status === 'ANSWERED') {
-            self::assertSame('El juego requiere 4 fichas. [F1, p. 2]', $response->answer);
+            self::assertSame($fact . ' [F1, p. 2]', $response->answer);
             self::assertSame([['fragment_id' => 18, 'page' => 2]], $response->citations);
             self::assertSame('model-test', $response->jsonSerialize()['provider']);
         } else {
