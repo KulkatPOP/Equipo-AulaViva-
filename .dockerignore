@@ -18,3 +18,14 @@ evidence/
 security/
 
 deploy/lab-receiver.php
+
+# Archivos de desarrollo y herramientas de seguridad
+phpunit.xml
+phpunit.xml.dist
+openapitools.json
+.semgrep/
+.spectral.yaml
+.gitleaksignore
+.dockerignore
+README.md
+CHARTER.md
