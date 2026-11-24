@@ -33,6 +33,8 @@ final class CrearInvitacionCoberturaTest extends TestCase
 
         ob_start();
 
+        $_SERVER['HTTP_HOST'] = 'untrusted.invalid';
+        $_SERVER['HTTP_X_FORWARDED_HOST'] = 'untrusted.invalid';
         require __DIR__ . '/../crear_invitacion.php';
 
         $html = ob_get_clean();
@@ -76,10 +78,11 @@ final class CrearInvitacionCoberturaTest extends TestCase
         );
 
         $this->assertStringContainsString(
-            '/activar_cuenta.php?token=',
+            'Enlace de prueba:<br>activar_cuenta.php?token=',
             $html
         );
         $this->assertStringNotContainsString('http://localhost', $html);
+        $this->assertStringNotContainsString('untrusted.invalid', $html);
 
         preg_match(
             '/token=([a-f0-9]{64})/',

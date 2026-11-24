@@ -13,7 +13,7 @@ try {
     }
     // Dedicated non-persistent connection: do not alter application connections.
     // PDO pgsql maps ATTR_TIMEOUT to libpq connect_timeout (seconds).
-    $pdo = new PDO($dsn, getenv('DB_USER') ?: null, getenv('DB_PASSWORD') ?: null, [
+    $pdo = @new PDO($dsn, getenv('DB_USER') ?: null, getenv('DB_PASSWORD') ?: null, [
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_TIMEOUT => 2,
         PDO::ATTR_PERSISTENT => false,
@@ -27,4 +27,6 @@ try {
 } catch (Throwable) {
     http_response_code(503);
     echo "unavailable\n";
+} finally {
+    $pdo = null;
 }

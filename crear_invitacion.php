@@ -55,5 +55,5 @@ echo 'Invitación creada correctamente.<br><br>';
 
 echo 'Enlace de prueba:<br>';
 
-echo '/activar_cuenta.php?token='
+echo 'activar_cuenta.php?token='
     . urlencode($token);
