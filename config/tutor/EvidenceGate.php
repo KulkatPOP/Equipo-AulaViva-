@@ -38,7 +38,45 @@ final class EvidenceGate
                     'estructura' => $hechoEstructurado,
                 ];
             }
-            $frases = preg_split('/(?<=[.!?])\s+(?=[\p{Lu}\d])|\n\s*\n/u', $texto, -1, PREG_SPLIT_NO_EMPTY);
+
+            // Reconocer encabezados independientes del material educativo.
+            // Reconocer encabezados educativos al inicio del fragmento,
+            // sin separar condiciones o hipótesis del contenido posterior.
+            $textoSegmentado = $texto;
+
+            $lineasIniciales = preg_split('/\R/u', $texto);
+
+            if (is_array($lineasIniciales)) {
+                foreach ($lineasIniciales as $indiceLinea => $linea) {
+                    $encabezado = trim($linea);
+
+                    if ($encabezado === '') {
+                        continue;
+                    }
+
+                    $normalizado = TutorLexico::normalizar($encabezado);
+
+                    $esEncabezado = preg_match(
+                        '/^(?:ciencias naturales|ciencias sociales|matematicas|lenguaje|historia|geografia|biologia|quimica|fisica|tecnologia|actividad experimental|materiales necesarios|materiales|unidad\s+\d+\s*:\s*materiales)$/u',
+                        $normalizado
+                    ) === 1;
+
+                    if (!$esEncabezado) {
+                        break;
+                    }
+
+                    $lineasIniciales[$indiceLinea] = $encabezado . '.';
+                }
+
+                $textoSegmentado = implode("\n", $lineasIniciales);
+            }
+
+            $frases = preg_split(
+                '/(?<=[.!?])\s+(?=[\p{Lu}\d])|\n\s*\n/u',
+                $textoSegmentado,
+                -1,
+                PREG_SPLIT_NO_EMPTY
+            );
             if (!$frases) {
                 continue;
             }
