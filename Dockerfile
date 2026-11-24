@@ -13,3 +13,4 @@ WORKDIR /var/www/html
 EXPOSE 80
 
 COPY deploy/security.conf /etc/apache2/conf-enabled/zzz-aulaviva.conf
+COPY deploy/php-runtime.ini /usr/local/etc/php/conf.d/zz-aulaviva.ini

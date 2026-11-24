@@ -76,9 +76,10 @@ final class CrearInvitacionCoberturaTest extends TestCase
         );
 
         $this->assertStringContainsString(
-            'activar_cuenta.php?token=',
+            '/activar_cuenta.php?token=',
             $html
         );
+        $this->assertStringNotContainsString('http://localhost', $html);
 
         preg_match(
             '/token=([a-f0-9]{64})/',
