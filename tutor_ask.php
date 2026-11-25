@@ -70,7 +70,20 @@ try {
     responderTutor(match ($respuesta->status) {
         'GENERATION_TIMEOUT' => 504, 'GENERATION_UNAVAILABLE' => 503, default => 200,
     }, $respuesta);
-} catch (Throwable) {
-    error_log('{"tutor_status":"GENERATION_UNAVAILABLE","fragments":0}');
-    responderTutor(503, new TutorResponse('GENERATION_UNAVAILABLE', 'El Tutor IA no está disponible en este momento.'));
+} catch (Throwable $error) {
+    error_log(json_encode([
+        'tutor_status' => 'GENERATION_UNAVAILABLE',
+        'fragments' => 0,
+        'error_type' => get_class($error),
+        'error_file' => basename($error->getFile()),
+        'error_line' => $error->getLine(),
+    ], JSON_UNESCAPED_UNICODE));
+
+    responderTutor(
+        503,
+        new TutorResponse(
+            'GENERATION_UNAVAILABLE',
+            'El Tutor IA no está disponible en este momento.'
+        )
+    );
 }

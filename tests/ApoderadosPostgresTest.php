@@ -148,7 +148,7 @@ final class ApoderadosPostgresTest extends TestCase
         $env['DB_PASSWORD'] = getenv('US05_TEST_PASSWORD') ?: '';
         $env['PGOPTIONS'] = '-c search_path=' . $this->schema;
         $this->server = proc_open([PHP_BINARY,'-S','127.0.0.1:' . $this->port,'-t',dirname(__DIR__)],
-            [0 => ['pipe','r'],1 => ['file','/dev/null','a'],2 => ['file','/dev/null','a']],$pipes,null,$env);
+            [0 => ['pipe','r'],1 => ['file',(PHP_OS_FAMILY === 'Windows' ? 'NUL' : '/dev/null'),'a'],2 => ['file',(PHP_OS_FAMILY === 'Windows' ? 'NUL' : '/dev/null'),'a']],$pipes,null,$env);
         if (!is_resource($this->server)) { throw new RuntimeException('Servidor de prueba no disponible'); }
         fclose($pipes[0]);
         $this->cookie = tempnam(sys_get_temp_dir(),'us05-cookie-');
@@ -165,7 +165,7 @@ final class ApoderadosPostgresTest extends TestCase
         $curl = curl_init('http://127.0.0.1:' . $this->port . '/' . $path);
         curl_setopt_array($curl,[CURLOPT_RETURNTRANSFER=>true,CURLOPT_COOKIEFILE=>$this->cookie,CURLOPT_COOKIEJAR=>$this->cookie,CURLOPT_TIMEOUT=>5]);
         if ($post !== null) { curl_setopt_array($curl,[CURLOPT_POST=>true,CURLOPT_POSTFIELDS=>http_build_query($post)]); }
-        $body = curl_exec($curl); $status = curl_getinfo($curl,CURLINFO_RESPONSE_CODE); curl_close($curl);
+        $body = curl_exec($curl); $status = curl_getinfo($curl,CURLINFO_RESPONSE_CODE); unset($curl);
         return [$status,$body];
     }
 

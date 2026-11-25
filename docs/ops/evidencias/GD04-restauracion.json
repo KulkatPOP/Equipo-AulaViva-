@@ -1,0 +1,12 @@
+﻿{
+    "prueba":  "GD04",
+    "entorno":  "DEMO local",
+    "inicio":  "2026-11-24T23:22:49.3174506-03:00",
+    "respaldo":  "aulaviva-demo-pregameday-20261124-230603.dump",
+    "base_origen":  "aulaviva_demo",
+    "base_destino":  "aulaviva_dr_test",
+    "restauracion_exitosa":  true,
+    "tiempo_segundos":  1.28,
+    "objetivo_segundos":  300,
+    "objetivo_cumplido":  true
+}

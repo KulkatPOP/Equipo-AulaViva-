@@ -1,40 +1,58 @@
-@startuml C4_Nivel2_Contenedores
-!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+@startuml
+!include <C4/C4_Container>
 
 LAYOUT_WITH_LEGEND()
 
 title AulaViva - Contenedores logicos (C4 L2)
 
 Person(usuario, "Usuario", "Estudiante, profesor, apoderado o administrador.")
+
 System_Ext(ollama, "Ollama", "nomic-embed-text: embeddings de 768 dimensiones. qwen3:1.7b: generacion controlada, think=false.")
-System_Ext(redis, "Redis Streams (opcional)", "Destino de eventos Outbox. No almacena sesiones ni implementa cache o rate limiting en este flujo.")
+
+System_Ext(redis, "Redis Streams (opcional)", "Destino opcional de eventos Outbox. No almacena sesiones ni implementa cache o rate limiting en este flujo.")
 
 System_Boundary(producto, "AulaViva") {
+
     Container(navegador, "Navegador", "HTML / CSS / JavaScript", "Muestra paginas renderizadas por PHP. Cookies de sesion; interaccion progresiva, no SPA.")
-    Container(web, "Aplicacion web y API REST", "Apache + PHP 8.4", "Un mismo artefacto: paginas PHP, handlers, API REST y logica academica. Sesiones PHP, roles, colegio y matricula/vinculo. RAG hibrido, EvidenceGate y validacion posterior.")
-    Container(ingesta, "Ingesta de materiales (CLI)", "PHP CLI + Poppler/pdftotext", "cli/tutor_ingestar.php: extrae texto de PDF, fragmenta por pagina, solicita embeddings y persiste la ingesta.")
-    Container(rendicion, "Operacion de rendicion (CLI)", "PHP CLI", "cli/rendicion.php: cierra intentos vencidos; publicar Outbox a Redis Streams requiere configuracion de Redis y extension PHP Redis disponible. Ejecucion puntual o --continuo.")
-    ContainerDb(db, "Persistencia", "PostgreSQL + pgvector", "Usuarios, aulas y relaciones; PDF en materiales.contenido (bytea); evaluaciones, preguntas, alternativas, entregas, respuestas, ayuda, Outbox, apoderados e invitaciones; ingestas y fragmentos vector(768).")
+
+    Container(web, "Aplicacion web y API REST", "Apache + PHP 8.4", "Paginas PHP, handlers, API REST y logica academica. Sesiones, roles, colegio y permisos. RAG hibrido, EvidenceGate y validacion posterior.")
+
+    Container(ingesta, "Ingesta de materiales (CLI)", "PHP CLI + Poppler/pdftotext", "Extrae texto de PDF, fragmenta por pagina, solicita embeddings y persiste la ingesta.")
+
+    Container(rendicion, "Operacion de rendicion (CLI)", "PHP CLI", "Cierra intentos vencidos. La publicacion de eventos Outbox requiere Redis y su extension PHP. Ejecucion puntual o continua.")
+
+    ContainerDb(db, "Persistencia", "PostgreSQL + pgvector", "Usuarios, aulas, materiales PDF, evaluaciones, entregas, respuestas, apoderados, invitaciones, Outbox, ingestas y fragmentos vector(768).")
 }
 
 Rel(usuario, navegador, "Utiliza la interfaz")
+
 Rel(navegador, usuario, "Muestra paginas, resultados y mensajes")
-Rel(navegador, web, "Paginas, formularios y solicitudes JSON; cookie de sesion", "HTTP en DEV; HTTPS cuando se aprovisione TLS")
-Rel(web, db, "Consulta y modifica datos autorizados; sirve PDF tras comprobar acceso", "PDO PostgreSQL / TCP")
-Rel(web, ollama, "Embeddings de preguntas y generacion con fragmentos autorizados", "HTTP/JSON")
-Rel(ingesta, db, "Lee PDF; registra estados, fragmentos y embeddings", "PDO PostgreSQL / TCP")
+
+Rel(navegador, web, "Paginas, formularios y solicitudes JSON; cookie de sesion", "HTTP local; HTTPS pendiente de aprovisionamiento")
+
+Rel(web, db, "Consulta y modifica datos autorizados; sirve PDF tras comprobar acceso", "PDO PostgreSQL / TLS verify-full en PROD y DEMO")
+
+Rel(web, ollama, "Embeddings de preguntas y generacion con evidencia autorizada", "HTTP/JSON")
+
+Rel(ingesta, db, "Lee PDF; registra estados, fragmentos y embeddings", "PDO PostgreSQL")
+
 Rel(ingesta, ollama, "Genera embeddings con nomic-embed-text", "HTTP/JSON")
-Rel(rendicion, db, "Cierra entregas vencidas y lee/marca eventos Outbox", "PDO PostgreSQL / TCP")
-Rel(rendicion, redis, "Publicacion opcional; los futuros consumidores deben deduplicar por event_id", "Redis protocol / TCP")
+
+Rel(rendicion, db, "Cierra entregas vencidas y lee/marca eventos Outbox", "PDO PostgreSQL")
+
+Rel(rendicion, redis, "Publicacion opcional; futuros consumidores deben deduplicar por event_id", "Redis protocol / TCP")
 
 note bottom of web
-  Despliegue DEV: imagen Docker PHP/Apache en Kubernetes.
-  GitOps mantiene los manifiestos; Argo CD reconcilia el estado.
+  DEV y PROD utilizan Docker, Kubernetes y GitOps con Argo CD.
+  DEMO utiliza Kubernetes local mediante Docker Desktop.
+  Los entornos mantienen datos y configuraciones separados.
   PostgreSQL y Ollama estan fuera del Pod de la aplicacion.
-  Los CLI reutilizan el codigo del producto: no se afirma que
-  existan Deployments, Jobs o workers permanentes para ellos.
-  Contenedor C4 significa unidad ejecutable/almacenamiento,
-  no necesariamente un contenedor Docker independiente.
+  PROD y DEMO utilizan TLS para la conexion a PostgreSQL.
+  HTTPS para el acceso web permanece pendiente.
+  Los CLI reutilizan el codigo de la aplicacion.
+  No se afirma que existan workers permanentes.
+  Redis Streams es opcional.
+  Contenedor C4 no implica un contenedor Docker independiente.
 end note
 
 @enduml

@@ -1,0 +1,6 @@
+﻿Error from server: admission webhook "mutate.kyverno.svc-fail" denied the request:
+
+resource Pod/aulaviva/admission-unsigned was blocked due to the following policies
+
+require-image-signature:
+  verify-official-workflow: 'failed to verify image ghcr.io/kulkatpop/aulaviva-api@sha256:ad3345d36be53eb2998e3edcfb144fe185971bcfb97ed85097073e3dbf317801: .attestors[0].entries[0].keyless: no signatures found'

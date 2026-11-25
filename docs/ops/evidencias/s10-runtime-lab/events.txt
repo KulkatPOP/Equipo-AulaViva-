@@ -1,0 +1,117 @@
+﻿NAMESPACE            LAST SEEN   TYPE      REASON                    OBJECT                                                MESSAGE
+default              109s        Normal    Starting                  node/aulaviva-s10-control-plane
+default              53s         Warning   PolicyViolation           clusterpolicy/require-image-signature                 Pod aulaviva/admission-unsigned: [verify-official-workflow] fail (blocked); failed to verify image ghcr.io/kulkatpop/aulaviva-api@sha256:ad3345d36be53eb2998e3edcfb144fe185971bcfb97ed85097073e3dbf317801: .attestors[0].entries[0].keyless: no signatures found
+kube-system          117s        Normal    LeaderElection            lease/kube-controller-manager                         aulaviva-s10-control-plane_468ec71f-7bf2-42aa-a9f5-7ca2aaba3156 became leader
+default              117s        Normal    Starting                  node/aulaviva-s10-control-plane                       Starting kubelet.
+default              117s        Normal    NodeAllocatableEnforced   node/aulaviva-s10-control-plane                       Updated Node Allocatable limit across pods
+default              117s        Normal    NodeHasSufficientMemory   node/aulaviva-s10-control-plane                       Node aulaviva-s10-control-plane status is now: NodeHasSufficientMemory
+default              117s        Normal    NodeHasNoDiskPressure     node/aulaviva-s10-control-plane                       Node aulaviva-s10-control-plane status is now: NodeHasNoDiskPressure
+default              117s        Normal    NodeHasSufficientPID      node/aulaviva-s10-control-plane                       Node aulaviva-s10-control-plane status is now: NodeHasSufficientPID
+kube-system          115s        Normal    LeaderElection            lease/kube-scheduler                                  aulaviva-s10-control-plane_df92cd67-baa7-44fe-badb-46613360cf83 became leader
+default              113s        Normal    RegisteredNode            node/aulaviva-s10-control-plane                       Node aulaviva-s10-control-plane event: Registered Node aulaviva-s10-control-plane in Controller
+kube-system          112s        Normal    SuccessfulCreate          replicaset/coredns-668d6bf9bc                         Created pod: coredns-668d6bf9bc-x4cx4
+local-path-storage   112s        Normal    SuccessfulCreate          replicaset/local-path-provisioner-58cc7856b6          Created pod: local-path-provisioner-58cc7856b6-vcsvn
+kube-system          112s        Warning   FailedScheduling          pod/coredns-668d6bf9bc-x4cx4                          0/1 nodes are available: 1 node(s) had untolerated taint {node.kubernetes.io/not-ready: }. preemption: 0/1 nodes are available: 1 Preemption is not helpful for scheduling.
+kube-system          112s        Normal    SuccessfulCreate          replicaset/coredns-668d6bf9bc                         Created pod: coredns-668d6bf9bc-n6fdk
+kube-system          112s        Warning   FailedScheduling          pod/coredns-668d6bf9bc-n6fdk                          0/1 nodes are available: 1 node(s) had untolerated taint {node.kubernetes.io/not-ready: }. preemption: 0/1 nodes are available: 1 Preemption is not helpful for scheduling.
+kube-system          112s        Normal    ScalingReplicaSet         deployment/coredns                                    Scaled up replica set coredns-668d6bf9bc from 0 to 2
+local-path-storage   112s        Warning   FailedScheduling          pod/local-path-provisioner-58cc7856b6-vcsvn           0/1 nodes are available: 1 node(s) had untolerated taint {node.kubernetes.io/not-ready: }. preemption: 0/1 nodes are available: 1 Preemption is not helpful for scheduling.
+kube-system          112s        Normal    Scheduled                 pod/kindnet-rl7cz                                     Successfully assigned kube-system/kindnet-rl7cz to aulaviva-s10-control-plane
+kube-system          112s        Normal    SuccessfulCreate          daemonset/kube-proxy                                  Created pod: kube-proxy-jvf2z
+kube-system          112s        Normal    SuccessfulCreate          daemonset/kindnet                                     Created pod: kindnet-rl7cz
+local-path-storage   112s        Normal    ScalingReplicaSet         deployment/local-path-provisioner                     Scaled up replica set local-path-provisioner-58cc7856b6 from 0 to 1
+kube-system          112s        Normal    Scheduled                 pod/kube-proxy-jvf2z                                  Successfully assigned kube-system/kube-proxy-jvf2z to aulaviva-s10-control-plane
+kube-system          111s        Normal    Pulled                    pod/kube-proxy-jvf2z                                  Container image "registry.k8s.io/kube-proxy:v1.32.0" already present on machine
+kube-system          111s        Normal    Pulled                    pod/kindnet-rl7cz                                     Container image "docker.io/kindest/kindnetd:v20241212-9f82dd49" already present on machine
+kube-system          110s        Normal    Created                   pod/kube-proxy-jvf2z                                  Created container: kube-proxy
+kube-system          110s        Normal    Started                   pod/kube-proxy-jvf2z                                  Started container kube-proxy
+kube-system          109s        Normal    Started                   pod/kindnet-rl7cz                                     Started container kindnet-cni
+kube-system          109s        Normal    Created                   pod/kindnet-rl7cz                                     Created container: kindnet-cni
+kube-system          99s         Normal    Scheduled                 pod/coredns-668d6bf9bc-x4cx4                          Successfully assigned kube-system/coredns-668d6bf9bc-x4cx4 to aulaviva-s10-control-plane
+default              99s         Normal    NodeReady                 node/aulaviva-s10-control-plane                       Node aulaviva-s10-control-plane status is now: NodeReady
+local-path-storage   99s         Normal    Scheduled                 pod/local-path-provisioner-58cc7856b6-vcsvn           Successfully assigned local-path-storage/local-path-provisioner-58cc7856b6-vcsvn to aulaviva-s10-control-plane
+kube-system          99s         Normal    Scheduled                 pod/coredns-668d6bf9bc-n6fdk                          Successfully assigned kube-system/coredns-668d6bf9bc-n6fdk to aulaviva-s10-control-plane
+local-path-storage   98s         Normal    Pulled                    pod/local-path-provisioner-58cc7856b6-vcsvn           Container image "docker.io/kindest/local-path-provisioner:v20241212-8ac705d0" already present on machine
+kube-system          98s         Normal    Pulled                    pod/coredns-668d6bf9bc-n6fdk                          Container image "registry.k8s.io/coredns/coredns:v1.11.3" already present on machine
+kube-system          98s         Normal    Pulled                    pod/coredns-668d6bf9bc-x4cx4                          Container image "registry.k8s.io/coredns/coredns:v1.11.3" already present on machine
+kube-system          97s         Normal    Created                   pod/coredns-668d6bf9bc-x4cx4                          Created container: coredns
+local-path-storage   97s         Normal    Started                   pod/local-path-provisioner-58cc7856b6-vcsvn           Started container local-path-provisioner
+kube-system          97s         Normal    Started                   pod/coredns-668d6bf9bc-n6fdk                          Started container coredns
+kube-system          97s         Normal    Created                   pod/coredns-668d6bf9bc-n6fdk                          Created container: coredns
+kube-system          97s         Normal    Started                   pod/coredns-668d6bf9bc-x4cx4                          Started container coredns
+local-path-storage   97s         Normal    Created                   pod/local-path-provisioner-58cc7856b6-vcsvn           Created container: local-path-provisioner
+kyverno              92s         Normal    Scheduled                 pod/kyverno-background-controller-654b6dc74c-7m8rf    Successfully assigned kyverno/kyverno-background-controller-654b6dc74c-7m8rf to aulaviva-s10-control-plane
+kyverno              92s         Normal    Scheduled                 pod/kyverno-cleanup-controller-7559d75556-s5thr       Successfully assigned kyverno/kyverno-cleanup-controller-7559d75556-s5thr to aulaviva-s10-control-plane
+kyverno              92s         Normal    ScalingReplicaSet         deployment/kyverno-reports-controller                 Scaled up replica set kyverno-reports-controller-dd57c4ddf from 0 to 1
+kyverno              92s         Normal    SuccessfulCreate          replicaset/kyverno-reports-controller-dd57c4ddf       Created pod: kyverno-reports-controller-dd57c4ddf-24cgp
+kyverno              92s         Normal    SuccessfulCreate          replicaset/kyverno-admission-controller-7f6bdddf8     Created pod: kyverno-admission-controller-7f6bdddf8-gch7b
+kyverno              92s         Normal    ScalingReplicaSet         deployment/kyverno-admission-controller               Scaled up replica set kyverno-admission-controller-7f6bdddf8 from 0 to 1
+kyverno              92s         Normal    SuccessfulCreate          replicaset/kyverno-background-controller-654b6dc74c   Created pod: kyverno-background-controller-654b6dc74c-7m8rf
+kyverno              92s         Normal    ScalingReplicaSet         deployment/kyverno-background-controller              Scaled up replica set kyverno-background-controller-654b6dc74c from 0 to 1
+kyverno              92s         Normal    Scheduled                 pod/kyverno-reports-controller-dd57c4ddf-24cgp        Successfully assigned kyverno/kyverno-reports-controller-dd57c4ddf-24cgp to aulaviva-s10-control-plane
+kyverno              92s         Normal    ScalingReplicaSet         deployment/kyverno-cleanup-controller                 Scaled up replica set kyverno-cleanup-controller-7559d75556 from 0 to 1
+kyverno              92s         Normal    SuccessfulCreate          replicaset/kyverno-cleanup-controller-7559d75556      Created pod: kyverno-cleanup-controller-7559d75556-s5thr
+kyverno              92s         Normal    Scheduled                 pod/kyverno-admission-controller-7f6bdddf8-gch7b      Successfully assigned kyverno/kyverno-admission-controller-7f6bdddf8-gch7b to aulaviva-s10-control-plane
+kyverno              91s         Warning   FailedMount               pod/kyverno-cleanup-controller-7559d75556-s5thr       MountVolume.SetUp failed for volume "kube-api-access-ssq5l" : failed to sync configmap cache: timed out waiting for the condition
+kyverno              91s         Normal    Pulling                   pod/kyverno-reports-controller-dd57c4ddf-24cgp        Pulling image "reg.kyverno.io/kyverno/reports-controller:v1.19.2"
+kyverno              91s         Normal    Pulling                   pod/kyverno-background-controller-654b6dc74c-7m8rf    Pulling image "reg.kyverno.io/kyverno/background-controller:v1.19.2"
+kyverno              91s         Normal    Pulling                   pod/kyverno-admission-controller-7f6bdddf8-gch7b      Pulling image "reg.kyverno.io/kyverno/kyvernopre:v1.19.2"
+kyverno              90s         Normal    Pulling                   pod/kyverno-cleanup-controller-7559d75556-s5thr       Pulling image "reg.kyverno.io/kyverno/cleanup-controller:v1.19.2"
+kyverno              88s         Normal    Pulled                    pod/kyverno-reports-controller-dd57c4ddf-24cgp        Successfully pulled image "reg.kyverno.io/kyverno/reports-controller:v1.19.2" in 2.794s (2.794s including waiting). Image size: 46533948 bytes.
+kyverno              88s         Normal    Created                   pod/kyverno-reports-controller-dd57c4ddf-24cgp        Created container: controller
+kyverno              88s         Normal    Started                   pod/kyverno-reports-controller-dd57c4ddf-24cgp        Started container controller
+kyverno              83s         Normal    Pulled                    pod/kyverno-admission-controller-7f6bdddf8-gch7b      Successfully pulled image "reg.kyverno.io/kyverno/kyvernopre:v1.19.2" in 4.553s (7.34s including waiting). Image size: 42629887 bytes.
+kyverno              83s         Normal    Started                   pod/kyverno-admission-controller-7f6bdddf8-gch7b      Started container kyverno-pre
+kyverno              83s         Normal    Created                   pod/kyverno-admission-controller-7f6bdddf8-gch7b      Created container: kyverno-pre
+kyverno              80s         Normal    Pulling                   pod/kyverno-admission-controller-7f6bdddf8-gch7b      Pulling image "reg.kyverno.io/kyverno/kyverno:v1.19.2"
+kyverno              79s         Normal    Started                   pod/kyverno-background-controller-654b6dc74c-7m8rf    Started container controller
+kyverno              79s         Normal    Pulled                    pod/kyverno-background-controller-654b6dc74c-7m8rf    Successfully pulled image "reg.kyverno.io/kyverno/background-controller:v1.19.2" in 4.215s (11.554s including waiting). Image size: 46957679 bytes.
+kyverno              79s         Normal    Created                   pod/kyverno-background-controller-654b6dc74c-7m8rf    Created container: controller
+kyverno              77s         Normal    Started                   pod/kyverno-cleanup-controller-7559d75556-s5thr       Started container controller
+kyverno              77s         Normal    Created                   pod/kyverno-cleanup-controller-7559d75556-s5thr       Created container: controller
+kyverno              77s         Normal    Pulled                    pod/kyverno-cleanup-controller-7559d75556-s5thr       Successfully pulled image "reg.kyverno.io/kyverno/cleanup-controller:v1.19.2" in 2.152s (13.163s including waiting). Image size: 43490309 bytes.
+kyverno              74s         Normal    Started                   pod/kyverno-admission-controller-7f6bdddf8-gch7b      Started container kyverno
+kyverno              74s         Normal    Created                   pod/kyverno-admission-controller-7f6bdddf8-gch7b      Created container: kyverno
+kyverno              74s         Normal    Pulled                    pod/kyverno-admission-controller-7f6bdddf8-gch7b      Successfully pulled image "reg.kyverno.io/kyverno/kyverno:v1.19.2" in 2.556s (5.596s including waiting). Image size: 47940550 bytes.
+falco                53s         Normal    Pulling                   pod/incident-receiver                                 Pulling image "ghcr.io/kulkatpop/aulaviva-api@sha256:b1a2ebaa40cecd6a476f35562438941941f64930c7d65c8f7cadc36ce5cc3942"
+falco                53s         Normal    Scheduled                 pod/incident-receiver                                 Successfully assigned falco/incident-receiver to aulaviva-s10-control-plane
+falco                47s         Normal    Started                   pod/incident-receiver                                 Started container receiver
+falco                47s         Normal    Created                   pod/incident-receiver                                 Created container: receiver
+falco                47s         Normal    Pulled                    pod/incident-receiver                                 Successfully pulled image "ghcr.io/kulkatpop/aulaviva-api@sha256:b1a2ebaa40cecd6a476f35562438941941f64930c7d65c8f7cadc36ce5cc3942" in 5.692s (5.692s including waiting). Image size: 219770706 bytes.
+falco                46s         Normal    SuccessfulCreate          replicaset/falco-k8s-metacollector-5d4bbc8bfc         Created pod: falco-k8s-metacollector-5d4bbc8bfc-72shj
+falco                46s         Normal    SuccessfulCreate          replicaset/falco-falcosidekick-649c677dc9             Created pod: falco-falcosidekick-649c677dc9-nzwkx
+falco                46s         Normal    ScalingReplicaSet         deployment/falco-k8s-metacollector                    Scaled up replica set falco-k8s-metacollector-5d4bbc8bfc from 0 to 1
+falco                46s         Normal    Scheduled                 pod/falco-falcosidekick-649c677dc9-nzwkx              Successfully assigned falco/falco-falcosidekick-649c677dc9-nzwkx to aulaviva-s10-control-plane
+falco                46s         Normal    Pulling                   pod/falco-falcosidekick-649c677dc9-nzwkx              Pulling image "docker.io/falcosecurity/falcosidekick:2.35.1"
+falco                46s         Normal    Scheduled                 pod/falco-falcosidekick-649c677dc9-tp29n              Successfully assigned falco/falco-falcosidekick-649c677dc9-tp29n to aulaviva-s10-control-plane
+falco                46s         Normal    Scheduled                 pod/falco-vpjv9                                       Successfully assigned falco/falco-vpjv9 to aulaviva-s10-control-plane
+falco                46s         Normal    Pulling                   pod/falco-vpjv9                                       Pulling image "docker.io/falcosecurity/falcoctl:0.14.3"
+falco                46s         Normal    SuccessfulCreate          daemonset/falco                                       Created pod: falco-vpjv9
+falco                46s         Normal    Pulling                   pod/falco-k8s-metacollector-5d4bbc8bfc-72shj          Pulling image "docker.io/falcosecurity/k8s-metacollector:0.1.5"
+falco                46s         Normal    Pulling                   pod/falco-falcosidekick-649c677dc9-tp29n              Pulling image "docker.io/falcosecurity/falcosidekick:2.35.1"
+falco                46s         Normal    Scheduled                 pod/falco-k8s-metacollector-5d4bbc8bfc-72shj          Successfully assigned falco/falco-k8s-metacollector-5d4bbc8bfc-72shj to aulaviva-s10-control-plane
+falco                46s         Normal    ScalingReplicaSet         deployment/falco-falcosidekick                        Scaled up replica set falco-falcosidekick-649c677dc9 from 0 to 2
+falco                46s         Normal    SuccessfulCreate          replicaset/falco-falcosidekick-649c677dc9             Created pod: falco-falcosidekick-649c677dc9-tp29n
+falco                44s         Normal    Created                   pod/falco-vpjv9                                       Created container: falcoctl-artifact-install
+falco                44s         Normal    Pulled                    pod/falco-vpjv9                                       Successfully pulled image "docker.io/falcosecurity/falcoctl:0.14.3" in 1.8s (1.8s including waiting). Image size: 34478247 bytes.
+falco                44s         Normal    Started                   pod/falco-vpjv9                                       Started container falcoctl-artifact-install
+falco                40s         Normal    Created                   pod/falco-k8s-metacollector-5d4bbc8bfc-72shj          Created container: k8s-metacollector
+falco                40s         Normal    Pulled                    pod/falco-k8s-metacollector-5d4bbc8bfc-72shj          Successfully pulled image "docker.io/falcosecurity/k8s-metacollector:0.1.5" in 4.408s (5.977s including waiting). Image size: 15769914 bytes.
+falco                39s         Normal    Started                   pod/falco-k8s-metacollector-5d4bbc8bfc-72shj          Started container k8s-metacollector
+falco                36s         Normal    Pulled                    pod/falco-falcosidekick-649c677dc9-tp29n              Successfully pulled image "docker.io/falcosecurity/falcosidekick:2.35.1" in 3.876s (9.82s including waiting). Image size: 59691558 bytes.
+falco                36s         Normal    Created                   pod/falco-falcosidekick-649c677dc9-tp29n              Created container: falcosidekick
+falco                35s         Normal    Pulled                    pod/falco-falcosidekick-649c677dc9-nzwkx              Successfully pulled image "docker.io/falcosecurity/falcosidekick:2.35.1" in 664ms (10.479s including waiting). Image size: 59691558 bytes.
+falco                35s         Normal    Created                   pod/falco-falcosidekick-649c677dc9-nzwkx              Created container: falcosidekick
+falco                35s         Normal    Started                   pod/falco-falcosidekick-649c677dc9-tp29n              Started container falcosidekick
+falco                35s         Normal    Started                   pod/falco-falcosidekick-649c677dc9-nzwkx              Started container falcosidekick
+falco                33s         Normal    Pulling                   pod/falco-vpjv9                                       Pulling image "docker.io/falcosecurity/falco:0.45.2"
+falco                31s         Normal    Pulled                    pod/falco-vpjv9                                       Container image "docker.io/falcosecurity/falcoctl:0.14.3" already present on machine
+falco                31s         Normal    Started                   pod/falco-vpjv9                                       Started container falcoctl-artifact-follow
+falco                31s         Normal    Created                   pod/falco-vpjv9                                       Created container: falcoctl-artifact-follow
+falco                31s         Normal    Started                   pod/falco-vpjv9                                       Started container falco
+falco                31s         Normal    Created                   pod/falco-vpjv9                                       Created container: falco
+falco                31s         Normal    Pulled                    pod/falco-vpjv9                                       Successfully pulled image "docker.io/falcosecurity/falco:0.45.2" in 1.828s (1.828s including waiting). Image size: 40683339 bytes.
+aulaviva             8s          Normal    Scheduled                 pod/runtime-fixture                                   Successfully assigned aulaviva/runtime-fixture to aulaviva-s10-control-plane
+aulaviva             7s          Normal    Started                   pod/runtime-fixture                                   Started container app
+aulaviva             7s          Normal    Created                   pod/runtime-fixture                                   Created container: app
+aulaviva             7s          Normal    Pulled                    pod/runtime-fixture                                   Container image "ghcr.io/kulkatpop/aulaviva-api@sha256:b1a2ebaa40cecd6a476f35562438941941f64930c7d65c8f7cadc36ce5cc3942" already present on machine

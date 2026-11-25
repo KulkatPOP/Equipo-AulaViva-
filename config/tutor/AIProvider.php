@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+require_once __DIR__ . '/OllamaKeepAlive.php';
 
 interface AIProvider
 {
@@ -100,6 +101,7 @@ final class OllamaAIProvider implements AIProvider
                     'think' => false,
                     'stream' => false,
                     'options' => ['temperature' => 0, 'num_predict' => 180],
+                    ...OllamaKeepAlive::parametros(),
                 ], JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE),
             ]);
             $json = curl_exec($http);

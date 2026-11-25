@@ -1,0 +1,29 @@
+﻿[
+    {
+        "escenario":  "Bajo",
+        "potencia_w":  100,
+        "horas_diarias":  2,
+        "dias_mes":  30,
+        "energia_mensual_kwh":  6,
+        "tarifa_clp_kwh":  260,
+        "costo_mensual_clp":  1560
+    },
+    {
+        "escenario":  "Medio",
+        "potencia_w":  200,
+        "horas_diarias":  2,
+        "dias_mes":  30,
+        "energia_mensual_kwh":  12,
+        "tarifa_clp_kwh":  260,
+        "costo_mensual_clp":  3120
+    },
+    {
+        "escenario":  "Alto",
+        "potencia_w":  300,
+        "horas_diarias":  2,
+        "dias_mes":  30,
+        "energia_mensual_kwh":  18,
+        "tarifa_clp_kwh":  260,
+        "costo_mensual_clp":  4680
+    }
+]

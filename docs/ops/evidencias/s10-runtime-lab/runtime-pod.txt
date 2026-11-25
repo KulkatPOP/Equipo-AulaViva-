@@ -1,0 +1,2 @@
+NAME              READY   STATUS    RESTARTS   AGE   IP            NODE                         NOMINATED NODE   READINESS GATES
+runtime-fixture   1/1     Running   0          8s    10.244.0.14   aulaviva-s10-control-plane   <none>           <none>

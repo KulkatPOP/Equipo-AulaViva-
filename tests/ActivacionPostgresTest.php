@@ -168,7 +168,7 @@ final class ActivacionPostgresTest extends TestCase
     {
         $this->puerto=random_int(20000,45000);$env=$this->entorno();
         $this->servidor=proc_open([PHP_BINARY,'-S','127.0.0.1:'.$this->puerto,'-t',dirname(__DIR__)],
-            [0=>['pipe','r'],1=>['file','/dev/null','a'],2=>['file','/dev/null','a']],$pipes,null,$env);
+            [0=>['pipe','r'],1=>['file',(PHP_OS_FAMILY === 'Windows' ? 'NUL' : '/dev/null'),'a'],2=>['file',(PHP_OS_FAMILY === 'Windows' ? 'NUL' : '/dev/null'),'a']],$pipes,null,$env);
         if (!is_resource($this->servidor)) { throw new RuntimeException('No inició el servidor desechable'); }
         fclose($pipes[0]); $this->cookie=tempnam(sys_get_temp_dir(),'activacion-cookie-');
         for($i=0;$i<50;$i++) { $s=@fsockopen('127.0.0.1',$this->puerto,$errno,$err,.1); if($s) { fclose($s);return; } usleep(50000); }
@@ -179,7 +179,7 @@ final class ActivacionPostgresTest extends TestCase
         $curl=curl_init('http://127.0.0.1:'.$this->puerto.'/'.$path);
         curl_setopt_array($curl,[CURLOPT_RETURNTRANSFER=>true,CURLOPT_COOKIEFILE=>$this->cookie,CURLOPT_COOKIEJAR=>$this->cookie,CURLOPT_TIMEOUT=>10]);
         if($datos!==null) { curl_setopt_array($curl,[CURLOPT_POST=>true,CURLOPT_POSTFIELDS=>http_build_query($datos)]); }
-        $body=curl_exec($curl);$status=curl_getinfo($curl,CURLINFO_RESPONSE_CODE);$location=curl_getinfo($curl,CURLINFO_REDIRECT_URL);curl_close($curl);
+        $body=curl_exec($curl);$status=curl_getinfo($curl,CURLINFO_RESPONSE_CODE);$location=curl_getinfo($curl,CURLINFO_REDIRECT_URL);unset($curl);
         return [$status,$body,$location];
     }
     private function formulario(): string

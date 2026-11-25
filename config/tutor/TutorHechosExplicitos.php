@@ -23,7 +23,9 @@ final class TutorHechosExplicitos
 
         $gramaticas = [
             'instrumento' => ['\binstrumento\b', '(?:el |la )?(' . self::NOMBRE . ') (?:mide|sirve para medir) (' . self::VALOR . ')'],
+            'medicion_directa' => ['^¿?que mide (?:el|la|los|las) ' . self::NOMBRE . '\??$', '(?:el |la )?(' . self::NOMBRE . ') (?:mide|sirve para medir) (' . self::VALOR . ')'],
             'lista' => ['\b(?:elementos|componentes|partes)\b', '(' . self::NOMBRE . ') (?:incluye|contiene|consta de) (' . self::VALOR . ')'],
+            'lista_directa' => ['^¿?que (?:incluye|contiene) (?:el|la|los|las) ' . self::NOMBRE . '\??$', '(' . self::NOMBRE . ') (?:incluye|contiene|consta de) (' . self::VALOR . ')'],
             'material' => ['\bmaterial(?:es)?\b', '(' . self::NOMBRE . ') (?:puede ser de|se fabrica con|se hace con|esta hecho de|está hecho de) (' . self::VALOR . ')'],
             'direccion' => ['\b(?:donde|direccion)\b', '(' . self::NOMBRE . ') (?:apunta|se orienta|se dirige) (?:hacia|al) (' . self::VALOR . ')'],
             'cantidad' => ['\b(?:cuantos?|cuantas?|minim[oa])\b', '(' . self::NOMBRE . ') (?:requiere|necesita) (?:al menos |como mínimo |como minimo )?([0-9]+(?:[.,][0-9]+)? ' . self::NOMBRE . ')'],
@@ -35,6 +37,22 @@ final class TutorHechosExplicitos
         foreach ($gramaticas as $relacion => [$intencion, $patron]) {
             if (!preg_match('/' . $intencion . '/u', $q) || !preg_match('/^' . $patron . '$/u', $t, $partes)) {
                 continue;
+            }
+            if (in_array($relacion, ['medicion_directa', 'lista_directa'], true)) {
+                if (!preg_match(
+                    '/^¿?que (?:mide|incluye|contiene) (?:el|la|los|las) (.+?)\??$/u',
+                    $q,
+                    $entidad
+                )) {
+                    continue;
+                }
+
+                $sujeto = TutorLexico::normalizar($partes[1]);
+                $sujeto = preg_replace('/^(?:el|la|los|las) /u', '', $sujeto);
+
+                if ($sujeto !== trim($entidad[1])) {
+                    continue;
+                }
             }
             $buscado = match ($relacion) {
                 'instrumento' => $partes[2],

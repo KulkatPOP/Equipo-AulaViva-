@@ -1,49 +1,84 @@
 @startuml
-title AulaViva — C4 L3: Componentes de la API PHP (main)
-left to right direction
-skinparam backgroundColor white
-skinparam shadowing false
-skinparam componentStyle rectangle
-skinparam packageStyle rectangle
-skinparam defaultFontName Arial
-skinparam ArrowColor #52677C
-skinparam component {
-    BackgroundColor #DDEEFF
-    BorderColor #2468A0
-    FontColor #12385A
+!include <C4/C4_Component>
+
+LAYOUT_WITH_LEGEND()
+
+title AulaViva - C4 L3 - Componentes de la aplicacion web
+
+Person(usuario, "Usuario", "Profesor, estudiante, apoderado o administrador.")
+
+Container_Ext(navegador, "Navegador", "HTML / CSS / JavaScript", "Interfaz web y formularios.")
+
+ContainerDb_Ext(db, "PostgreSQL + pgvector", "PostgreSQL", "Datos academicos, materiales, fragmentos y embeddings.")
+
+System_Ext(ollama, "Ollama", "nomic-embed-text y qwen3:1.7b.")
+
+Container_Boundary(app, "Aplicacion web AulaViva - Apache y PHP 8.4") {
+
+    Component(auth, "Autenticacion y autorizacion", "PHP", "Sesiones, roles, colegio y permisos.")
+
+    Component(aulas, "Aulas y cursos", "PHP", "Consulta de aulas, cursos, matriculas y alumnos.")
+
+    Component(materiales, "Materiales educativos", "PHP", "Carga y consulta autorizada de archivos PDF.")
+
+    Component(evaluaciones, "Gestion de evaluaciones", "PHP", "Creacion, edicion y publicacion de evaluaciones.")
+
+    Component(rendicion, "Rendicion y autocorreccion", "PHP", "Respuestas, puntajes, calificaciones y eventos Outbox.")
+
+    Component(tutor, "Tutor IA", "PHP", "Orquesta la recuperacion y generacion de respuestas.")
+
+    Component(retriever, "Recuperador hibrido", "TutorRetriever", "Recupera fragmentos autorizados mediante busqueda textual y vectorial.")
+
+    Component(evidence, "Validacion de evidencia", "EvidenceGate", "Extrae hechos explicitos y controla afirmaciones y citas.")
+
+    Component(provider, "Proveedor de IA", "AIProvider / Embeddings", "Comunica la aplicacion con Ollama.")
+
+    Component(apoderados, "Panel y vinculaciones", "PHP", "Consulta de rendimiento y gestion de vinculos autorizados.")
+
+    Component(invitaciones, "Invitaciones y activacion", "PHP", "Emision y consumo transaccional de invitaciones.")
+
+    Component(api, "API REST", "PHP / JSON", "Endpoints de autenticacion, aulas e invitaciones.")
+
+    Component(pdo, "Conexion y persistencia", "PDO PostgreSQL", "Acceso a la base de datos.")
 }
-rectangle "Interfaz web AulaViva\n(cliente HTTP)" as web #E9F1FA
-package "Backend PHP — API REST (Apache)" {
- component "Autenticación / login\napi/v1/auth/login/index.php" as auth
- component "Gestión de aulas\napi/v1/aulas/index.php" as aulas
- component "Detalle del aula\napi/v1/aulas/detalle/index.php" as detalle
- component "Alumnos del aula\napi/v1/aulas/alumnos/index.php" as alumnos
- component "Invitaciones\napi/v1/invitaciones/index.php" as invit
- component "Helpers API y permisos\napi/v1/_helpers/api.php" as helper
- component "Conexión PDO\nconfig/conexion.php" as pdo
-}
-database "PostgreSQL + pgvector\n(datos académicos)" as db
-web --> auth : Login HTTP/JSON
-web --> aulas : Consulta HTTP/JSON
-web --> detalle : Detalle HTTP/JSON
-web --> alumnos : Alumnos HTTP/JSON
-web --> invit : Solicitud HTTP/JSON
-auth ..> helper : require_once
-aulas ..> helper : require_once
-detalle ..> helper : require_once
-alumnos ..> helper : require_once
-invit ..> helper : require_once
-auth --> pdo : require_once / SQL
-aulas --> pdo : require_once / SQL
-detalle --> pdo : require_once / SQL
-alumnos --> pdo : require_once / SQL
-invit --> pdo : require_once / SQL
-pdo --> db : PDO / SQL
-note bottom of helper
-  Verificación de rol mediante sesión PHP.
-  Detalle y alumnos son módulos separados
-  del mismo backend PHP, no microservicios.
-  Este L3 representa solo el subconjunto
-  de endpoints REST mostrado, no toda AulaViva.
-end note
+
+Rel(usuario, navegador, "Utiliza")
+
+Rel(navegador, auth, "Inicia sesion")
+Rel(navegador, aulas, "Consulta aulas y cursos")
+Rel(navegador, materiales, "Gestiona materiales")
+Rel(navegador, evaluaciones, "Gestiona evaluaciones")
+Rel(navegador, rendicion, "Rinde y consulta resultados")
+Rel(navegador, tutor, "Formula preguntas")
+Rel(navegador, apoderados, "Consulta rendimiento y vinculos")
+Rel(navegador, invitaciones, "Gestiona invitaciones")
+Rel(navegador, api, "Solicitudes HTTP/JSON cuando corresponde")
+
+Rel(aulas, auth, "Comprueba permisos")
+Rel(materiales, auth, "Comprueba permisos")
+Rel(evaluaciones, auth, "Comprueba permisos")
+Rel(rendicion, auth, "Comprueba permisos")
+Rel(tutor, auth, "Comprueba matricula y acceso")
+Rel(apoderados, auth, "Comprueba rol y acceso")
+Rel(invitaciones, auth, "Comprueba permisos de emision")
+Rel(api, auth, "Valida sesion y permisos")
+
+Rel(tutor, retriever, "Recupera evidencia autorizada")
+Rel(tutor, evidence, "Prepara y valida afirmaciones")
+Rel(tutor, provider, "Solicita generacion")
+Rel(retriever, provider, "Solicita embeddings")
+Rel(provider, ollama, "Inferencia local", "HTTP/JSON")
+
+Rel(auth, pdo, "Consulta usuarios")
+Rel(aulas, pdo, "Consulta aulas y alumnos")
+Rel(materiales, pdo, "Lee y guarda materiales")
+Rel(evaluaciones, pdo, "Gestiona evaluaciones")
+Rel(rendicion, pdo, "Persiste entregas, resultados y Outbox")
+Rel(retriever, pdo, "Consulta fragmentos y vectores")
+Rel(apoderados, pdo, "Consulta y gestiona vinculos")
+Rel(invitaciones, pdo, "Gestiona invitaciones")
+Rel(api, pdo, "Ejecuta consultas autorizadas")
+
+Rel(pdo, db, "Consultas SQL y transacciones", "PDO PostgreSQL")
+
 @enduml

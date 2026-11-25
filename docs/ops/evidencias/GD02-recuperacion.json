@@ -1,0 +1,13 @@
+﻿{
+    "prueba":  "GD02",
+    "entorno":  "DEMO local",
+    "inicio":  "2026-11-24T23:14:57.9039646-03:00",
+    "tipo_fallo":  "Indisponibilidad simulada de Ollama",
+    "solicitudes_fallidas_controladas":  3,
+    "latencia_media_fallo_ms":  5,
+    "http_tutor_durante_fallo":  503,
+    "http_liveness_durante_fallo":  200,
+    "http_readiness_durante_fallo":  200,
+    "despliegue_recuperado":  true,
+    "tiempo_restauracion_segundos":  12.513
+}

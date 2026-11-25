@@ -1,0 +1,1 @@
+ghcr.io/kulkatpop/aulaviva-api@sha256:ad3345d36be53eb2998e3edcfb144fe185971bcfb97ed85097073e3dbf317801
