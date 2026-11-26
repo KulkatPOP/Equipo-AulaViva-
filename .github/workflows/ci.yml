@@ -51,35 +51,88 @@ jobs:
   quality:
     name: PHPUnit, cobertura y seguridad
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    permissions:
+      contents: read
+
+    services:
+      postgres:
+        image: pgvector/pgvector:0.8.7-pg16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: aulaia_ci_temporal
+          POSTGRES_DB: us05_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d us05_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+
+    env:
+      US05_TEST_DSN: "pgsql:host=127.0.0.1;port=5432;dbname=us05_test"
+      US05_TEST_USER: postgres
+      US05_TEST_PASSWORD: aulaia_ci_temporal
+      ACTIVACION_TEST_DSN: "pgsql:host=127.0.0.1;port=5432;dbname=activacion_test"
+      ACTIVACION_TEST_USER: postgres
+      ACTIVACION_TEST_PASSWORD: aulaia_ci_temporal
 
     steps:
       - name: Descargar codigo
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
 
       - name: Configurar PHP 8.4 y Xdebug
-        uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # v2
+        uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962
         with:
           php-version: '8.4'
-          extensions: mbstring, dom, xml, pdo, pdo_sqlite, sqlite3
+          extensions: mbstring, dom, xml, xmlreader, xmlwriter, simplexml, pdo, pdo_sqlite, sqlite3, pdo_pgsql, pgsql, gd, zip, fileinfo, iconv, ctype, curl
           coverage: xdebug
           tools: composer:v2
 
       - name: Instalar dependencias PHP
-        run: composer install --no-interaction --prefer-dist --no-progress
+        run: |
+          composer install --no-interaction --prefer-dist --no-progress
+          composer check-platform-reqs
+
+      - name: Preparar bases de datos de pruebas
+        env:
+          PG_CONTAINER: ${{ job.services.postgres.id }}
+        run: |
+          docker exec "$PG_CONTAINER" \
+            psql -v ON_ERROR_STOP=1 -U postgres -d postgres \
+            -c "CREATE DATABASE activacion_test;"
+
+          for db in us05_test activacion_test; do
+            docker exec "$PG_CONTAINER" \
+              psql -v ON_ERROR_STOP=1 -U postgres -d "$db" \
+              -c "CREATE EXTENSION IF NOT EXISTS vector;"
+          done
 
       - name: Comprobar sintaxis PHP
         shell: bash
         run: |
-          find api config -type f -name '*.php' -print0 |
+          find api config cli includes tests -type f -name '*.php' -print0 |
+            xargs -0 -n1 php -l
+
+          find . -maxdepth 1 -type f -name '*.php' -print0 |
             xargs -0 -n1 php -l
 
       - name: Ejecutar PHPUnit y generar cobertura real
         shell: bash
         run: |
+          mkdir -p evidence
+
           XDEBUG_MODE=coverage vendor/bin/phpunit \
             --no-progress \
+            --fail-on-skipped \
+            --fail-on-risky \
+            --fail-on-warning \
+            --fail-on-deprecation \
             --coverage-text \
-            --coverage-clover coverage.xml
+            --coverage-clover evidence/coverage.xml \
+            --log-junit evidence/phpunit.xml
 
       - name: Exigir cobertura minima del 70%
         shell: bash
@@ -87,7 +140,7 @@ jobs:
           python3 - <<'PY'
           import xml.etree.ElementTree as ET
 
-          root = ET.parse("coverage.xml").getroot()
+          root = ET.parse("evidence/coverage.xml").getroot()
           metrics = root.find("./project/metrics")
 
           if metrics is None:
@@ -108,6 +161,14 @@ jobs:
 
           print("OK: cobertura minima superada")
           PY
+
+      - name: Guardar evidencia de calidad
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: quality-report
+          path: evidence/
+          if-no-files-found: error
 
   build-and-push:
     name: Construir imagen Docker

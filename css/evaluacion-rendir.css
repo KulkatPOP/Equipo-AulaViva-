@@ -1,0 +1,390 @@
+
+/* General */
+
+.av-rendicion {
+    margin: 0;
+    min-height: 100vh;
+    background: #f1f5f9;
+    color: #0f172a;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+}
+
+.av-rendicion [hidden] {
+    display: none !important;
+}
+
+.av-rendicion *,
+.av-rendicion *::before,
+.av-rendicion *::after {
+    box-sizing: border-box;
+}
+
+/* Encabezado */
+
+.rendicion-header {
+    min-height: 76px;
+    padding: 12px 40px;
+    background: #0b192e;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.rendicion-marca {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-size: 23px;
+    font-weight: 700;
+}
+
+.rendicion-marca img {
+    width: 45px;
+    height: 45px;
+    object-fit: contain;
+}
+
+.rendicion-usuario {
+    display: flex;
+    flex-direction: column;
+    text-align: right;
+}
+
+.rendicion-usuario span {
+    font-size: 12px;
+    color: #b9cde4;
+}
+
+/* Contenido */
+
+.rendicion-contenido {
+    width: calc(100% - 40px);
+    max-width: 1100px;
+    margin: 35px auto 60px;
+}
+
+.rendicion-volver {
+    color: #2563eb;
+    text-decoration: none;
+    font-size: 13px;
+}
+
+.rendicion-titulo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin: 24px 0;
+}
+
+.rendicion-titulo h1 {
+    margin: 5px 0 0;
+    font-size: 32px;
+    font-weight: 700;
+}
+
+.rendicion-asignatura {
+    color: #64748b;
+    font-size: 13px;
+}
+
+.rendicion-card,
+.av-rendicion .panel-pregunta {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 26px;
+}
+
+.rendicion-card h2 {
+    margin: 0 0 20px;
+    font-size: 20px;
+}
+
+.rendicion-card p {
+    color: #64748b;
+    line-height: 1.7;
+}
+
+.rendicion-informacion {
+    margin-bottom: 18px;
+}
+
+.rendicion-informacion p {
+    margin: 7px 0;
+}
+
+/* Temporizador y progreso */
+
+.rendicion-reloj {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 12px 24px;
+    text-align: center;
+    min-width: 165px;
+}
+
+.rendicion-reloj span {
+    display: block;
+    color: #64748b;
+    font-size: 12px;
+}
+
+.rendicion-reloj strong {
+    font-size: 28px;
+    color: #19365c;
+    font-variant-numeric: tabular-nums;
+}
+
+.rendicion-progreso {
+    margin: 20px 0 26px;
+}
+
+.rendicion-progreso p,
+#estado-rendicion,
+#estado-ayuda {
+    font-size: 12px;
+    color: #64748b;
+}
+
+#barra-rendicion {
+    display: block;
+    width: 100%;
+    height: 8px;
+    border: 0;
+    border-radius: 10px;
+    overflow: hidden;
+    accent-color: #19365c;
+}
+
+#barra-rendicion::-webkit-progress-bar {
+    background: #dbe3ed;
+}
+
+#barra-rendicion::-webkit-progress-value {
+    background: #19365c;
+}
+
+#barra-rendicion::-moz-progress-bar {
+    background: #19365c;
+}
+
+/* Preguntas */
+
+#preguntas-rendicion {
+    border: 0;
+    padding: 0;
+    margin: 0;
+    min-width: 0;
+}
+
+.av-rendicion .panel-pregunta {
+    position: relative;
+    display: block;
+    min-width: 0;
+    margin: 0 0 20px;
+}
+
+.rendicion-numero {
+    padding: 0 8px;
+    color: #19365c;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.rendicion-puntos {
+    display: block;
+    text-align: right;
+    color: #64748b;
+    font-size: 12px;
+}
+
+.panel-pregunta h3 {
+    margin: 0 0 20px;
+    font-size: 17px;
+    font-weight: 600;
+}
+
+.rendicion-alternativa {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 13px 16px;
+    margin-top: 10px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.rendicion-alternativa:hover {
+    background: #f8fafc;
+}
+
+.rendicion-alternativa:has(input:checked) {
+    background: #eff6ff;
+    border-color: #2563eb;
+}
+
+.rendicion-alternativa input {
+    width: 17px;
+    height: 17px;
+    flex-shrink: 0;
+    margin: 0;
+    accent-color: #19365c;
+}
+
+/* Botones */
+
+.rendicion-boton,
+.rendicion-secundario {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 20px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    font: 600 13px 'Poppins', sans-serif;
+    cursor: pointer;
+}
+
+.rendicion-boton {
+    background: #0b192e;
+    color: #fff;
+}
+
+.rendicion-boton:hover {
+    background: #19365c;
+}
+
+.rendicion-boton:disabled {
+    opacity: .55;
+    cursor: not-allowed;
+}
+
+.rendicion-secundario {
+    background: #fff;
+    color: #0f172a;
+    border-color: #cbd5e1;
+}
+
+.rendicion-acciones {
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+/* Confirmación y ayuda */
+
+#confirmar-rendicion {
+    width: calc(100% - 40px);
+    max-width: 450px;
+    padding: 26px;
+    border: 0;
+    border-radius: 14px;
+    color: #0f172a;
+}
+
+#confirmar-rendicion::backdrop {
+    background: rgb(15 23 42 / 55%);
+}
+
+#confirmar-rendicion h2 {
+    margin: 0 0 12px;
+    font-size: 20px;
+}
+
+#ayuda-rendicion {
+    margin-top: 25px;
+}
+
+#ayuda-rendicion summary {
+    font-weight: 600;
+    cursor: pointer;
+}
+
+#solicitud-rendicion {
+    margin-top: 18px;
+}
+
+#mensaje-rendicion {
+    display: block;
+    width: 100%;
+    margin: 10px 0 15px;
+    padding: 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font: inherit;
+    resize: vertical;
+}
+
+/* Accesibilidad */
+
+.rendicion-sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+}
+
+.av-rendicion :focus-visible {
+    outline: 2px solid #2563eb;
+    outline-offset: 3px;
+}
+
+/* Responsive */
+
+@media (max-width: 600px) {
+    .rendicion-header {
+        padding: 12px 20px;
+    }
+
+    .rendicion-contenido {
+        width: calc(100% - 28px);
+        margin-top: 24px;
+    }
+
+    .rendicion-titulo h1 {
+        font-size: 24px;
+    }
+
+    .rendicion-reloj {
+        min-width: 120px;
+        padding: 10px;
+    }
+
+    .rendicion-card,
+    .av-rendicion .panel-pregunta {
+        padding: 18px;
+    }
+
+    .rendicion-reloj strong {
+        font-size: 23px;
+    }
+}
+/* Tipo de selección */
+
+.rendicion-instruccion {
+    margin: 0 0 16px;
+    font-size: 12px;
+    color: #64748b;
+}
+
+.rendicion-alternativa input[type="radio"],
+.rendicion-alternativa input[type="checkbox"] {
+    width: 17px;
+    height: 17px;
+    flex-shrink: 0;
+    accent-color: #2563eb;
+    cursor: pointer;
+}
+
+.rendicion-alternativa:has(input:checked) {
+    background: #eff6ff;
+    border-color: #2563eb;
+}

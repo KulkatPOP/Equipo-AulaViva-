@@ -11,8 +11,70 @@ const reloj = document.querySelector('#tiempo-rendicion');
 const progreso = document.querySelector('#progreso-rendicion');
 const ayuda = document.querySelector('#ayuda-rendicion');
 const avisoAyuda = document.querySelector('#estado-ayuda');
-const preguntas = [...campos.querySelectorAll('.panel-pregunta')];
-const opciones = [...campos.querySelectorAll('input')];
+let preguntas = [];
+let opciones = [];
+
+function cargarPreguntas(datos) {
+    if (!datos || preguntas.length) return;
+
+    Object.values(datos).forEach((alternativas, indice) => {
+        if (!alternativas.length) return;
+
+        const multiple = Number(alternativas[0].multiple) === 1;
+
+        const pregunta = document.createElement('fieldset');
+        pregunta.className = 'panel-pregunta';
+
+        const encabezado = document.createElement('legend');
+        encabezado.className = 'rendicion-numero';
+        encabezado.textContent = `Pregunta ${indice + 1}`;
+
+        const puntos = document.createElement('span');
+        puntos.className = 'rendicion-puntos';
+        puntos.textContent = `${alternativas[0].puntaje} puntos`;
+
+        const enunciado = document.createElement('h3');
+        enunciado.textContent = alternativas[0].enunciado;
+
+        const instruccion = document.createElement('p');
+        instruccion.className = 'rendicion-instruccion';
+
+        instruccion.textContent = multiple
+            ? 'Selecciona todas las alternativas que consideres correctas.'
+            : 'Selecciona una alternativa.';
+
+        pregunta.append(
+            encabezado,
+            puntos,
+            enunciado,
+            instruccion
+        );
+
+        alternativas.forEach((alternativa, i) => {
+            const etiqueta = document.createElement('label');
+            etiqueta.className = 'rendicion-alternativa';
+
+            const input = document.createElement('input');
+
+            input.type = multiple ? 'checkbox' : 'radio';
+            input.name = `pregunta-${indice}`;
+            input.value = alternativa.alternativa;
+
+            const texto = document.createElement('span');
+
+            texto.textContent =
+                `${String.fromCharCode(65 + i)}. ${alternativa.texto}`;
+
+            etiqueta.append(input, texto);
+            pregunta.append(etiqueta);
+        });
+
+        campos.append(pregunta);
+    });
+
+    preguntas = [...campos.querySelectorAll('.panel-pregunta')];
+    opciones = [...campos.querySelectorAll('input')];
+}
 
 let entrega = panel.dataset.entrega;
 let revision = 0;
@@ -62,9 +124,17 @@ function contar(ids) {
 
 function presentarProgreso() {
     const local = contar(selecciones());
-    progreso.textContent = 'Has respondido ' + local + ' de ' + preguntas.length + ' preguntas. Recibidas por el servidor: ' + contar(recibidas) + '.';
-}
+    const confirmadas = contar(recibidas);
 
+    progreso.textContent =
+        `${local} de ${preguntas.length} preguntas respondidas · ` +
+        `${confirmadas} guardadas en el servidor`;
+
+    const barra = document.querySelector('#barra-rendicion');
+
+    barra.max = preguntas.length || 1;
+    barra.value = local;
+}
 async function solicitar(accion, datos = {}) {
     const respuesta = await fetch(location.href, {
         method: 'POST',
@@ -87,7 +157,12 @@ function aplicarEstado(datos, restaurar) {
     ayuda.hidden = false;
     if (datos.estado === 'calificada') {
         const mostrarAviso = pendiente || enviarPendiente || local?.pendiente || local?.enviarPendiente;
-        cerrado = true;
+        document.querySelector('#inicio-rendicion').hidden = true;
+document.querySelector('#contenedor-reloj').hidden = true;
+document.querySelector('#contenedor-progreso').hidden = true;
+document.querySelector('#volver-rendicion').hidden = false;
+
+formulario.hidden = true;
         retenerResultado ||= Boolean(mostrarAviso || solicitud);
         abierto = false;
         campos.disabled = true;
@@ -116,7 +191,19 @@ function aplicarEstado(datos, restaurar) {
         return;
     }
 
-    abierto = true;
+    cargarPreguntas(datos.preguntas);
+
+if (!preguntas.length) {
+    aviso.textContent = 'No se pudieron cargar las preguntas. Recarga la página.';
+    return;
+}
+
+document.querySelector('#inicio-rendicion').hidden = true;
+document.querySelector('#contenedor-reloj').hidden = false;
+document.querySelector('#contenedor-progreso').hidden = false;
+document.querySelector('#volver-rendicion').hidden = true;
+
+abierto = true;
     limite = performance.now() + Number(datos.restante_ms);
     inicio.hidden = true;
     formulario.hidden = false;
@@ -275,4 +362,8 @@ setInterval(() => {
 }, 1000);
 
 inicio.hidden = Boolean(entrega);
-if (entrega) void abrir('estado');
+
+if (entrega) {
+    document.querySelector('#inicio-rendicion').hidden = true;
+    void abrir('estado');
+}

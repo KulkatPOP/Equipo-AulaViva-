@@ -1,4 +1,3 @@
-
 {
   "name": "aulaviva/aulaviva",
   "description": "Aplicación AulaIA y API PHP",
@@ -6,5 +5,13 @@
   "license": "proprietary",
   "require-dev": {
     "phpunit/phpunit": "^11.5"
+  },
+  "config": {
+    "platform": {
+      "php": "8.4.27"
+    }
+  },
+  "require": {
+    "phpoffice/phpspreadsheet": "^5.12"
   }
 }

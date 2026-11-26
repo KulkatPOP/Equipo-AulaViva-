@@ -1,0 +1,48 @@
+﻿AulaIA - Validacion de migraciones
+Fecha: 2026-11-25 22:00:08
+PostgreSQL 16 + pgvector 0.8.7
+Instalacion desde cero: 11/11 migraciones correctas
+Tablas resultantes: 19
+Actualizacion desde esquema 006: 4/4 migraciones correctas
+Tablas originales conservadas: 16/16
+Comparacion de datos mediante MD5: sin diferencias
+Calificacion original conservada: 4.5
+Puntaje original conservado: 20/30
+Preguntas de respuesta unica: 3
+Reclasificacion de preguntas multiples: pendiente
+
+HASHES ANTES:
+alternativas|12|a60027b2d9fab88174d936c89fad36ec
+apoderado_estudiantes|1|55ef1bcaf4f3c82a1f6bb9493eb6858d
+aula_alumnos|1|c781c9c13ae3daa0a1ea6c00c2257b56
+aula_profesores|1|2c8d97c9a4b47610714e2f7428828ab0
+aulas|1|a2810dbccb419e515ed2324e844ad436
+entregas|1|4200ac29845d7b260d85078233a7574f
+evaluaciones|1|a38581bb540d80d81fb10d844af38660
+invitaciones|0|d41d8cd98f00b204e9800998ecf8427e
+material_fragmentos|39|a1f6fdf7810cbdc83e38995309667248
+material_ingestas|3|cce683ec28ba1ebf83c6b460f5d0dcac
+materiales|3|4c0a053936d684b8abfd5a74783f8151
+outbox_events|3|5398bae0d49432dfdef499c3cba4485a
+preguntas|3|d00da2b7be54f3d17d5fba56ed2221ef
+respuestas|3|aa756da14ac2361fed6a0dba1f3656f5
+solicitudes_ayuda|0|d41d8cd98f00b204e9800998ecf8427e
+usuarios|4|5a2e0709b7052fdc58d462865706999a
+
+HASHES DESPUES:
+alternativas|12|a60027b2d9fab88174d936c89fad36ec
+apoderado_estudiantes|1|55ef1bcaf4f3c82a1f6bb9493eb6858d
+aula_alumnos|1|c781c9c13ae3daa0a1ea6c00c2257b56
+aula_profesores|1|2c8d97c9a4b47610714e2f7428828ab0
+aulas|1|a2810dbccb419e515ed2324e844ad436
+entregas|1|4200ac29845d7b260d85078233a7574f
+evaluaciones|1|a38581bb540d80d81fb10d844af38660
+invitaciones|0|d41d8cd98f00b204e9800998ecf8427e
+material_fragmentos|39|a1f6fdf7810cbdc83e38995309667248
+material_ingestas|3|cce683ec28ba1ebf83c6b460f5d0dcac
+materiales|3|4c0a053936d684b8abfd5a74783f8151
+outbox_events|3|5398bae0d49432dfdef499c3cba4485a
+preguntas|3|d00da2b7be54f3d17d5fba56ed2221ef
+respuestas|3|aa756da14ac2361fed6a0dba1f3656f5
+solicitudes_ayuda|0|d41d8cd98f00b204e9800998ecf8427e
+usuarios|4|5a2e0709b7052fdc58d462865706999a

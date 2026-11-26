@@ -73,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && (
                     'profesor' => 'mis_aulas.php',
                     'alumno' => 'mis_cursos.php',
                     'apoderado' => 'panel_apoderado.php',
-                    'admin' => 'vinculos_apoderado.php',
+                    'admin' => 'panel_admin.php',
                     default => 'index.html',
                 };
                 header('Location: ' . $destino);
