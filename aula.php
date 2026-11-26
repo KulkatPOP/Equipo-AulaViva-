@@ -203,7 +203,7 @@ try {
 
             <span class="av-menu-label">AULA ACTUAL</span>
 
-            <a href="aula.php?id=<?= (int) $aulaId ?>"
+            <a href="aula.php?id=<?= htmlspecialchars((string) (int) $aulaId, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>"
                class="av-menu-active"
                aria-current="page">
 
@@ -215,11 +215,11 @@ try {
 
             </a>
 
-            <a href="materiales.php?aula_id=<?= (int) $aulaId ?>">
+            <a href="materiales.php?aula_id=<?= htmlspecialchars((string) (int) $aulaId, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
                 Materiales
             </a>
 
-            <a href="notas.php?aula_id=<?= (int) $aulaId ?>">
+            <a href="notas.php?aula_id=<?= htmlspecialchars((string) (int) $aulaId, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
                 Notas
             </a>
 
@@ -349,7 +349,7 @@ try {
             </p>
 
             <a class="av-course-button"
-               href="materiales.php?aula_id=<?= (int) $aulaId ?>">
+               href="materiales.php?aula_id=<?= htmlspecialchars((string) (int) $aulaId, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
 
                 Ver materiales
 
@@ -369,7 +369,7 @@ try {
             </p>
 
             <a class="av-course-button"
-               href="evaluaciones.php?aula_id=<?= (int) $aulaId ?>">
+               href="evaluaciones.php?aula_id=<?= htmlspecialchars((string) (int) $aulaId, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
 
                 Ver evaluaciones
 
@@ -389,7 +389,7 @@ try {
             </p>
 
             <a class="av-course-button"
-               href="notas.php?aula_id=<?= (int) $aulaId ?>">
+               href="notas.php?aula_id=<?= htmlspecialchars((string) (int) $aulaId, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
 
                 Ver notas
 

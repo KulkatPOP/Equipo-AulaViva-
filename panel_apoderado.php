@@ -127,7 +127,7 @@ $nombreHijo = $hijo !== null
         <div class="av-profile">
 
             <div class="av-profile-text">
-                <strong><?= escaparApoderados($nombre) ?></strong>
+                <strong><?= htmlspecialchars($nombre, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></strong>
                 <span>Apoderado</span>
             </div>
 
@@ -183,14 +183,14 @@ $nombreHijo = $hijo !== null
 
                 <?php foreach ($pupilos as $pupilo): ?>
 
-                    <a href="panel_apoderado.php?estudiante_id=<?= (int) $pupilo['id'] ?>"
+                    <a href="panel_apoderado.php?estudiante_id=<?= htmlspecialchars((string) (int) $pupilo['id'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>"
                        <?= $hijo !== null && (int) $pupilo['id'] === $seleccionado
                            ? 'class="av-menu-active" aria-current="page"'
                            : '' ?>>
 
-                        <?= escaparApoderados(
+                        <?= htmlspecialchars(
                             $pupilo['nombre'] . ' ' . $pupilo['apellido']
-                        ) ?>
+                        , ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
 
                     </a>
 
@@ -216,7 +216,7 @@ $nombreHijo = $hijo !== null
 
                 <a href="panel_apoderado.php">Inicio</a>
                 <span aria-hidden="true">/</span>
-                <span><?= escaparApoderados($nombreHijo) ?></span>
+                <span><?= htmlspecialchars($nombreHijo, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></span>
 
             <?php else: ?>
 
@@ -253,7 +253,7 @@ $nombreHijo = $hijo !== null
                     </span>
 
                     <h1>
-                        ¡Hola, <?= escaparApoderados($primerNombre) ?>!
+                        ¡Hola, <?= htmlspecialchars($primerNombre, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>!
                     </h1>
 
                     <p>Consulta las calificaciones de tus hijos.</p>
@@ -282,7 +282,7 @@ $nombreHijo = $hijo !== null
                         <?php foreach ($pupilos as $pupilo): ?>
 
                             <a class="ap-hijo"
-                               href="panel_apoderado.php?estudiante_id=<?= (int) $pupilo['id'] ?>">
+                               href="panel_apoderado.php?estudiante_id=<?= htmlspecialchars((string) (int) $pupilo['id'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
 
                                 <div class="ap-hijo-icono">
 
@@ -301,9 +301,9 @@ $nombreHijo = $hijo !== null
                                 <div class="ap-hijo-info">
 
                                     <h3>
-                                        <?= escaparApoderados(
+                                        <?= htmlspecialchars(
                                             $pupilo['nombre'] . ' ' . $pupilo['apellido']
-                                        ) ?>
+                                        , ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
                                     </h3>
 
                                     <span>Estudiante</span>
@@ -337,7 +337,7 @@ $nombreHijo = $hijo !== null
                         RENDIMIENTO ACADÉMICO
                     </span>
 
-                    <h1><?= escaparApoderados($nombreHijo) ?></h1>
+                    <h1><?= htmlspecialchars($nombreHijo, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></h1>
 
                     <p>Consulta las calificaciones por asignatura.</p>
 
@@ -381,7 +381,7 @@ $nombreHijo = $hijo !== null
                                         <?php for ($i = 1; $i <= $maxNotas; $i++): ?>
 
                                             <th scope="col">
-                                                Nota <?= $i ?>
+                                                Nota <?= htmlspecialchars((string) $i, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
                                             </th>
 
                                         <?php endfor; ?>
@@ -399,7 +399,7 @@ $nombreHijo = $hijo !== null
                                         <tr>
 
                                             <th scope="row">
-                                                <?= escaparApoderados($aula['asignatura']) ?>
+                                                <?= htmlspecialchars($aula['asignatura'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
                                             </th>
 
                                             <?php for ($i = 0; $i < $maxNotas; $i++): ?>
@@ -414,7 +414,7 @@ $nombreHijo = $hijo !== null
 
                                                     <?= $nota === null
                                                         ? '&mdash;'
-                                                        : number_format($nota, 1, ',', '.') ?>
+                                                        : htmlspecialchars(number_format($nota, 1, ',', '.'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
 
                                                 </td>
 
@@ -428,7 +428,7 @@ $nombreHijo = $hijo !== null
 
                                                 <?= $promedio === null
                                                     ? '&mdash;'
-                                                    : number_format($promedio, 1, ',', '.') ?>
+                                                    : htmlspecialchars(number_format($promedio, 1, ',', '.'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
 
                                             </td>
 

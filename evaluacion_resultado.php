@@ -146,7 +146,7 @@ function valorBooleanoResultado(mixed $valor): bool
         </a>
 
         <div class="resultado-perfil">
-            <strong><?= escaparMaterial($primerNombre) ?></strong>
+            <strong><?= htmlspecialchars($primerNombre, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></strong>
             <span>Estudiante</span>
         </div>
 
@@ -155,7 +155,7 @@ function valorBooleanoResultado(mixed $valor): bool
     <main class="resultado-contenido">
 
         <a class="resultado-volver"
-           href="<?= escaparMaterial($volver) ?>">
+           href="<?= htmlspecialchars($volver, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
             &larr; Volver a la asignatura
         </a>
 
@@ -166,11 +166,11 @@ function valorBooleanoResultado(mixed $valor): bool
             <div class="resultado-titulo">
 
                 <span>
-                    <?= escaparMaterial($asignatura) ?>
+                    <?= htmlspecialchars($asignatura, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
                 </span>
 
                 <h1>
-                    <?= escaparMaterial($resultado['titulo']) ?>
+                    <?= htmlspecialchars($resultado['titulo'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
                 </h1>
 
                 <p class="resultado-confirmacion">
@@ -205,7 +205,7 @@ function valorBooleanoResultado(mixed $valor): bool
                         ? 'nota-aprobada'
                         : 'nota-reprobada' ?>">
 
-                        <?= formatoResultado($nota, 1) ?>
+                        <?= htmlspecialchars(formatoResultado($nota, 1), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
 
                     </strong>
                 </p>
@@ -213,15 +213,15 @@ function valorBooleanoResultado(mixed $valor): bool
                 <p>
                     <strong>Puntaje obtenido:</strong>
 
-                    <?= escaparMaterial(
+                    <?= htmlspecialchars(
                         (string) $resultado['puntaje_obtenido']
-                    ) ?>
+                    , ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
 
                     de
 
-                    <?= escaparMaterial(
+                    <?= htmlspecialchars(
                         (string) $resultado['puntaje_maximo']
-                    ) ?>
+                    , ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
 
                     puntos
                 </p>
@@ -230,9 +230,7 @@ function valorBooleanoResultado(mixed $valor): bool
                     <strong>Porcentaje:</strong>
 
                     <?= $resultado['porcentaje'] !== null
-                        ? formatoResultado(
-                            (float) $resultado['porcentaje'], 2
-                        ) . '%'
+                        ? htmlspecialchars(formatoResultado((float) $resultado['porcentaje'], 2), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '%'
                         : 'No disponible' ?>
                 </p>
 
@@ -284,7 +282,7 @@ function valorBooleanoResultado(mixed $valor): bool
                         <div class="resultado-pregunta-header">
 
                             <strong>
-                                Pregunta <?= $numero ?>
+                                Pregunta <?= htmlspecialchars((string) $numero, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
                             </strong>
 
                             <span class="<?= $acertada
@@ -292,12 +290,12 @@ function valorBooleanoResultado(mixed $valor): bool
                                 : 'nota-reprobada' ?>">
 
                                 <?= $acertada
-                                    ? escaparMaterial($puntaje)
+                                    ? htmlspecialchars($puntaje, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8')
                                     : '0' ?>
 
                                 /
 
-                                <?= escaparMaterial($puntaje) ?>
+                                <?= htmlspecialchars($puntaje, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
 
                                 puntos
 
@@ -306,9 +304,9 @@ function valorBooleanoResultado(mixed $valor): bool
                         </div>
 
                         <h3>
-                            <?= escaparMaterial(
+                            <?= htmlspecialchars(
                                 $opciones[0]['enunciado']
-                            ) ?>
+                            , ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
                         </h3>
 
                         <div class="resultado-alternativas">
@@ -384,13 +382,13 @@ function valorBooleanoResultado(mixed $valor): bool
 
                                         <span>
 
-                                            <?= escaparMaterial(
+                                            <?= htmlspecialchars(
                                                 ($i < 26
                                                     ? chr(65 + $i)
                                                     : (string) ($i + 1))
                                                 . '. '
                                                 . $opcion['texto']
-                                            ) ?>
+                                            , ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
 
                                         </span>
 
@@ -399,7 +397,7 @@ function valorBooleanoResultado(mixed $valor): bool
                                     <?php if ($estado !== ''): ?>
 
                                         <small>
-                                            <?= escaparMaterial($estado) ?>
+                                            <?= htmlspecialchars($estado, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
                                         </small>
 
                                     <?php endif; ?>
@@ -428,7 +426,7 @@ function valorBooleanoResultado(mixed $valor): bool
 
             <div class="resultado-acciones">
 
-                <a href="<?= escaparMaterial($volver) ?>"
+                <a href="<?= htmlspecialchars($volver, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>"
                    class="resultado-boton">
 
                     Volver a la asignatura
