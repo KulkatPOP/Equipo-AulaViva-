@@ -1,9 +1,9 @@
-@startuml C4_Nivel1_Contexto
-!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+@startuml
+!include <C4/C4_Context>
 
 LAYOUT_WITH_LEGEND()
 
-title AulaViva - Contexto del sistema (C4 L1) - Implementacion en main f908f01
+title AulaViva - Contexto del sistema (C4 L1)
 
 Person(estudiante, "Estudiante", "Consulta materiales de sus aulas, rinde evaluaciones y utiliza el Tutor IA.")
 Person(docente, "Profesor / docente", "Consulta sus aulas y alumnos, sube materiales, crea y publica evaluaciones y emite invitaciones.")

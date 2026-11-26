@@ -75,7 +75,7 @@ final class TutorLexico
             }
         }
         foreach (array_keys($terminos) as $forma) {
-            foreach (self::variantes($forma) as $variante) {
+            foreach (self::variantes((string) $forma) as $variante) {
                 $terminos[$variante] = true;
                 $traducciones = self::diccionario()['es'][$variante] ?? [];
                 // Evitar añadir todas las acepciones de términos polisémicos al OR textual.

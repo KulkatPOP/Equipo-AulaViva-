@@ -1,0 +1,228 @@
+
+/* Hijos vinculados */
+
+.ap-hijos-lista {
+    display: grid;
+    gap: 14px;
+}
+
+.ap-hijo {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 22px 26px;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    color: #0f172a;
+    text-decoration: none;
+    transition: border-color .2s, box-shadow .2s;
+}
+
+.ap-hijo:hover {
+    border-color: #94a3b8;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, .06);
+}
+
+.ap-hijo-icono {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    background: #eff4fa;
+    color: #19365c;
+}
+
+.ap-hijo-info {
+    flex: 1;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.ap-hijo-info h3 {
+    margin: 0 0 4px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.ap-hijo-info > span {
+    font-size: 13px;
+    color: #64748b;
+}
+
+.ap-hijo-acceso {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #19365c;
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.ap-hijo-acceso > span {
+    font-size: 20px;
+}
+
+/* Tabla de calificaciones */
+
+.ap-notas-card {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 24px;
+}
+
+.ap-notas-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 22px;
+}
+
+.ap-notas-header h2 {
+    margin: 0;
+    font-size: 19px;
+    font-weight: 600;
+    color: #0f172a;
+}
+
+.ap-notas-header > span {
+    font-size: 12px;
+    color: #64748b;
+}
+
+.ap-tabla-scroll {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.ap-tabla {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    color: #0f172a;
+}
+
+.ap-tabla th,
+.ap-tabla td {
+    padding: 16px 18px;
+    text-align: center;
+    border-bottom: 1px solid #e2e8f0;
+    white-space: nowrap;
+}
+
+.ap-tabla thead th {
+    background: #f8fafc;
+    font-weight: 600;
+    color: #475569;
+}
+
+.ap-tabla th:first-child {
+    text-align: left;
+    min-width: 210px;
+}
+
+.ap-tabla tbody th {
+    font-weight: 500;
+}
+
+.ap-tabla tbody tr:last-child > * {
+    border-bottom: 0;
+}
+
+.ap-tabla tbody tr:hover {
+    background: #f8fafc;
+}
+
+.ap-tabla .ap-nota-baja {
+    color: #dc2626;
+}
+
+.ap-tabla .ap-nota-vacia {
+    color: #94a3b8;
+}
+
+.ap-promedio {
+    font-weight: 600;
+}
+
+/* Avisos y navegación */
+
+.ap-aviso {
+    padding: 24px;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    color: #64748b;
+    font-size: 14px;
+}
+
+.ap-volver {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 22px;
+    color: #19365c;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.ap-volver:hover {
+    text-decoration: underline;
+}
+
+.ap-hijo:focus-visible,
+.ap-volver:focus-visible,
+.ap-tabla-scroll:focus-visible {
+    outline: 2px solid #2563eb;
+    outline-offset: 4px;
+}
+
+/* Responsive */
+
+@media (max-width: 768px) {
+
+    .ap-hijo {
+        padding: 18px 16px;
+        gap: 12px;
+    }
+
+    .ap-hijo-icono {
+        width: 44px;
+        height: 44px;
+    }
+
+    .ap-hijo-info h3 {
+        font-size: 14px;
+    }
+
+    .ap-hijo-acceso {
+        font-size: 12px;
+        gap: 6px;
+    }
+
+    .ap-notas-card {
+        padding: 16px;
+    }
+
+    .ap-tabla th,
+    .ap-tabla td {
+        padding: 14px;
+        font-size: 13px;
+    }
+
+    .ap-tabla th:first-child {
+        min-width: 170px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .ap-hijo {
+        transition: none;
+    }
+}

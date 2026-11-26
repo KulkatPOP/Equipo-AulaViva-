@@ -63,3 +63,37 @@ Para investigar una vulnerabilidad transitiva, buscar el CVE en
 `trivy-report.json` y anotar el paquete y la versión instalada. Luego, buscar
 el componente en `sbom.json` y seguir su `bom-ref` en `dependencies` para
 identificar qué dependencia lo incorpora.
+
+
+## S10 · Seguridad en runtime
+
+Se realizaron pruebas de seguridad en un clúster Kubernetes
+desechable mediante Kyverno y Falco.
+
+Los controles evaluados incluyen:
+
+- Admisión de imágenes mediante verificación de firmas.
+- Rechazo de imágenes sin firma válida.
+- Verificación de identidad y provenance SLSA.
+- Detección de comportamientos sospechosos durante la ejecución.
+
+El laboratorio y sus resultados están documentados en:
+
+- [Informe S10](docs/ops/S10-runtime-lab.md)
+- [Evidencias S10](docs/ops/evidencias/s10-runtime-lab/)
+
+## FinOps
+
+Se documentaron las optimizaciones de recursos Kubernetes,
+la gestión de memoria de modelos IA, el etiquetado de recursos
+y la estimación de costos de infraestructura local.
+
+- [Informe FinOps](docs/finops/README.md)
+- [Evidencias FinOps](docs/finops/evidencias/)
+
+## Operaciones y arquitectura
+
+- [Documentación operacional](docs/ops/README.md)
+- [Decisiones arquitectónicas](docs/adr/)
+- [Diagramas C4](docs/c4/)
+- [Documentación del Tutor IA](docs/tutor-rag-generation.md)

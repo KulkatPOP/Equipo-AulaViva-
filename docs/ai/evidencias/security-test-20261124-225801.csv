@@ -1,0 +1,7 @@
+﻿"id","prueba","esperado","http","aprobado","detalle"
+"SEC01","Tutor aula autorizada","HTTP 200, respuesta correcta y citas del fragmento 39","200","False","{""http"":200,""estado"":""INSUFFICIENT_EVIDENCE"",""respuesta"":""No encontré información suficiente en los materiales disponibles para responder esta pregunta."",""citas"":[],""redireccion"":""""}"
+"SEC02","Tutor aula restringida","HTTP 403, sin citas","403","True","{""http"":403,""estado"":""INSUFFICIENT_EVIDENCE"",""respuesta"":""No tienes acceso a esta aula."",""citas"":[],""redireccion"":""""}"
+"SEC03","Tutor aula inexistente","HTTP 403, sin citas","403","True","{""http"":403,""estado"":""INSUFFICIENT_EVIDENCE"",""respuesta"":""No tienes acceso a esta aula."",""citas"":[],""redireccion"":""""}"
+"SEC04","Material autorizado","HTTP 200 y PDF vÃ¡lido en su cabecera","200","True","{""http"":200,""tipo"":""application/pdf"",""es_pdf"":true,""bytes"":24256}"
+"SEC05","Material restringido","HTTP 404, sin contenido PDF","404","True","{""http"":404,""tipo"":""text/html; charset=UTF-8"",""es_pdf"":false,""bytes"":59}"
+"SEC06","Tutor sin autenticaciÃ³n","RedirecciÃ³n al login o HTTP 401/403, sin citas","302","True","{""http"":302,""estado"":"""",""respuesta"":"""",""citas"":[],""redireccion"":""/login.php""}"

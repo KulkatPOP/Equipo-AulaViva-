@@ -27,9 +27,19 @@ final class ApoderadosPostgresTest extends TestCase
         $this->pdo->exec("CREATE TABLE usuarios (id integer PRIMARY KEY, colegio_id integer NOT NULL, nombre text NOT NULL, apellido text NOT NULL, username text, rol text CHECK (rol IN ('alumno','profesor','admin')), activo boolean NOT NULL DEFAULT TRUE);
             CREATE TABLE aulas (id integer PRIMARY KEY, colegio_id integer NOT NULL, nombre text NOT NULL, activo boolean NOT NULL DEFAULT TRUE);
             CREATE TABLE aula_alumnos (aula_id integer REFERENCES aulas(id), alumno_id integer REFERENCES usuarios(id), PRIMARY KEY(aula_id, alumno_id));");
-        foreach (['002_evaluaciones.sql', '003_rendicion.sql', '005_apoderados.sql'] as $file) {
-            $this->pdo->exec(file_get_contents(__DIR__ . '/../migrations/' . $file));
-        }
+        foreach ([
+    '002_evaluaciones.sql',
+    '003_rendicion.sql',
+    '005_apoderados.sql',
+    '007_libro_notas.sql',
+    '008_ajustes_notas.sql',
+    '009_evaluaciones_disponibilidad.sql',
+    '010_tipo_respuesta.sql'
+] as $file) {
+    $this->pdo->exec(
+        file_get_contents(__DIR__ . '/../migrations/' . $file)
+    );
+}
         $this->pdo->exec("INSERT INTO usuarios(id,colegio_id,nombre,apellido,rol) VALUES
             (1,1,'Admin','Uno','admin'),(2,1,'Apoderado','Uno','apoderado'),(3,1,'Alumno','Uno','alumno'),
             (4,1,'Alumno','Dos','alumno'),(5,2,'Alumno','Ajeno','alumno'),(6,2,'Admin','Ajeno','admin'),
@@ -49,29 +59,134 @@ final class ApoderadosPostgresTest extends TestCase
         }
     }
 
-    private function nota(int $numero, string $valor, bool $publicada = true, string $estado = 'calificada', int $aula = 10): void
-    {
-        $id = sprintf('00000000-0000-4000-8000-%012d', $numero);
-        consultaApoderados($this->pdo, 'INSERT INTO evaluaciones(id,aula_id,titulo,publicada_en) VALUES (?,?,?,?)', [$id,$aula,'Evaluación ' . $numero,$publicada ? '2026-01-01' : null]);
-        consultaApoderados($this->pdo, "INSERT INTO entregas(id,evaluacion_id,estudiante_id,fecha_inicio,fecha_vencimiento,fecha_entrega,puntaje_obtenido,puntaje_maximo,calificacion,estado)
-            VALUES (?,?,3,CAST(? AS timestamptz),CAST(? AS timestamptz) + interval '60 minutes',?, ?, ?, ?, ?)",
-            [$id,$id,'2026-01-01','2026-01-01',$estado === 'en_progreso' ? null : '2026-01-01 00:30:00+00', $estado === 'calificada' ? 5 : null,$estado === 'calificada' ? 10 : null,$estado === 'calificada' ? $valor : null,$estado]);
+    private function nota(
+    int $numero,
+    string $valor,
+    bool $publicada = true,
+    string $estado = 'calificada',
+    int $aula = 10
+): void {
+    $id = sprintf(
+        '00000000-0000-4000-8000-%012d',
+        $numero
+    );
+
+    consultaApoderados(
+        $this->pdo,
+        'INSERT INTO evaluaciones
+         (id, aula_id, titulo, publicada_en)
+         VALUES (?, ?, ?, ?)',
+        [
+            $id,
+            $aula,
+            'Evaluación ' . $numero,
+            $publicada ? '2026-01-01' : null
+        ]
+    );
+
+    consultaApoderados(
+        $this->pdo,
+        "INSERT INTO entregas (
+            id,
+            evaluacion_id,
+            estudiante_id,
+            fecha_inicio,
+            fecha_vencimiento,
+            fecha_entrega,
+            puntaje_obtenido,
+            puntaje_maximo,
+            calificacion,
+            estado
+        ) VALUES (
+            ?, ?, 3,
+            CAST(? AS timestamptz),
+            CAST(? AS timestamptz) + interval '60 minutes',
+            ?, ?, ?, ?, ?
+        )",
+        [
+            $id,
+            $id,
+            '2026-01-01',
+            '2026-01-01',
+            $estado === 'en_progreso'
+                ? null
+                : '2026-01-01 00:30:00+00',
+            $estado === 'calificada' ? 5 : null,
+            $estado === 'calificada' ? 10 : null,
+            $estado === 'calificada' ? $valor : null,
+            $estado
+        ]
+    );
+
+    if ($publicada) {
+        consultaApoderados(
+            $this->pdo,
+            "INSERT INTO libro_notas (
+                aula_id,
+                numero,
+                titulo,
+                tipo,
+                evaluacion_id,
+                creado_por
+            ) VALUES (?, ?, ?, 'automatica', ?, 7)",
+            [
+                $aula,
+                $numero,
+                'Evaluación ' . $numero,
+                $id
+            ]
+        );
+    }
+}
+
+    public function testPromedioTodasLasNotas(): void
+{
+    self::assertTrue(
+        confirmarVinculoApoderado($this->pdo, 1, 1, 2, 3)
+    );
+
+    foreach (['1.0', '5.0', '6.0', '6.0', '6.0', '6.0'] as $i => $nota) {
+        $this->nota($i + 1, $nota);
     }
 
-    public function testPromedioTodasLasNotasPeroSoloCincoUltimas(): void
-    {
-        self::assertTrue(confirmarVinculoApoderado($this->pdo,1,1,2,3));
-        foreach (['1.0','5.0','6.0','6.0','6.0','6.0'] as $i => $nota) { $this->nota($i+1,$nota); }
-        $this->nota(7,'7.0',false);
-        $this->nota(8,'7.0',true,'entregada');
-        $this->nota(9,'7.0',true,'en_progreso');
-        $aulas = rendimientoApoderado($this->pdo,2,1,3);
-        self::assertEquals('5.0',$aulas[10]['promedio']);
-        self::assertCount(5,$aulas[10]['evaluaciones']);
-        self::assertSame(['Evaluación 6','Evaluación 5','Evaluación 4','Evaluación 3','Evaluación 2'], array_column($aulas[10]['evaluaciones'],'titulo'));
-        self::assertNull($aulas[11]['promedio']);
-        self::assertSame('Asignatura sin configurar',$aulas[11]['asignatura']);
-    }
+    $this->nota(7, '7.0', false);
+    $this->nota(8, '7.0', true, 'entregada');
+    $this->nota(9, '7.0', true, 'en_progreso');
+
+    $aulas = rendimientoApoderado(
+        $this->pdo, 2, 1, 3
+    );
+
+    self::assertEquals(5.0, $aulas[10]['promedio']);
+
+    self::assertCount(8, $aulas[10]['notas']);
+
+    self::assertSame(
+        [1.0, 5.0, 6.0, 6.0, 6.0, 6.0, null, null],
+        array_column($aulas[10]['notas'], 'calificacion')
+    );
+
+    self::assertSame(
+        [
+            'Evaluación 1',
+            'Evaluación 2',
+            'Evaluación 3',
+            'Evaluación 4',
+            'Evaluación 5',
+            'Evaluación 6',
+            'Evaluación 8',
+            'Evaluación 9'
+        ],
+        array_column($aulas[10]['notas'], 'titulo')
+    );
+
+    self::assertNull($aulas[11]['promedio']);
+
+    self::assertSame(
+        'Lenguaje',
+        $aulas[11]['asignatura']
+    );
+}
 
     public function testRedondeoYSeparacionPorAula(): void
     {
@@ -148,7 +263,7 @@ final class ApoderadosPostgresTest extends TestCase
         $env['DB_PASSWORD'] = getenv('US05_TEST_PASSWORD') ?: '';
         $env['PGOPTIONS'] = '-c search_path=' . $this->schema;
         $this->server = proc_open([PHP_BINARY,'-S','127.0.0.1:' . $this->port,'-t',dirname(__DIR__)],
-            [0 => ['pipe','r'],1 => ['file','/dev/null','a'],2 => ['file','/dev/null','a']],$pipes,null,$env);
+            [0 => ['pipe','r'],1 => ['file',(PHP_OS_FAMILY === 'Windows' ? 'NUL' : '/dev/null'),'a'],2 => ['file',(PHP_OS_FAMILY === 'Windows' ? 'NUL' : '/dev/null'),'a']],$pipes,null,$env);
         if (!is_resource($this->server)) { throw new RuntimeException('Servidor de prueba no disponible'); }
         fclose($pipes[0]);
         $this->cookie = tempnam(sys_get_temp_dir(),'us05-cookie-');
@@ -165,7 +280,7 @@ final class ApoderadosPostgresTest extends TestCase
         $curl = curl_init('http://127.0.0.1:' . $this->port . '/' . $path);
         curl_setopt_array($curl,[CURLOPT_RETURNTRANSFER=>true,CURLOPT_COOKIEFILE=>$this->cookie,CURLOPT_COOKIEJAR=>$this->cookie,CURLOPT_TIMEOUT=>5]);
         if ($post !== null) { curl_setopt_array($curl,[CURLOPT_POST=>true,CURLOPT_POSTFIELDS=>http_build_query($post)]); }
-        $body = curl_exec($curl); $status = curl_getinfo($curl,CURLINFO_RESPONSE_CODE); curl_close($curl);
+        $body = curl_exec($curl); $status = curl_getinfo($curl,CURLINFO_RESPONSE_CODE); unset($curl);
         return [$status,$body];
     }
 
@@ -177,38 +292,188 @@ final class ApoderadosPostgresTest extends TestCase
         self::assertSame(302,$status);
     }
 
-    public function testHttpPanelSelectorSinVinculosYAutorizacion(): void
-    {
-        $this->demarrerHttp();
-        self::assertSame(302,$this->http('panel_apoderado.php')[0]);
-        $this->loginHttp(2);
-        [$status,$body]=$this->http('panel_apoderado.php');
-        self::assertSame(200,$status);
-        self::assertStringContainsString('No hay estudiantes asociados a tu cuenta. Contacte a Coordinación',$body);
-        confirmarVinculoApoderado($this->pdo,1,1,2,3);
-        confirmarVinculoApoderado($this->pdo,1,1,2,4);
-        [$status,$body]=$this->http('panel_apoderado.php?estudiante_id=3');
-        self::assertSame(200,$status);
-        self::assertStringContainsString('Sin calificaciones',$body);
-        self::assertStringContainsString('name="estudiante_id"',$body);
-        self::assertSame(200,$this->http('panel_apoderado.php?estudiante_id=4')[0]);
-        [$status,$body] = $this->http('panel_apoderado.php?estudiante_id=5');
-        self::assertSame(403,$status);
-        self::assertStringContainsString('Estudiante no disponible.',$body);
-        self::assertStringContainsString('Volver al panel del apoderado',$body);
-        self::assertStringContainsString('<header>',$body);
-        self::assertStringNotContainsString('Promedio actual:',$body);
-        $this->nota(1,'5.0');
-        [$status,$body] = $this->http('panel_apoderado.php?estudiante_id=3');
-        self::assertSame(200,$status);
-        self::assertStringContainsString('1 de enero de 2026, 00:30',$body);
-        self::assertStringNotContainsString('00:30:00+00',$body);
-        self::assertSame(403,$this->http('panel_apoderado.php?estudiante_id[]=3')[0]);
-        self::assertSame(403,$this->http('vinculos_apoderado.php')[0]);
-        $this->http('logout.php');
-        $this->loginHttp(7);
-        self::assertSame(403,$this->http('panel_apoderado.php')[0]);
-    }
+   public function testHttpPanelSelectorSinVinculosYAutorizacion(): void
+{
+    $this->demarrerHttp();
+
+    // Sin sesión: redirección al login.
+    self::assertSame(
+        302,
+        $this->http('panel_apoderado.php')[0]
+    );
+
+    $this->loginHttp(2);
+
+    // Apoderado sin estudiantes vinculados.
+    [$status, $body] = $this->http('panel_apoderado.php');
+
+    self::assertSame(200, $status);
+
+    self::assertStringContainsString(
+        'No tienes estudiantes vinculados a tu cuenta.',
+        $body
+    );
+
+    // Confirmar estudiantes autorizados.
+    self::assertTrue(
+        confirmarVinculoApoderado($this->pdo, 1, 1, 2, 3)
+    );
+
+    self::assertTrue(
+        confirmarVinculoApoderado($this->pdo, 1, 1, 2, 4)
+    );
+
+    // Comprobar navegación entre estudiantes.
+    [$status, $body] = $this->http('panel_apoderado.php');
+
+    self::assertSame(200, $status);
+
+    self::assertStringContainsString(
+        'panel_apoderado.php?estudiante_id=3',
+        $body
+    );
+
+    self::assertStringContainsString(
+        'panel_apoderado.php?estudiante_id=4',
+        $body
+    );
+
+    self::assertStringNotContainsString(
+        'panel_apoderado.php?estudiante_id=5',
+        $body
+    );
+
+    // Consultar estudiante autorizado sin notas.
+    [$status, $body] = $this->http(
+        'panel_apoderado.php?estudiante_id=3'
+    );
+
+    self::assertSame(200, $status);
+
+    self::assertStringContainsString(
+        'Alumno Uno',
+        $body
+    );
+
+    self::assertStringContainsString(
+        'Tabla de calificaciones',
+        $body
+    );
+
+    self::assertStringContainsString(
+        'Solo lectura',
+        $body
+    );
+
+    self::assertStringContainsString(
+        'ap-nota-vacia',
+        $body
+    );
+
+    self::assertStringContainsString(
+        '&mdash;',
+        $body
+    );
+
+    self::assertSame(
+        200,
+        $this->http(
+            'panel_apoderado.php?estudiante_id=4'
+        )[0]
+    );
+
+    // Impedir acceso a estudiantes ajenos.
+    [$status, $body] = $this->http(
+        'panel_apoderado.php?estudiante_id=5'
+    );
+
+    self::assertSame(403, $status);
+
+    self::assertStringContainsString(
+        'Estudiante no disponible.',
+        $body
+    );
+
+    self::assertStringContainsString(
+        'Volver al inicio',
+        $body
+    );
+
+    self::assertStringContainsString(
+        '<header class="av-header">',
+        $body
+    );
+
+    self::assertStringNotContainsString(
+        'class="ap-tabla"',
+        $body
+    );
+
+    self::assertStringNotContainsString(
+        'Alumno Ajeno',
+        $body
+    );
+
+    // Registrar y comprobar una calificación.
+    $this->nota(1, '5.0');
+
+    [$status, $body] = $this->http(
+        'panel_apoderado.php?estudiante_id=3'
+    );
+
+    self::assertSame(200, $status);
+
+    self::assertMatchesRegularExpression(
+        '/<td class="">\s*5,0\s*<\/td>/',
+        $body
+    );
+
+    self::assertMatchesRegularExpression(
+        '/<td class="ap-promedio\s*">\s*5,0\s*<\/td>/',
+        $body
+    );
+
+    self::assertStringNotContainsString(
+        '00:30:00+00',
+        $body
+    );
+
+    // Otro estudiante no debe recibir esa nota.
+    [$status, $body] = $this->http(
+        'panel_apoderado.php?estudiante_id=4'
+    );
+
+    self::assertSame(200, $status);
+
+    self::assertDoesNotMatchRegularExpression(
+        '/<td[^>]*>\s*5,0\s*<\/td>/',
+        $body
+    );
+
+    // Rechazar manipulación de parámetros.
+    self::assertSame(
+        403,
+        $this->http(
+            'panel_apoderado.php?estudiante_id[]=3'
+        )[0]
+    );
+
+    // El apoderado no puede gestionar vinculaciones.
+    self::assertSame(
+        403,
+        $this->http('vinculos_apoderado.php')[0]
+    );
+
+    // Un profesor no puede acceder al panel del apoderado.
+    $this->http('logout.php');
+
+    $this->loginHttp(7);
+
+    self::assertSame(
+        403,
+        $this->http('panel_apoderado.php')[0]
+    );
+}
 
     public function testHttpAdminCsrfConfirmacion(): void
     {

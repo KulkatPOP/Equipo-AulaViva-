@@ -47,7 +47,11 @@ conservadoras: una construcción desconocida, una relación ambigua o
 una paráfrasis que no conserve una firma comprobable puede provocar
 abstención. El léxico ayuda a identificar argumentos, pero no se usa
 como prueba de que dos oraciones completas impliquen lo mismo.
-Ollama se conecta solo a loopback y recibe `think: false`.
+
+Ollama utiliza loopback por defecto. En entornos Docker y Kubernetes
+locales se permite explícitamente `host.docker.internal` mediante
+`OLLAMA_ALLOW_DOCKER_HOST=true`. La comunicación utiliza HTTP/JSON
+en el puerto 11434. El modelo recibe `think: false`.
 
 El checklist incluye una representación intermedia para listas de
 alternativas, relaciones de protección, orientaciones relativas a un
@@ -75,6 +79,32 @@ TUTOR_MAX_CONTEXT_FRAGMENTS=3
 TUTOR_MAX_ANSWER_CHARS=1000
 ```
 
+### Configuración del entorno DEMO
+
+El entorno DEMO utiliza Kubernetes local mediante Docker Desktop.
+Ollama se ejecuta fuera del Pod de la aplicación.
+
+```text
+OLLAMA_BASE_URL=http://host.docker.internal:11434
+OLLAMA_ALLOW_DOCKER_HOST=true
+OLLAMA_EMBEDDING_MODEL=nomic-embed-text
+OLLAMA_CHAT_MODEL=qwen3:1.7b
+TUTOR_AI_TIMEOUT_SECONDS=60
+```
+
+El tiempo de espera se amplía a 60 segundos para la demostración
+local. Esto no constituye una garantía de latencia ni un SLO medido.
+
+La comunicación con Ollama utiliza HTTP local, sin cifrado TLS.
+No se utilizan proveedores externos de inferencia ni claves API
+comerciales.
+
+La inferencia local evita cargos por consumo de tokens de una API
+externa, pero requiere recursos de procesamiento, memoria,
+almacenamiento y energía del equipo anfitrión.
+
+### Requisitos y comportamiento de ejecución
+
 Usa una base con la migración 004 de 768 dimensiones y material
 ingestado. El presupuesto de tiempo incluye recuperación y generación.
 El generador recibe el tiempo restante y nunca se publica una respuesta
@@ -90,7 +120,8 @@ de fragmentos, sin guardar pregunta ni texto de materiales.
 | `GENERATION_TIMEOUT` | 504 |
 
 Una sesión ausente sigue la redirección de autenticación existente.
-La configuración actual usa Ollama local, sin claves API ni servicios de hosting específicos.
+La configuración actual usa Ollama local, sin claves API ni servicios
+de hosting específicos.
 
 ## Interfaz del Tutor IA
 
@@ -112,5 +143,5 @@ enlaces generados a partir de la respuesta.
 
 La conversación solo vive en la página y se borra al recargar. No se
 guarda en PostgreSQL ni en almacenamiento del navegador. Para responder,
-el endpoint sigue necesitando material ingestado y Ollama configurado
-en el entorno local de desarrollo.
+el endpoint necesita material ingestado y una instancia de Ollama
+disponible y configurada para el entorno correspondiente.

@@ -1,0 +1,92 @@
+﻿[
+    {
+        "id":  "SEC01",
+        "prueba":  "Tutor aula autorizada",
+        "esperado":  "HTTP 200, respuesta correcta y citas del fragmento 39",
+        "http":  200,
+        "aprobado":  false,
+        "detalle":  {
+                        "http":  200,
+                        "estado":  "INSUFFICIENT_EVIDENCE",
+                        "respuesta":  "No encontré información suficiente en los materiales disponibles para responder esta pregunta.",
+                        "citas":  [
+
+                                  ],
+                        "redireccion":  ""
+                    }
+    },
+    {
+        "id":  "SEC02",
+        "prueba":  "Tutor aula restringida",
+        "esperado":  "HTTP 403, sin citas",
+        "http":  403,
+        "aprobado":  true,
+        "detalle":  {
+                        "http":  403,
+                        "estado":  "INSUFFICIENT_EVIDENCE",
+                        "respuesta":  "No tienes acceso a esta aula.",
+                        "citas":  [
+
+                                  ],
+                        "redireccion":  ""
+                    }
+    },
+    {
+        "id":  "SEC03",
+        "prueba":  "Tutor aula inexistente",
+        "esperado":  "HTTP 403, sin citas",
+        "http":  403,
+        "aprobado":  true,
+        "detalle":  {
+                        "http":  403,
+                        "estado":  "INSUFFICIENT_EVIDENCE",
+                        "respuesta":  "No tienes acceso a esta aula.",
+                        "citas":  [
+
+                                  ],
+                        "redireccion":  ""
+                    }
+    },
+    {
+        "id":  "SEC04",
+        "prueba":  "Material autorizado",
+        "esperado":  "HTTP 200 y PDF vÃ¡lido en su cabecera",
+        "http":  200,
+        "aprobado":  true,
+        "detalle":  {
+                        "http":  200,
+                        "tipo":  "application/pdf",
+                        "es_pdf":  true,
+                        "bytes":  24256
+                    }
+    },
+    {
+        "id":  "SEC05",
+        "prueba":  "Material restringido",
+        "esperado":  "HTTP 404, sin contenido PDF",
+        "http":  404,
+        "aprobado":  true,
+        "detalle":  {
+                        "http":  404,
+                        "tipo":  "text/html; charset=UTF-8",
+                        "es_pdf":  false,
+                        "bytes":  59
+                    }
+    },
+    {
+        "id":  "SEC06",
+        "prueba":  "Tutor sin autenticaciÃ³n",
+        "esperado":  "RedirecciÃ³n al login o HTTP 401/403, sin citas",
+        "http":  302,
+        "aprobado":  true,
+        "detalle":  {
+                        "http":  302,
+                        "estado":  "",
+                        "respuesta":  "",
+                        "citas":  [
+
+                                  ],
+                        "redireccion":  "/login.php"
+                    }
+    }
+]

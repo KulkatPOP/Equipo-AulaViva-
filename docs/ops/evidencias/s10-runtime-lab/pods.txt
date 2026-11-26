@@ -1,0 +1,20 @@
+NAMESPACE            NAME                                                 READY   STATUS    RESTARTS   AGE    IP            NODE                         NOMINATED NODE   READINESS GATES
+aulaviva             runtime-fixture                                      1/1     Running   0          8s     10.244.0.14   aulaviva-s10-control-plane   <none>           <none>
+falco                falco-falcosidekick-649c677dc9-nzwkx                 1/1     Running   0          46s    10.244.0.13   aulaviva-s10-control-plane   <none>           <none>
+falco                falco-falcosidekick-649c677dc9-tp29n                 1/1     Running   0          46s    10.244.0.12   aulaviva-s10-control-plane   <none>           <none>
+falco                falco-k8s-metacollector-5d4bbc8bfc-72shj             1/1     Running   0          46s    10.244.0.11   aulaviva-s10-control-plane   <none>           <none>
+falco                falco-vpjv9                                          2/2     Running   0          46s    10.244.0.10   aulaviva-s10-control-plane   <none>           <none>
+falco                incident-receiver                                    1/1     Running   0          53s    10.244.0.9    aulaviva-s10-control-plane   <none>           <none>
+kube-system          coredns-668d6bf9bc-n6fdk                             1/1     Running   0          112s   10.244.0.3    aulaviva-s10-control-plane   <none>           <none>
+kube-system          coredns-668d6bf9bc-x4cx4                             1/1     Running   0          112s   10.244.0.4    aulaviva-s10-control-plane   <none>           <none>
+kube-system          etcd-aulaviva-s10-control-plane                      1/1     Running   0          117s   172.18.0.2    aulaviva-s10-control-plane   <none>           <none>
+kube-system          kindnet-rl7cz                                        1/1     Running   0          112s   172.18.0.2    aulaviva-s10-control-plane   <none>           <none>
+kube-system          kube-apiserver-aulaviva-s10-control-plane            1/1     Running   0          117s   172.18.0.2    aulaviva-s10-control-plane   <none>           <none>
+kube-system          kube-controller-manager-aulaviva-s10-control-plane   1/1     Running   0          118s   172.18.0.2    aulaviva-s10-control-plane   <none>           <none>
+kube-system          kube-proxy-jvf2z                                     1/1     Running   0          112s   172.18.0.2    aulaviva-s10-control-plane   <none>           <none>
+kube-system          kube-scheduler-aulaviva-s10-control-plane            1/1     Running   0          117s   172.18.0.2    aulaviva-s10-control-plane   <none>           <none>
+kyverno              kyverno-admission-controller-7f6bdddf8-gch7b         1/1     Running   0          92s    10.244.0.6    aulaviva-s10-control-plane   <none>           <none>
+kyverno              kyverno-background-controller-654b6dc74c-7m8rf       1/1     Running   0          92s    10.244.0.7    aulaviva-s10-control-plane   <none>           <none>
+kyverno              kyverno-cleanup-controller-7559d75556-s5thr          1/1     Running   0          92s    10.244.0.8    aulaviva-s10-control-plane   <none>           <none>
+kyverno              kyverno-reports-controller-dd57c4ddf-24cgp           1/1     Running   0          92s    10.244.0.5    aulaviva-s10-control-plane   <none>           <none>
+local-path-storage   local-path-provisioner-58cc7856b6-vcsvn              1/1     Running   0          112s   10.244.0.2    aulaviva-s10-control-plane   <none>           <none>

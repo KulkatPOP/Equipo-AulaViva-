@@ -1,31 +1,448 @@
-.tutor-panel {
-    overflow-wrap: anywhere;
+/* General */
+
+.tutor-page {
+    --navy: #0b192e;
+    --blue: #19365c;
+    --background: #f1f5f9;
+    --border: #e2e8f0;
+    --text: #0f172a;
+    --muted: #64748b;
+
+    margin: 0;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+    background: var(--background);
+    color: var(--text);
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
 }
 
-.tutor-panel .tutor-form {
-    display: grid;
-    gap: 1rem;
-    width: 100%;
+.tutor-page *,
+.tutor-page *::before,
+.tutor-page *::after {
     box-sizing: border-box;
 }
 
-.tutor-campo {
-    display: grid;
-    gap: .35rem;
-    min-width: 0;
+.tutor-page [hidden] {
+    display: none !important;
 }
 
-.tutor-campo label,
-.tutor-aula-nombre {
+.tutor-page button,
+.tutor-page textarea {
+    font: inherit;
+}
+
+.tutor-page button {
+    cursor: pointer;
+}
+
+.tutor-page button:disabled {
+    cursor: default;
+    opacity: .5;
+}
+
+.tutor-page a {
+    text-decoration: none;
+}
+
+.tutor-page :is(a, button, textarea):focus-visible {
+    outline: 2px solid #2563eb;
+    outline-offset: 3px;
+}
+
+/* Encabezado */
+
+.tutor-header {
+    height: 76px;
+    padding: 0 36px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--navy);
+    color: #fff;
+}
+
+.tutor-header-left,
+.tutor-logo,
+.tutor-perfil {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.tutor-header-left {
+    gap: 30px;
+}
+
+.tutor-logo {
+    color: #fff;
+    font-size: 23px;
+    font-weight: 700;
+}
+
+.tutor-logo img {
+    width: 45px;
+    height: 45px;
+    object-fit: contain;
+}
+
+.tutor-menu {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    padding: 6px;
+    background: transparent;
+    color: #fff;
+    border: 0;
+    border-radius: 6px;
+}
+
+.tutor-menu:hover {
+    background: #243c58;
+}
+
+.tutor-menu svg,
+.tutor-avatar svg {
+    width: 23px;
+    height: 23px;
+}
+
+.tutor-perfil-texto {
+    display: flex;
+    flex-direction: column;
+    text-align: right;
+    font-size: 13px;
+}
+
+.tutor-perfil-texto span {
+    color: #bfdbfe;
+    font-size: 12px;
+}
+
+.tutor-avatar {
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    background: #243c58;
+    border-radius: 50%;
+}
+
+/* Estructura */
+
+.tutor-layout {
+    display: grid;
+    grid-template-columns: 270px minmax(0, 1fr);
+    height: calc(100% - 76px);
+}
+
+.tutor-layout.menu-cerrado {
+    grid-template-columns: minmax(0, 1fr);
+}
+
+.tutor-layout.menu-cerrado .tutor-sidebar {
+    display: none;
+}
+
+/* Menú lateral */
+
+.tutor-sidebar {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    padding: 28px 20px;
+    background: #fff;
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+}
+
+.tutor-sidebar h2 {
+    margin: 0 0 22px;
+    font-size: 21px;
     font-weight: 600;
 }
 
-.tutor-aula-nombre,
-.tutor-estado {
-    margin: 0;
+.tutor-nueva {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+    min-height: 45px;
+    padding: 10px;
+    background: var(--navy);
+    color: #fff;
+    border: 0;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
 }
 
-.tutor-form:not([data-state="LOADING"]) .tutor-estado {
+.tutor-nueva span {
+    font-size: 20px;
+    font-weight: 400;
+}
+
+.tutor-nueva:hover {
+    background: var(--blue);
+}
+
+.tutor-sidebar-label {
+    margin: 32px 0 12px;
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.tutor-asignaturas {
+    display: grid;
+    gap: 6px;
+}
+
+.tutor-asignatura {
+    width: 100%;
+    padding: 13px 14px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--text);
+    font-size: 13px;
+    text-align: left;
+    overflow-wrap: anywhere;
+}
+
+.tutor-asignatura:hover,
+.tutor-asignatura.activa {
+    background: #e9eff7;
+}
+
+.tutor-asignatura.activa {
+    color: var(--blue);
+    font-weight: 600;
+    box-shadow: inset 3px 0 var(--blue);
+}
+
+/* Conversación */
+
+.tutor-main {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 0;
+}
+
+.tutor-chat {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 32px;
+}
+
+.tutor-bienvenida {
+    width: 100%;
+    max-width: 680px;
+    margin: auto;
+    padding: 24px 0;
+    text-align: center;
+}
+
+.tutor-bienvenida-logo {
+    width: 75px;
+    height: 75px;
+    object-fit: contain;
+    margin-bottom: 14px;
+}
+
+.tutor-bienvenida h1 {
+    margin: 0 0 12px;
+    color: var(--navy);
+    font-size: clamp(23px, 3vw, 34px);
+    font-weight: 700;
+}
+
+.tutor-bienvenida p {
+    margin: 0;
+    color: var(--muted);
+    line-height: 1.8;
+}
+
+.tutor-historial {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.tutor-respuestas {
+    display: grid;
+    gap: 30px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.tutor-turno {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    min-width: 0;
+}
+
+.tutor-mensaje-usuario {
+    align-self: flex-end;
+    max-width: 80%;
+    padding: 14px 20px;
+    background: var(--blue);
+    color: #fff;
+    border-radius: 16px 16px 4px 16px;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.tutor-mensaje-ia {
+    align-self: flex-start;
+    width: fit-content;
+    max-width: 95%;
+    padding: 20px 24px;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 4px 16px 16px 16px;
+    overflow-wrap: anywhere;
+}
+
+.tutor-mensaje-ia h3 {
+    margin: 0 0 12px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.tutor-respuesta {
+    margin: 0;
+    line-height: 1.9;
+    white-space: pre-wrap;
+}
+
+.tutor-turno-aula {
+    margin: 0 0 10px;
+    color: var(--muted);
+    font-size: 11px;
+}
+
+.tutor-mensaje-ia h4 {
+    margin: 18px 0 8px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+}
+
+.tutor-fuentes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.tutor-fuentes li {
+    padding: 6px 10px;
+    background: #e9eff7;
+    color: var(--blue);
+    border-radius: 6px;
+    font-size: 11px;
+}
+
+/* Campo de escritura */
+
+.tutor-compositor {
+    width: 100%;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 16px 30px 18px;
+}
+
+.tutor-caja {
+    padding: 15px 18px 12px;
+    background: #fff;
+    border: 1px solid #cbd5e1;
+    border-radius: 16px;
+    box-shadow: 0 3px 12px rgb(15 23 42 / 4%);
+}
+
+.tutor-caja:focus-within {
+    border-color: #94a3b8;
+}
+
+.tutor-caja textarea {
+    display: block;
+    width: 100%;
+    min-height: 50px;
+    max-height: 180px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--text);
+    resize: none;
+    outline: none;
+    line-height: 1.7;
+}
+
+.tutor-caja textarea:focus-visible {
+    outline: none;
+}
+
+.tutor-caja textarea::placeholder {
+    color: var(--muted);
+}
+
+.tutor-caja-inferior {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.tutor-aula-actual {
+    color: var(--muted);
+    font-size: 12px;
+    overflow-wrap: anywhere;
+}
+
+#tutor-enviar {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 38px;
+    height: 38px;
+    padding: 9px;
+    background: var(--navy);
+    color: #fff;
+    border: 0;
+    border-radius: 10px;
+}
+
+#tutor-enviar svg {
+    width: 20px;
+    height: 20px;
+}
+
+#tutor-enviar:not(:disabled):hover {
+    background: var(--blue);
+}
+
+.tutor-aclaracion {
+    margin: 12px 0 0;
+    color: var(--muted);
+    font-size: 11px;
+    text-align: center;
+}
+
+.tutor-estado {
     position: absolute;
     width: 1px;
     height: 1px;
@@ -33,91 +450,134 @@
     clip-path: inset(50%);
 }
 
-.tutor-campo :is(input, select) {
-    width: 100%;
-    min-width: 0;
-    min-height: 2.75rem;
-    box-sizing: border-box;
-    border: 1px solid #40516a;
-    border-radius: 6px;
-    padding: .55rem .75rem;
-    color: inherit;
+.tutor-aviso {
+    margin: 30px;
+    padding: 24px;
     background: #fff;
-    font: inherit;
+    border: 1px solid var(--border);
+    border-radius: 12px;
 }
 
-.tutor-panel :is(input, select, button):focus-visible {
-    outline: 3px solid #40516a;
-    outline-offset: 3px;
-}
+/* Carga */
 
-.tutor-panel .tutor-form button {
-    justify-self: start;
-    min-height: 2.75rem;
-    font: inherit;
-    font-weight: 600;
-    cursor: pointer;
-}
-
-.tutor-panel .tutor-form button:disabled {
-    opacity: .65;
-    cursor: default;
-}
-
-.tutor-historial {
-    margin-top: 1.5rem;
-}
-
-.tutor-respuestas,
-.tutor-fuentes {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-}
-
-.tutor-respuestas {
-    display: grid;
-    gap: 1rem;
-}
-
-.tutor-respuestas > .tutor-turno {
-    min-width: 0;
-    box-sizing: border-box;
-}
-
-.tutor-turno :is(h3, h4) {
-    margin: .5rem 0 .25rem;
-    font-size: 1rem;
-}
-
-.tutor-turno p {
-    margin: 0 0 .7rem;
-}
-
-.tutor-turno-aula {
-    font-weight: 600;
-}
-
-.tutor-respuesta {
-    white-space: pre-wrap;
-}
-
-.tutor-fuentes {
+.tutor-cargando {
     display: flex;
-    flex-wrap: wrap;
-    gap: .5rem;
+    align-items: center;
+    gap: 5px;
+    padding: 8px 0;
 }
 
-.tutor-fuentes li {
-    border-radius: 6px;
-    padding: .25rem .5rem;
-    background: #e9eef5;
-    color: #26364b;
-    font-size: .875rem;
+.tutor-cargando span {
+    width: 7px;
+    height: 7px;
+    background: #64748b;
+    border-radius: 50%;
+    animation: tutor-pulso 1.2s infinite alternate;
 }
 
-@media (max-width: 600px) {
-    .tutor-panel .tutor-form button {
-        justify-self: stretch;
+.tutor-cargando span:nth-child(2) {
+    animation-delay: .2s;
+}
+
+.tutor-cargando span:nth-child(3) {
+    animation-delay: .4s;
+}
+
+@keyframes tutor-pulso {
+    from { opacity: .3; }
+    to { opacity: 1; }
+}
+
+/* Responsive */
+
+@media (max-width: 768px) {
+
+    .tutor-header {
+        padding: 0 16px;
     }
+
+    .tutor-header-left {
+        gap: 12px;
+    }
+
+    .tutor-logo {
+        font-size: 20px;
+        gap: 8px;
+    }
+
+    .tutor-layout {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .tutor-sidebar {
+        position: fixed;
+        top: 76px;
+        bottom: 0;
+        left: 0;
+        z-index: 20;
+        width: min(270px, 85vw);
+        box-shadow: 10px 0 30px rgb(15 23 42 / 12%);
+    }
+
+    .tutor-chat {
+        padding: 20px 16px;
+    }
+
+    .tutor-compositor {
+        padding: 12px 16px;
+    }
+
+    .tutor-mensaje-usuario,
+    .tutor-mensaje-ia {
+        max-width: 95%;
+    }
+
+    .tutor-mensaje-ia {
+        padding: 16px;
+    }
+
+    .tutor-perfil-texto {
+        display: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .tutor-cargando span {
+        animation: none;
+    }
+}
+/* Menú general del estudiante */
+
+.tutor-page .av-sidebar {
+    background: #0b192e;
+    color: #fff;
+    border: none;
+    opacity: 1;
+}
+
+.tutor-page .av-sidebar::backdrop {
+    background: rgba(15, 23, 42, 0.45);
+}
+
+.tutor-page .av-sidebar-header {
+    border-bottom: 1px solid #243c58;
+}
+
+.tutor-page .av-sidebar-nav a {
+    color: #fff;
+}
+
+.tutor-page .av-sidebar-nav a:hover,
+.tutor-page .av-sidebar-nav .av-menu-active {
+    background: #243c58;
+    color: #fff;
+}
+
+.tutor-page .av-menu-label {
+    color: #94a3b8;
+}
+
+.tutor-page .av-sidebar-bottom a {
+    color: #fff;
 }

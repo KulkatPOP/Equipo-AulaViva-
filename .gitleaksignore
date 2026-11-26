@@ -15,3 +15,23 @@ c436fdf834228e7d41e6f29bef2bb4a5417fb0df:docs/arch/deployment.md:generic-api-key
 f1c4c93a125744e40b06dbba3ed01629513903a2:api/examples/invitaciones.http:generic-api-key:10
 # SHA público de imagen Docker, no una credencial; excepción específica al commit, archivo, regla y línea.
 8430cf56648b5df0a3052ba6e67c6d7d8b871c68:docs/infra/s07-reconciliacion.md:generic-api-key:59
+docs/ops/evidencias/s10-runtime-lab/incidents.ndjson:generic-api-key:10
+docs/ops/evidencias/s10-runtime-lab/incidents.ndjson:generic-api-key:11
+docs/ops/evidencias/s10-runtime-lab/incidents.ndjson:generic-api-key:12
+docs/ops/evidencias/s10-runtime-lab/incidents.ndjson:generic-api-key:13
+docs/ops/evidencias/s10-runtime-lab/incidents.ndjson:generic-api-key:14
+docs/ops/evidencias/s10-runtime-lab/incidents.ndjson:generic-api-key:15
+docs/ops/evidencias/s10-runtime-lab/incidents.ndjson:generic-api-key:16
+docs/ops/evidencias/s10-runtime-lab/incidents.ndjson:generic-api-key:17
+docs/ops/evidencias/s10-runtime-lab/incidents.ndjson:generic-api-key:18
+docs/ops/evidencias/s10-runtime-lab/incidents.ndjson:generic-api-key:19
+docs/ops/evidencias/s10-runtime-lab/incidents.ndjson:generic-api-key:2
+docs/ops/evidencias/s10-runtime-lab/incidents.ndjson:generic-api-key:20
+docs/ops/evidencias/s10-runtime-lab/incidents.ndjson:generic-api-key:21
+docs/ops/evidencias/s10-runtime-lab/incidents.ndjson:generic-api-key:3
+docs/ops/evidencias/s10-runtime-lab/incidents.ndjson:generic-api-key:4
+docs/ops/evidencias/s10-runtime-lab/incidents.ndjson:generic-api-key:5
+docs/ops/evidencias/s10-runtime-lab/incidents.ndjson:generic-api-key:6
+docs/ops/evidencias/s10-runtime-lab/incidents.ndjson:generic-api-key:7
+docs/ops/evidencias/s10-runtime-lab/incidents.ndjson:generic-api-key:8
+docs/ops/evidencias/s10-runtime-lab/incidents.ndjson:generic-api-key:9

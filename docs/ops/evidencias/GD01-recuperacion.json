@@ -1,0 +1,13 @@
+﻿{
+    "prueba":  "GD01",
+    "entorno":  "DEMO local",
+    "inicio":  "2026-11-24T23:07:27.3143677-03:00",
+    "pod_anterior":  "aulaviva-api-6857bf699f-fjbq4",
+    "uid_anterior":  "2a114e01-4f0b-4a07-b8e1-7d253316ac20",
+    "pod_nuevo":  "aulaviva-api-6857bf699f-6rpkd",
+    "uid_nuevo":  "edd6b043-9958-4b5f-bf5e-5cbb6dc5ca7e",
+    "recuperacion_automatica":  true,
+    "tiempo_segundos":  12.373,
+    "objetivo_segundos":  60,
+    "objetivo_cumplido":  true
+}

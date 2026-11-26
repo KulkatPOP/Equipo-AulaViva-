@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+require_once __DIR__ . '/OllamaKeepAlive.php';
 
 interface EmbeddingProvider
 {
@@ -69,7 +70,10 @@ final class OllamaEmbeddingProvider implements EmbeddingProvider
                 CURLOPT_TIMEOUT_MS => $this->timeoutMs,
                 CURLOPT_HTTPHEADER => ['Content-Type: application/json'],
                 CURLOPT_POSTFIELDS => json_encode([
-                    'model' => $this->modelo, 'input' => $textos, 'truncate' => false,
+                    'model' => $this->modelo,
+                    'input' => $textos,
+                    'truncate' => false,
+                    ...OllamaKeepAlive::parametros(),
                 ], JSON_THROW_ON_ERROR),
             ]);
             $json = curl_exec($http);

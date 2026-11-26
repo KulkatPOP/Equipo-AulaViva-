@@ -21,6 +21,15 @@ final class TutorEvidenceExtractionTest extends TestCase
             ['¿Qué deben observar los estudiantes?', 'Every day, observe both plants and write down or illustrate important changes.', 'Revisa ambas plantas cada día y escribe o ilustra las cambios importantes.'],
             ['¿Qué factores afectan el cráter?', 'Factors affecting the crater are mass and velocity.', 'Los factores son masa y velocidad.'],
             ['¿Qué se debe medir del cráter?', 'Measure the diameter and the depth of the resulting crater.', 'Mide el diámetro y la profundidad del cráter resultante.'],
+
+            // Preguntas directas de medición y listas.
+
+            ['¿Qué mide el termómetro?', 'El termómetro mide la temperatura del agua.', 'El termómetro mide la temperatura del agua.'],
+            ['¿Qué incluye el kit?', 'El kit incluye papel, tijeras y pegamento.', 'El kit incluye papel, tijeras y pegamento.'],
+            ['¿Qué mide el barómetro?', 'El barómetro mide la presión atmosférica.', 'El barómetro mide la presión atmosférica.'],
+            ['¿Qué incluye la mochila?', 'La mochila incluye libros y cuadernos.', 'La mochila incluye libros y cuadernos.'],
+            ['¿Qué instrumento mide la temperatura del agua?', 'El termómetro mide la temperatura del agua.', 'El termómetro mide la temperatura del agua.'],
+            ['¿Qué elementos incluye el kit?', 'El kit incluye papel, tijeras y pegamento.', 'El kit incluye papel, tijeras y pegamento.'],
         ];
     }
 
@@ -202,6 +211,74 @@ final class TutorEvidenceExtractionTest extends TestCase
                     'material_id' => 2,
                     'page' => 5,
                     'text' => 'El experimento se realiza durante seis días completos.',
+                ],
+            ],
+            3
+        );
+
+        self::assertSame([], $context);
+    }
+
+    // Controles negativos para preguntas directas.
+
+    public static function directQuestionControls(): array
+    {
+        return [
+            'instrumento incorrecto' => [
+                '¿Qué mide el barómetro?',
+                'El termómetro mide la temperatura del agua.',
+            ],
+
+            'lista incorrecta' => [
+                '¿Qué incluye la mochila?',
+                'El kit incluye papel, tijeras y pegamento.',
+            ],
+
+            'medicion negada' => [
+                '¿Qué mide el termómetro?',
+                'El termómetro no mide la temperatura del agua.',
+            ],
+
+            'lista negada' => [
+                '¿Qué incluye el kit?',
+                'El kit no incluye papel y tijeras.',
+            ],
+
+            'medicion hipotetica' => [
+                '¿Qué mide el termómetro?',
+                "Supongamos que\nEl termómetro mide la temperatura del agua.",
+            ],
+
+            'lista hipotetica' => [
+                '¿Qué incluye el kit?',
+                "Supongamos que\nEl kit incluye papel y tijeras.",
+            ],
+
+            'mediciones contradictorias' => [
+                '¿Qué mide el termómetro?',
+                "El termómetro mide la temperatura del agua.\nEl termómetro mide la presión atmosférica.",
+            ],
+
+            'listas contradictorias' => [
+                '¿Qué incluye el kit?',
+                "El kit incluye papel y tijeras.\nEl kit incluye libros y cuadernos.",
+            ],
+        ];
+    }
+
+    #[DataProvider('directQuestionControls')]
+    public function testDirectQuestionsRejectInvalidEvidence(
+        string $question,
+        string $passage
+    ): void {
+        $context = (new EvidenceGate())->preparar(
+            $question,
+            [
+                [
+                    'fragment_id' => 39,
+                    'material_id' => 3,
+                    'page' => 1,
+                    'text' => $passage,
                 ],
             ],
             3

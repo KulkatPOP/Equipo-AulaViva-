@@ -1,111 +1,112 @@
-/* Inicio Header*/
-header {
-    display: flex;
-    min-height: 80px;
-    background-color: #0b192e;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0px 40px;
+/* Configuración general */
+
+body {
+    margin: 0;
+    font-family: "Poppins", sans-serif;
 }
-.title-header{
+
+body:not(.av-dashboard) a {
+    margin: 0 0 0 10px;
+    color: white;
+    text-decoration: none;
+}
+
+/* Header */
+
+body:not(.av-dashboard) header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 80px;
+    padding: 0 40px;
+    background: #0b192e;
+}
+
+.title-header {
     font-size: 24px;
     font-weight: 600;
 }
-body {
-    font-family: 'Poppins', sans-serif;
-    margin: 0px;
-}
 
-a {
-    text-decoration: none;
-    color: white;
-    margin-left: 10px;
-    margin-right: 0px;
-}
-
-.logo{
+.logo {
     display: flex;
     align-items: center;
 }
 
-.logo img{
+.logo img {
     height: 70px;
     margin-right: 15px;
 }
-nav {
+
+body:not(.av-dashboard) nav {
     display: flex;
     align-items: stretch;
     align-self: stretch;
 }
 
-nav a{
-    font-weight: 400;
-    padding: 0 20px;
-    margin: 0px;
+body:not(.av-dashboard) nav a {
     display: flex;
     align-items: center;
-    transition: 0.2s;
+    margin: 0;
+    padding: 0 20px;
+    font-weight: 400;
+    transition: background .2s;
 }
 
-nav a:hover {
-    background-color: #152947;
+body:not(.av-dashboard) nav a:hover,
+body:not(.av-dashboard) nav a.activo {
+    background: #152947;
     color: white;
 }
 
-nav a.activo {
-    background-color: #152947;
-    color: white;
-}
-/* Termino Header*/
+/* Asignaturas */
 
-
-/* Inicio Asignatura*/
-main {
-  background-color:#eaf4ff ;
+body:not(.av-dashboard) main {
+    background: #eaf4ff;
 }
+
 .asignaturas {
-    padding: 50px 70px
+    padding: 50px 70px;
 }
-main h1{
-    margin: 0 ;
-    padding: 10px 0px;
-    margin-left: 30px;
+
+body:not(.av-dashboard) main h1 {
+    margin: 0 0 0 30px;
+    padding: 10px 0;
 }
+
 .cursos {
     display: flex;
     gap: 20px;
 }
 
 .curso {
+    box-sizing: border-box;
     width: 33%;
-    margin: 10px ;
+    margin: 10px;
     padding: 25px;
-    background-color: white;
-    border: 1px solid #dddddd;
+    border: 1px solid #ddd;
     border-radius: 8px;
-     box-sizing: border-box;
+    background: white;
 }
 
 .curso h2 {
-    color:#000;
+    margin-top: 0;
+    color: #000;
     font-size: 20px;
     font-weight: 600;
-    margin-top: 0;
 }
 
 .curso p {
     font-size: 15px;
 }
-/* Termino Asignatura*/
 
+/* Banner */
 
-/* Inicio Banner*/
 .banner {
-    height: 300px;
-    background-color: #eaf4ff;
     display: flex;
     align-items: center;
+    height: 300px;
     padding: 0 50px;
+    background: #eaf4ff;
 }
 
 .banner-texto {
@@ -113,43 +114,40 @@ main h1{
 }
 
 .banner-texto h1 {
-    font-size: 40px;
-    color: #0b192e;
     margin-bottom: 15px;
+    color: #0b192e;
+    font-size: 40px;
 }
 
 .banner-texto p {
-    font-size: 18px;
-    color: #555;
     margin-bottom: 25px;
+    color: #555;
+    font-size: 18px;
 }
 
-.banner-texto a {
-    background-color: #0b192e;
-    color: white;
-
+body:not(.av-dashboard) .banner-texto a {
+    margin: 0;
     padding: 12px 20px;
     border-radius: 6px;
-
-    margin: 0;
-}
-/* Termino Banner*/
-
-
-/* Inicio Footer*/
-footer {
-    width: 100%;
-    background-color: #0b192e;
+    background: #0b192e;
     color: white;
 }
 
-footer .row {
+/* Footer */
+
+body:not(.av-dashboard) footer {
+    width: 100%;
+    background: #0b192e;
+    color: white;
+}
+
+body:not(.av-dashboard) footer .row {
     display: flex;
-    justify-content: space-between;
     align-items: flex-start;
+    justify-content: space-between;
+    box-sizing: border-box;
     width: 100%;
     padding: 20px 65px;
-    box-sizing: border-box;
 }
 
 footer .col {
@@ -157,9 +155,8 @@ footer .col {
 }
 
 footer .col h2 {
+    margin: 0 0 15px;
     font-size: 20px;
-    margin: 0;
-    margin-bottom: 15px;
 }
 
 footer .col p {
@@ -167,58 +164,38 @@ footer .col p {
     font-size: 16px;
 }
 
-
 footer ul {
-    list-style: none;
-    padding: 0;
     margin: 0;
+    padding: 0;
+    list-style: none;
 }
 
 footer li {
     margin-bottom: 5px;
 }
 
-footer a {
-    color: white;
-    text-decoration: none;
+body:not(.av-dashboard) footer a {
     margin: 0;
+    color: white;
     font-size: 16px;
     font-weight: 400;
+    text-decoration: none;
 }
-footer a:hover {
-    display: inline;
+
+body:not(.av-dashboard) footer a:hover {
     color: #386cbb;
-
-}
-
-footer .correo a:hover {
-    display: inline;
-    color: #386cbb;
-}
-/* Termino Footer*/
-
-@media (max-width: 800px) {
-
-    footer .row {
-        grid-template-columns: 1fr;
-        text-align: center;
-        padding: 35px 20px;
-    }
-
-    footer .col-logo {
-        justify-content: center;
-    }
 }
 
 /* Panel docente */
+
 .panel-docente {
     min-height: 100vh;
+    background: #eaf4ff;
     color: #0b192e;
-    background-color: #eaf4ff;
     overflow-wrap: anywhere;
 }
 
-.panel-docente header {
+.panel-docente:not(.av-dashboard) header {
     display: grid;
     grid-template-columns: auto minmax(0, 1fr) auto;
     column-gap: 20px;
@@ -232,9 +209,9 @@ footer .correo a:hover {
     font-weight: 500;
 }
 
-.panel-docente .logo {
-    margin-left: 0;
+.panel-docente:not(.av-dashboard) .logo {
     min-height: 64px;
+    margin-left: 0;
 }
 
 .panel-docente .panel-contenido {
@@ -243,7 +220,7 @@ footer .correo a:hover {
     padding: clamp(24px, 5vw, 64px) clamp(16px, 5vw, 48px);
 }
 
-.panel-docente h1 {
+.panel-docente:not(.av-dashboard) main h1 {
     margin: 0;
     padding: 0;
     font-size: clamp(28px, 4vw, 40px);
@@ -251,19 +228,19 @@ footer .correo a:hover {
 }
 
 .panel-intro {
-    margin-bottom: 32px;
+    margin-bottom: 24px;
 }
 
 .panel-intro p {
-    margin: 12px 0 0;
+    margin: 10px 0 0;
     color: #40516a;
 }
 
 .panel-docente .panel-intro-aula {
     padding: clamp(16px, 3vw, 28px);
-    background-color: white;
     border: 1px solid #ddd;
     border-radius: 8px;
+    background: white;
 }
 
 .panel-docente .panel-resumen {
@@ -275,6 +252,8 @@ footer .correo a:hover {
     margin: 0 0 16px;
     font-size: 24px;
 }
+
+/* Tarjetas */
 
 .panel-tarjetas {
     display: grid;
@@ -306,8 +285,7 @@ footer .correo a:hover {
     gap: 16px;
 }
 
-.panel-tarjetas .curso h2,
-.panel-tarjetas .curso h3 {
+.panel-tarjetas .curso :is(h2, h3) {
     margin: 0;
     color: inherit;
     font-size: 20px;
@@ -319,13 +297,15 @@ footer .correo a:hover {
     color: #40516a;
 }
 
+/* Estudiantes */
+
 .panel-tarjetas-alumnos {
     gap: 10px;
 }
 
 .panel-tarjetas-alumnos .curso {
-    padding: 10px 16px;
     gap: 2px;
+    padding: 10px 16px;
 }
 
 .panel-tarjetas-alumnos .curso h3 {
@@ -338,17 +318,19 @@ footer .correo a:hover {
     line-height: 1.4;
 }
 
+/* Botones */
+
 .panel-docente .panel-boton {
     display: inline-block;
     margin: auto 0 0;
     padding: 12px 20px;
     border-radius: 6px;
+    background: #0b192e;
     color: white;
-    background-color: #0b192e;
 }
 
 .panel-docente .panel-boton:hover {
-    background-color: #152947;
+    background: #152947;
 }
 
 .panel-docente .panel-volver {
@@ -358,7 +340,7 @@ footer .correo a:hover {
     text-decoration: underline;
 }
 
-.panel-docente a:focus-visible {
+.panel-docente :is(a, button, input, select, summary):focus-visible {
     outline: 2px solid #0b192e;
     outline-offset: 3px;
 }
@@ -368,6 +350,8 @@ footer .correo a:hover {
     outline-offset: -3px;
 }
 
+/* Avisos */
+
 .panel-docente .panel-aviso {
     margin-top: 16px;
 }
@@ -375,16 +359,35 @@ footer .correo a:hover {
 .panel-docente .panel-aviso-error {
     margin-bottom: 20px;
     border-color: #e6a5a5;
-    background-color: #fff0f0;
+    background: #fff0f0;
     color: #8b2017;
 }
 
+.panel-docente .panel-resultado {
+    padding: 10px 12px;
+    border-radius: 6px;
+    background: #eaf4ff;
+}
+
+.panel-docente .panel-resultado-exito {
+    background: #eaf7ef;
+    color: #165a38;
+}
+
+.panel-docente .panel-resultado-error {
+    background: #fff0f0;
+    color: #8b2017;
+}
+
+/* Formularios */
+
 .panel-docente .panel-asignacion {
-    margin-bottom: 32px;
+    margin-bottom: 24px;
     padding: clamp(16px, 3vw, 25px);
 }
 
-.panel-docente .panel-asignacion label {
+.panel-docente .panel-asignacion label,
+.panel-docente .panel-buscar-alumno label {
     display: block;
     margin-bottom: 6px;
     font-weight: 500;
@@ -400,30 +403,30 @@ footer .correo a:hover {
 
 .panel-asignacion-busqueda input,
 .panel-invitacion-campos input,
-.panel-docente .panel-buscar-alumno input {
-    flex: 1 1 220px;
+.panel-docente .panel-buscar-alumno input,
+.panel-filtros-invitaciones :is(input, select) {
+    box-sizing: border-box;
     min-width: 0;
     max-width: 100%;
     min-height: 44px;
     padding: 8px 12px;
     border: 1px solid #40516a;
     border-radius: 6px;
-    font: inherit;
+    background: white;
     color: inherit;
+    font: inherit;
+}
+
+.panel-asignacion-busqueda input {
+    flex: 1 1 220px;
 }
 
 .panel-docente .panel-asignacion button {
-    margin: 0;
     min-height: 44px;
+    margin: 0;
     border: 0;
     font: inherit;
     cursor: pointer;
-}
-
-.panel-asignacion :is(input, button):focus-visible,
-.panel-docente .panel-buscar-alumno input:focus-visible {
-    outline: 2px solid #0b192e;
-    outline-offset: 3px;
 }
 
 .panel-asignacion-candidato {
@@ -442,21 +445,7 @@ footer .correo a:hover {
     color: #40516a;
 }
 
-.panel-docente .panel-resultado {
-    padding: 10px 12px;
-    border-radius: 6px;
-    background: #eaf4ff;
-}
-
-.panel-docente .panel-resultado-exito {
-    color: #165a38;
-    background: #eaf7ef;
-}
-
-.panel-docente .panel-resultado-error {
-    color: #8b2017;
-    background: #fff0f0;
-}
+/* Botones secundarios */
 
 .panel-tarjetas-alumnos .panel-boton-secundario {
     margin-top: 6px;
@@ -474,13 +463,15 @@ footer .correo a:hover {
 
 .panel-docente .panel-boton-secundario {
     border: 1px solid #8b2017;
-    color: #8b2017;
     background: white;
+    color: #8b2017;
 }
 
 .panel-docente .panel-boton-secundario:hover {
     background: #fff0f0;
 }
+
+/* Confirmación */
 
 .panel-docente .panel-confirmacion {
     box-sizing: border-box;
@@ -488,8 +479,8 @@ footer .correo a:hover {
     padding: 24px;
     border: 1px solid #ddd;
     border-radius: 8px;
-    color: #0b192e;
     background: white;
+    color: #0b192e;
 }
 
 .panel-confirmacion::backdrop {
@@ -517,24 +508,14 @@ footer .correo a:hover {
     background: #8b2017;
 }
 
-.panel-docente :is(.panel-confirmacion button, .panel-boton-secundario):focus-visible {
-    outline: 2px solid #0b192e;
-    outline-offset: 3px;
-}
+/* Buscador de estudiantes */
 
 .panel-docente .panel-buscar-alumno {
     max-width: 420px;
     margin-bottom: 16px;
 }
 
-.panel-docente .panel-buscar-alumno label {
-    display: block;
-    margin-bottom: 6px;
-    font-weight: 500;
-}
-
 .panel-docente .panel-buscar-alumno input {
-    box-sizing: border-box;
     width: 100%;
 }
 
@@ -546,15 +527,12 @@ footer .correo a:hover {
     margin: 0;
 }
 
+/* Invitaciones */
+
 .panel-docente .panel-invitacion summary {
-    cursor: pointer;
     font-size: 20px;
     font-weight: 600;
-}
-
-.panel-docente .panel-invitacion summary:focus-visible {
-    outline: 2px solid #0b192e;
-    outline-offset: 3px;
+    cursor: pointer;
 }
 
 .panel-invitacion-campos {
@@ -565,7 +543,6 @@ footer .correo a:hover {
 }
 
 .panel-invitacion-campos input {
-    box-sizing: border-box;
     width: 100%;
 }
 
@@ -592,20 +569,7 @@ footer .correo a:hover {
 }
 
 .panel-filtros-invitaciones :is(input, select) {
-    box-sizing: border-box;
     width: 100%;
-    min-height: 44px;
-    padding: 8px 12px;
-    border: 1px solid #40516a;
-    border-radius: 6px;
-    font: inherit;
-    color: inherit;
-    background: white;
-}
-
-.panel-filtros-invitaciones select:focus-visible {
-    outline: 2px solid #0b192e;
-    outline-offset: 3px;
 }
 
 .panel-docente .panel-listado-invitaciones {
@@ -629,6 +593,8 @@ footer .correo a:hover {
     margin: 0;
 }
 
+/* Materiales - diseño anterior */
+
 .panel-docente .panel-subir-material input:not([type="hidden"]) {
     display: block;
     box-sizing: border-box;
@@ -638,8 +604,8 @@ footer .correo a:hover {
     padding: 8px 12px;
     border: 1px solid #40516a;
     border-radius: 6px;
-    font: inherit;
     color: inherit;
+    font: inherit;
 }
 
 .panel-acciones-material {
@@ -653,35 +619,7 @@ footer .correo a:hover {
     margin: 0;
 }
 
-@media (max-width: 600px) {
-    .panel-tarjetas-alumnos {
-        grid-template-columns: minmax(0, 1fr);
-    }
-
-    .panel-tarjetas-aulas {
-        grid-template-columns: 1fr;
-    }
-
-    .panel-docente header {
-        grid-template-columns: auto minmax(0, 1fr);
-        column-gap: 12px;
-        padding: 0 16px;
-    }
-
-    .panel-docente .logo img {
-        height: 52px;
-    }
-
-    .panel-docente nav {
-        grid-column: 1 / -1;
-        flex-wrap: wrap;
-    }
-
-    .panel-docente nav a {
-        min-height: 44px;
-        padding: 0 12px;
-    }
-}
+/* Editor de evaluaciones */
 
 .panel-docente .panel-editor-evaluacion fieldset {
     min-inline-size: 0;
@@ -705,4 +643,47 @@ footer .correo a:hover {
 
 .panel-docente .panel-editor-evaluacion .panel-boton {
     margin: .25rem;
+}
+
+/* Responsive */
+
+@media (max-width: 800px) {
+    body:not(.av-dashboard) footer .row {
+        flex-direction: column;
+        align-items: center;
+        gap: 24px;
+        padding: 35px 20px;
+        text-align: center;
+    }
+
+    footer .col-logo {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 600px) {
+    .panel-tarjetas-alumnos,
+    .panel-tarjetas-aulas {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .panel-docente:not(.av-dashboard) header {
+        grid-template-columns: auto minmax(0, 1fr);
+        column-gap: 12px;
+        padding: 0 16px;
+    }
+
+    .panel-docente .logo img {
+        height: 52px;
+    }
+
+    .panel-docente:not(.av-dashboard) nav {
+        grid-column: 1 / -1;
+        flex-wrap: wrap;
+    }
+
+    .panel-docente:not(.av-dashboard) nav a {
+        min-height: 44px;
+        padding: 0 12px;
+    }
 }

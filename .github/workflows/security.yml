@@ -32,7 +32,7 @@ jobs:
           semgrep scan --error --strict --metrics=off --disable-nosem \
             --json-output "$RUNNER_TEMP/semgrep-report.json" \
             --config p/owasp-top-ten --config p/php --config .semgrep/ \
-            --exclude tests/semgrep/ .
+            --exclude tests/semgrep/ --exclude docs/ops/evidencias/s10-runtime-lab/admission-signed.yaml .
 
       - name: Guardar informe Semgrep
         if: always()

@@ -29,3 +29,12 @@ openapitools.json
 .dockerignore
 README.md
 CHARTER.md
+# Dependencias instaladas durante la construcción
+vendor/
+
+# Archivos de diseño local y respaldos
+Dockerfile.diseno
+*.backup
+*.backup-*
+*.bak
+*.dump

@@ -1,0 +1,65 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    kyverno.io/verify-images: '{"ghcr.io/kulkatpop/aulaviva-api@sha256:b1a2ebaa40cecd6a476f35562438941941f64930c7d65c8f7cadc36ce5cc3942":"pass"}'
+    kyverno.io/verify-images-scoped: '{"version":1,"policies":{"/require-image-signature":{"verify-official-workflow":{"ghcr.io/kulkatpop/aulaviva-api@sha256:b1a2ebaa40cecd6a476f35562438941941f64930c7d65c8f7cadc36ce5cc3942":"pass"}}}}'
+  creationTimestamp: "2026-11-25T03:36:26Z"
+  labels:
+    run: admission-signed
+  name: admission-signed
+  namespace: aulaviva
+  uid: af373aec-91b2-457f-8032-a0ebdd59ae59
+spec:
+  containers:
+  - image: ghcr.io/kulkatpop/aulaviva-api@sha256:b1a2ebaa40cecd6a476f35562438941941f64930c7d65c8f7cadc36ce5cc3942
+    imagePullPolicy: IfNotPresent
+    name: admission-signed
+    resources: {}
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: File
+    volumeMounts:
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: kube-api-access-qhd2x
+      readOnly: true
+  dnsPolicy: ClusterFirst
+  enableServiceLinks: true
+  preemptionPolicy: PreemptLowerPriority
+  priority: 0
+  restartPolicy: Never
+  schedulerName: default-scheduler
+  securityContext: {}
+  serviceAccount: default
+  serviceAccountName: default
+  terminationGracePeriodSeconds: 30
+  tolerations:
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+    tolerationSeconds: 300
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+    tolerationSeconds: 300
+  volumes:
+  - name: kube-api-access-qhd2x
+    projected:
+      defaultMode: 420
+      sources:
+      - serviceAccountToken:
+          expirationSeconds: 3607
+          path: token
+      - configMap:
+          items:
+          - key: ca.crt
+            path: ca.crt
+          name: kube-root-ca.crt
+      - downwardAPI:
+          items:
+          - fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+            path: namespace
+status:
+  phase: Pending
+  qosClass: BestEffort

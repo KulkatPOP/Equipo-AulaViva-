@@ -1,0 +1,309 @@
+/* General */
+
+.resultado-page {
+    background: #f1f5f9;
+    color: #0f172a;
+    font-family: 'Poppins', sans-serif;
+    min-height: 100vh;
+}
+
+.resultado-page *,
+.resultado-page *::before,
+.resultado-page *::after {
+    box-sizing: border-box;
+}
+
+/* Encabezado */
+
+.resultado-header {
+    min-height: 76px;
+    padding: 12px 40px;
+    background: #0b192e;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.resultado-marca {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    color: #fff;
+    text-decoration: none;
+    font-size: 23px;
+    font-weight: 700;
+}
+
+.resultado-marca img {
+    width: 42px;
+    height: 42px;
+    object-fit: contain;
+}
+
+.resultado-perfil {
+    display: flex;
+    flex-direction: column;
+    text-align: right;
+    font-size: 13px;
+}
+
+.resultado-perfil span {
+    color: #bfdbfe;
+    font-size: 12px;
+}
+
+/* Contenido */
+
+.resultado-contenido {
+    width: calc(100% - 40px);
+    max-width: 1120px;
+    margin: 35px auto 60px;
+}
+
+.resultado-volver {
+    display: inline-block;
+    margin-bottom: 22px;
+    color: #2563eb;
+    font-size: 13px;
+    text-decoration: none;
+}
+
+.resultado-volver:hover {
+    text-decoration: underline;
+}
+
+.resultado-bloque {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 30px;
+}
+
+/* Información general */
+
+.resultado-titulo > span {
+    color: #64748b;
+    font-size: 13px;
+}
+
+.resultado-titulo h1 {
+    margin: 8px 0 12px;
+    font-size: 30px;
+    line-height: 1.4;
+    font-weight: 700;
+}
+
+.resultado-confirmacion {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin: 0;
+    color: #15803d;
+    font-size: 13px;
+}
+
+.resultado-confirmacion svg,
+.alternativa-contenido svg {
+    width: 17px;
+    height: 17px;
+    flex-shrink: 0;
+}
+
+/* Resumen y revisión */
+
+.resultado-resumen,
+.resultado-revision,
+.resultado-acciones {
+    border-top: 1px solid #e2e8f0;
+    margin-top: 24px;
+    padding-top: 22px;
+}
+
+.resultado-bloque h2 {
+    margin: 0 0 16px;
+    font-size: 19px;
+    font-weight: 600;
+}
+
+.resultado-resumen p {
+    margin: 9px 0;
+    font-size: 14px;
+    color: #475569;
+}
+
+.resultado-resumen p strong:first-child {
+    color: #0f172a;
+    font-weight: 600;
+}
+
+.resultado-page .nota-aprobada {
+    color: #15803d;
+}
+
+.resultado-page .nota-reprobada {
+    color: #dc2626;
+}
+
+/* Preguntas */
+
+.resultado-pregunta + .resultado-pregunta {
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 1px solid #e2e8f0;
+}
+
+.resultado-pregunta-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    font-size: 13px;
+}
+
+.resultado-pregunta-header strong {
+    font-weight: 600;
+}
+
+.resultado-pregunta h3 {
+    margin: 14px 0;
+    font-size: 14px;
+    font-weight: 500;
+    overflow-wrap: anywhere;
+}
+
+/* Alternativas */
+
+.resultado-alternativas {
+    display: grid;
+    gap: 10px;
+}
+
+.resultado-alternativa {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 13px 15px;
+    min-height: 48px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background: #fff;
+    font-size: 13px;
+}
+
+.alternativa-contenido {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.alternativa-neutra {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #64748b;
+    flex-shrink: 0;
+}
+
+.resultado-alternativa small {
+    font-size: 11px;
+    text-align: right;
+    flex-shrink: 0;
+}
+
+.alternativa-correcta {
+    background: #f0fdf4;
+    border-color: #bbf7d0;
+    color: #166534;
+}
+
+.alternativa-incorrecta {
+    background: #fef2f2;
+    border-color: #fecaca;
+    color: #b91c1c;
+}
+
+.resultado-sin-respuesta {
+    margin: 12px 0 0;
+    color: #64748b;
+    font-size: 12px;
+}
+
+/* Botón */
+
+.resultado-acciones {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.resultado-boton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 13px 22px;
+    border-radius: 8px;
+    background: #0b192e;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.resultado-boton:hover {
+    background: #1e3a5f;
+}
+
+.resultado-page a:focus-visible {
+    outline: 2px solid #2563eb;
+    outline-offset: 4px;
+}
+
+/* Responsive */
+
+@media (max-width: 600px) {
+
+    .resultado-header {
+        padding: 12px 18px;
+    }
+
+    .resultado-marca {
+        gap: 10px;
+        font-size: 20px;
+    }
+
+    .resultado-marca img {
+        width: 35px;
+        height: 35px;
+    }
+
+    .resultado-contenido {
+        width: calc(100% - 28px);
+        margin-top: 24px;
+    }
+
+    .resultado-bloque {
+        padding: 20px;
+    }
+
+    .resultado-titulo h1 {
+        font-size: 25px;
+    }
+
+    .resultado-alternativa {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+    }
+
+    .resultado-alternativa small {
+        padding-left: 27px;
+        text-align: left;
+    }
+
+    .resultado-boton {
+        width: 100%;
+    }
+}

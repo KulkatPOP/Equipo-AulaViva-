@@ -1,0 +1,66 @@
+﻿[
+    {
+        "tabla":  "usuarios",
+        "coincidencia":  true
+    },
+    {
+        "tabla":  "aulas",
+        "coincidencia":  true
+    },
+    {
+        "tabla":  "aula_alumnos",
+        "coincidencia":  true
+    },
+    {
+        "tabla":  "aula_profesores",
+        "coincidencia":  true
+    },
+    {
+        "tabla":  "materiales",
+        "coincidencia":  true
+    },
+    {
+        "tabla":  "material_ingestas",
+        "coincidencia":  true
+    },
+    {
+        "tabla":  "material_fragmentos",
+        "coincidencia":  true
+    },
+    {
+        "tabla":  "evaluaciones",
+        "coincidencia":  true
+    },
+    {
+        "tabla":  "preguntas",
+        "coincidencia":  true
+    },
+    {
+        "tabla":  "alternativas",
+        "coincidencia":  true
+    },
+    {
+        "tabla":  "entregas",
+        "coincidencia":  true
+    },
+    {
+        "tabla":  "respuestas",
+        "coincidencia":  true
+    },
+    {
+        "tabla":  "solicitudes_ayuda",
+        "coincidencia":  true
+    },
+    {
+        "tabla":  "outbox_events",
+        "coincidencia":  true
+    },
+    {
+        "tabla":  "apoderado_estudiantes",
+        "coincidencia":  true
+    },
+    {
+        "tabla":  "invitaciones",
+        "coincidencia":  true
+    }
+]
